@@ -1,0 +1,2 @@
+ignore:
+  - "extopy-commons/src/commonMain/kotlin/me/nathanfallet/extopy/models"

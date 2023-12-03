@@ -1,0 +1,43 @@
+.screen {
+    height: 100vh;
+    width: 100%;
+    text-align: center;
+    display: table;
+}
+
+.v-center {
+    display: table-cell;
+    vertical-align: middle;
+}
+
+p {
+    margin: auto;
+    color: white;
+    font-family: "Helvetica Neue Light", Helvetica, sans-serif;
+    text-decoration: none;
+    font-size: 60px;
+    font-weight: thin;
+}
+
+b, i {
+    color: white;
+    font-family: "Helvetica Neue Bold", Helvetica, sans-serif;
+    font-size: 60px;
+    font-weight: 3000;
+}
+
+a {
+    color: white;
+    font-family: "Helvetica Neue Bold", Helvetica, sans-serif;
+    text-decoration: none;
+    font-size: 60px;
+    font-weight: thin;
+}
+
+a:hover {
+    cursor: default;
+}
+
+body {
+    background-color: red;
+}
