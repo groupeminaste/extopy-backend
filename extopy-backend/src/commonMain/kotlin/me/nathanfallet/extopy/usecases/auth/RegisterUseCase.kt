@@ -23,6 +23,7 @@ class RegisterUseCase(
                 displayName = input2.displayName,
                 email = code.email,
                 password = input2.password,
+                birthdate = input2.birthdate,
             )
         )
     }

@@ -9,8 +9,8 @@ import me.nathanfallet.usecases.users.IUser
 @Serializable
 data class User(
     override val id: String,
-    val displayName: String?,
-    val username: String?,
+    val displayName: String,
+    val username: String,
     val email: String?,
     val password: String?,
     val biography: String?,
@@ -19,7 +19,6 @@ data class User(
     val joinDate: Instant?,
     val lastActive: Instant?,
     val personal: Boolean?,
-    val emailVerified: Boolean?,
     val verified: Boolean?,
     val banned: Boolean?,
     val postsCount: Long?,

@@ -6,9 +6,11 @@ import me.nathanfallet.extopy.controllers.notifications.NotificationsRouter
 import me.nathanfallet.extopy.controllers.posts.PostsRouter
 import me.nathanfallet.extopy.controllers.users.UsersRouter
 import me.nathanfallet.extopy.database.Database
+import me.nathanfallet.extopy.database.users.DatabaseUsersRepository
 import me.nathanfallet.extopy.models.auth.LoginPayload
 import me.nathanfallet.extopy.models.auth.RegisterCodePayload
 import me.nathanfallet.extopy.models.auth.RegisterPayload
+import me.nathanfallet.extopy.repositories.users.IUsersRepository
 import me.nathanfallet.extopy.usecases.auth.CreateCodeRegisterUseCase
 import me.nathanfallet.extopy.usecases.auth.GetCodeRegisterUseCase
 import me.nathanfallet.extopy.usecases.auth.RegisterUseCase
@@ -40,7 +42,7 @@ fun Application.configureKoin() {
             }
         }
         val repositoryModule = module {
-
+            single<IUsersRepository> { DatabaseUsersRepository(get()) }
         }
         val useCaseModule = module {
             // Application
