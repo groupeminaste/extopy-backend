@@ -1,6 +1,7 @@
 package me.nathanfallet.extopy.database
 
 import kotlinx.coroutines.Dispatchers
+import me.nathanfallet.extopy.database.application.CodesInEmails
 import me.nathanfallet.extopy.database.notifications.Notifications
 import me.nathanfallet.extopy.database.notifications.TokensInNotifications
 import me.nathanfallet.extopy.database.posts.LikesInPosts
@@ -40,6 +41,7 @@ class Database(
         transaction(database) {
             //SchemaUtils.create(Authorizes)
             //SchemaUtils.create(Clients)
+            SchemaUtils.create(CodesInEmails)
             SchemaUtils.create(Notifications)
             SchemaUtils.create(TokensInNotifications)
             SchemaUtils.create(Posts)

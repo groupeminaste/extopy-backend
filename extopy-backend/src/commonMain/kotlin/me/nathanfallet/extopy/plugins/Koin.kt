@@ -7,6 +7,7 @@ import me.nathanfallet.extopy.controllers.posts.PostsRouter
 import me.nathanfallet.extopy.controllers.users.UsersController
 import me.nathanfallet.extopy.controllers.users.UsersRouter
 import me.nathanfallet.extopy.database.Database
+import me.nathanfallet.extopy.database.application.DatabaseCodesInEmailsRepository
 import me.nathanfallet.extopy.database.users.DatabaseUsersRepository
 import me.nathanfallet.extopy.models.auth.LoginPayload
 import me.nathanfallet.extopy.models.auth.RegisterCodePayload
@@ -14,6 +15,7 @@ import me.nathanfallet.extopy.models.auth.RegisterPayload
 import me.nathanfallet.extopy.models.users.CreateUserPayload
 import me.nathanfallet.extopy.models.users.UpdateUserPayload
 import me.nathanfallet.extopy.models.users.User
+import me.nathanfallet.extopy.repositories.application.ICodesInEmailsRepository
 import me.nathanfallet.extopy.repositories.users.IUsersRepository
 import me.nathanfallet.extopy.services.emails.EmailsService
 import me.nathanfallet.extopy.services.emails.IEmailsService
@@ -63,6 +65,7 @@ fun Application.configureKoin() {
             }
         }
         val repositoryModule = module {
+            single<ICodesInEmailsRepository> { DatabaseCodesInEmailsRepository(get()) }
             single<IUsersRepository> { DatabaseUsersRepository(get()) }
         }
         val useCaseModule = module {
@@ -80,15 +83,17 @@ fun Application.configureKoin() {
             single<ISetSessionForCallUseCase> { SetSessionForCallUseCase() }
             single<ILoginUseCase<LoginPayload>> { LoginUseCase(get(), get()) }
             single<IRegisterUseCase<RegisterCodePayload>> { RegisterUseCase(get(), get(named<User>())) }
-            single<IGetCodeRegisterUseCase<RegisterPayload>> { GetCodeRegisterUseCase() }
+            single<IGetCodeRegisterUseCase<RegisterPayload>> { GetCodeRegisterUseCase(get()) }
             single<ICreateCodeRegisterUseCase<RegisterPayload>> {
                 CreateCodeRegisterUseCase(
+                    get(),
+                    get(),
                     get(),
                     get(),
                     get()
                 )
             }
-            single<IDeleteCodeRegisterUseCase> { DeleteCodeRegisterUseCase() }
+            single<IDeleteCodeRegisterUseCase> { DeleteCodeRegisterUseCase(get()) }
 
             // Users
             single<IRequireUserForCallUseCase> { RequireUserForCallUseCase(get()) }

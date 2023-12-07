@@ -7,6 +7,6 @@ import me.nathanfallet.usecases.models.repositories.IModelSuspendRepository
 
 interface IUsersRepository : IModelSuspendRepository<User, String, CreateUserPayload, UpdateUserPayload> {
 
-    suspend fun getForEmail(email: String, includePassword: Boolean): User?
+    suspend fun getForUsernameOrEmail(username: String, includePassword: Boolean): User?
 
 }

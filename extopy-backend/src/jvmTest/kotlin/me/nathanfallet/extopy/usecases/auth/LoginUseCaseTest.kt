@@ -18,7 +18,7 @@ class LoginUseCaseTest {
         val verifyPasswordUseCase = mockk<IVerifyPasswordUseCase>()
         val useCase = LoginUseCase(repository, verifyPasswordUseCase)
         val user = User("id", "displayName", "username", "email", "hash")
-        coEvery { repository.getForEmail("email", true) } returns user
+        coEvery { repository.getForUsernameOrEmail("email", true) } returns user
         every { verifyPasswordUseCase("password", "hash") } returns true
         assertEquals(user, useCase(LoginPayload("email", "password")))
     }
@@ -28,7 +28,7 @@ class LoginUseCaseTest {
         val repository = mockk<IUsersRepository>()
         val verifyPasswordUseCase = mockk<IVerifyPasswordUseCase>()
         val useCase = LoginUseCase(repository, verifyPasswordUseCase)
-        coEvery { repository.getForEmail("email", true) } returns null
+        coEvery { repository.getForUsernameOrEmail("email", true) } returns null
         assertEquals(null, useCase(LoginPayload("email", "password")))
     }
 
@@ -38,7 +38,7 @@ class LoginUseCaseTest {
         val verifyPasswordUseCase = mockk<IVerifyPasswordUseCase>()
         val useCase = LoginUseCase(repository, verifyPasswordUseCase)
         val user = User("id", "displayName", "username", "email", "hash")
-        coEvery { repository.getForEmail("email", true) } returns user
+        coEvery { repository.getForUsernameOrEmail("email", true) } returns user
         every { verifyPasswordUseCase("password", "hash") } returns false
         assertEquals(null, useCase(LoginPayload("email", "password")))
     }

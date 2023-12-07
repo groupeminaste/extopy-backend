@@ -11,7 +11,7 @@ class LoginUseCase(
 ) : ILoginUseCase<LoginPayload> {
 
     override suspend fun invoke(input: LoginPayload): IUser? {
-        return repository.getForEmail(input.email, true)?.takeIf {
+        return repository.getForUsernameOrEmail(input.username, true)?.takeIf {
             verifyPasswordUseCase(input.password, it.password ?: "")
         }
     }

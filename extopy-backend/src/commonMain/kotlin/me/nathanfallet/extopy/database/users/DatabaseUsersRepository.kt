@@ -26,10 +26,10 @@ class DatabaseUsersRepository(
         }
     }
 
-    override suspend fun getForEmail(email: String, includePassword: Boolean): User? {
+    override suspend fun getForUsernameOrEmail(username: String, includePassword: Boolean): User? {
         return database.dbQuery {
             Users
-                .select { Users.email eq email }
+                .select { Users.username eq username or (Users.email eq username) }
                 .map {
                     Users.toUser(it, includePassword)
                 }
