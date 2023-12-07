@@ -33,8 +33,6 @@ object Users : Table() {
     val followersIn = FollowersInUsers.followersIn[FollowersInUsers.userId].countDistinct()
     val followingIn = FollowersInUsers.followingIn[FollowersInUsers.targetId].countDistinct()
 
-    val usernameRegex = Regex("[a-zA-Z0-9_]+")
-
     override val primaryKey = PrimaryKey(id)
 
     fun generateId(): String {

@@ -38,6 +38,8 @@ import me.nathanfallet.usecases.localization.ITranslateUseCase
 import me.nathanfallet.usecases.models.create.ICreateModelSuspendUseCase
 import me.nathanfallet.usecases.models.get.context.GetModelWithContextFromRepositorySuspendUseCase
 import me.nathanfallet.usecases.models.get.context.IGetModelWithContextSuspendUseCase
+import me.nathanfallet.usecases.models.update.IUpdateModelSuspendUseCase
+import me.nathanfallet.usecases.models.update.UpdateModelFromRepositorySuspendUseCase
 import org.koin.core.qualifier.named
 import org.koin.dsl.module
 import org.koin.ktor.plugin.Koin
@@ -104,6 +106,9 @@ fun Application.configureKoin() {
             single<ICreateModelSuspendUseCase<User, CreateUserPayload>>(named<User>()) {
                 CreateUserUseCase(get(), get())
             }
+            single<IUpdateModelSuspendUseCase<User, String, UpdateUserPayload>>(named<User>()) {
+                UpdateModelFromRepositorySuspendUseCase(get<IUsersRepository>())
+            }
         }
         val controllerModule = module {
             // Auth
@@ -123,6 +128,7 @@ fun Application.configureKoin() {
             single<IModelController<User, String, CreateUserPayload, UpdateUserPayload>>(named<User>()) {
                 UsersController(
                     get(),
+                    get(named<User>()),
                     get(named<User>())
                 )
             }

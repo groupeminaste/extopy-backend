@@ -26,4 +26,12 @@ data class User(
     val followingCount: Long? = null,
     val followersIn: Boolean? = null,
     val followingIn: Boolean? = null,
-) : IModel<String, CreateUserPayload, UpdateUserPayload>, IUser
+) : IModel<String, CreateUserPayload, UpdateUserPayload>, IUser {
+
+    companion object {
+
+        val usernameRegex = Regex("[a-zA-Z0-9_]+")
+
+    }
+
+}
