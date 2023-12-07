@@ -59,7 +59,6 @@ kotlin {
 
                 implementation("ch.qos.logback:logback-core:$logbackVersion")
                 implementation("ch.qos.logback:logback-classic:$logbackVersion")
-                implementation("org.slf4j:slf4j-api:2.0.7")
 
                 implementation("me.nathanfallet.i18n:i18n:1.0.4")
                 implementation("me.nathanfallet.ktorx:ktor-i18n:$ktorxVersion")

@@ -6,4 +6,7 @@ import me.nathanfallet.extopy.models.users.User
 import me.nathanfallet.usecases.models.repositories.IModelSuspendRepository
 
 interface IUsersRepository : IModelSuspendRepository<User, String, CreateUserPayload, UpdateUserPayload> {
+
+    suspend fun getForUsernameOrEmail(username: String, includePassword: Boolean): User?
+
 }

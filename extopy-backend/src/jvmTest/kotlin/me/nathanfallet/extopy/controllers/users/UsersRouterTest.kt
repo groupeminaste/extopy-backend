@@ -21,9 +21,7 @@ import kotlin.test.assertEquals
 
 class UsersRouterTest {
 
-    private val user = User(
-        "id", "displayName", "username"
-    )
+    private val user = User("id", "displayName", "username")
 
     private fun installApp(application: ApplicationTestBuilder): HttpClient {
         application.environment {
