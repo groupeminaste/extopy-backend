@@ -18,10 +18,21 @@ class DatabaseUsersRepository(
     override suspend fun get(id: String, context: IContext?): User? {
         if (context !is UserContext) return null
         return database.dbQuery {
-            customJoin(context.user.id)
+            customJoin(context.userId)
                 .select { Users.id eq id }
                 .groupBy(Users.id)
                 .map(Users::toUser)
+                .singleOrNull()
+        }
+    }
+
+    override suspend fun getForEmail(email: String, includePassword: Boolean): User? {
+        return database.dbQuery {
+            Users
+                .select { Users.email eq email }
+                .map {
+                    Users.toUser(it, includePassword)
+                }
                 .singleOrNull()
         }
     }

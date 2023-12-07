@@ -54,7 +54,7 @@ class DatabaseUsersRepositoryTest {
                 LocalDate(2002, 12, 24)
             )
         ) ?: fail("Unable to create user")
-        val result = repository.get(user.id, UserContext(user))
+        val result = repository.get(user.id, UserContext(user.id))
         assertEquals(user.id, result?.id)
         assertEquals(user.username, result?.username)
         assertEquals(user.displayName, result?.displayName)
@@ -73,7 +73,7 @@ class DatabaseUsersRepositoryTest {
                 LocalDate(2002, 12, 24)
             )
         ) ?: fail("Unable to create user")
-        assertEquals(null, repository.get("userId", UserContext(user)))
+        assertEquals(null, repository.get("userId", UserContext(user.id)))
     }
 
     @Test
@@ -87,6 +87,44 @@ class DatabaseUsersRepositoryTest {
             )
         ) ?: fail("Unable to create user")
         assertEquals(null, repository.get(user.id))
+    }
+
+    @Test
+    fun getUserForEmail() = runBlocking {
+        val database = Database(protocol = "h2", name = "getUserForEmail")
+        val repository = DatabaseUsersRepository(database)
+        val user = repository.create(
+            CreateUserPayload(
+                "username", "displayName", "email", "password",
+                LocalDate(2002, 12, 24)
+            )
+        ) ?: fail("Unable to create user")
+        val result = repository.getForEmail(user.email!!, false)
+        assertEquals(user.id, result?.id)
+        assertEquals(user.username, result?.username)
+        assertEquals(user.displayName, result?.displayName)
+        assertEquals(user.email, result?.email)
+        assertEquals(null, result?.password)
+        assertEquals(user.birthdate, result?.birthdate)
+    }
+
+    @Test
+    fun getUserForEmailWithPassword() = runBlocking {
+        val database = Database(protocol = "h2", name = "getUserForEmailWithPassword")
+        val repository = DatabaseUsersRepository(database)
+        val user = repository.create(
+            CreateUserPayload(
+                "username", "displayName", "email", "password",
+                LocalDate(2002, 12, 24)
+            )
+        ) ?: fail("Unable to create user")
+        val result = repository.getForEmail(user.email!!, true)
+        assertEquals(user.id, result?.id)
+        assertEquals(user.username, result?.username)
+        assertEquals(user.displayName, result?.displayName)
+        assertEquals(user.email, result?.email)
+        assertEquals("password", result?.password)
+        assertEquals(user.birthdate, result?.birthdate)
     }
 
     @Test

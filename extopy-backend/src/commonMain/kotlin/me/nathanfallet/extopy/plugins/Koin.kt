@@ -15,17 +15,13 @@ import me.nathanfallet.extopy.models.users.CreateUserPayload
 import me.nathanfallet.extopy.models.users.UpdateUserPayload
 import me.nathanfallet.extopy.models.users.User
 import me.nathanfallet.extopy.repositories.users.IUsersRepository
-import me.nathanfallet.extopy.usecases.auth.CreateCodeRegisterUseCase
-import me.nathanfallet.extopy.usecases.auth.GetCodeRegisterUseCase
-import me.nathanfallet.extopy.usecases.auth.RegisterUseCase
+import me.nathanfallet.extopy.usecases.auth.*
 import me.nathanfallet.extopy.usecases.users.GetUserForCallUseCase
 import me.nathanfallet.i18n.usecases.localization.TranslateUseCase
 import me.nathanfallet.ktorx.controllers.IModelController
 import me.nathanfallet.ktorx.controllers.auth.AuthWithCodeController
 import me.nathanfallet.ktorx.controllers.auth.IAuthWithCodeController
-import me.nathanfallet.ktorx.usecases.auth.ICreateCodeRegisterUseCase
-import me.nathanfallet.ktorx.usecases.auth.IGetCodeRegisterUseCase
-import me.nathanfallet.ktorx.usecases.auth.IRegisterUseCase
+import me.nathanfallet.ktorx.usecases.auth.*
 import me.nathanfallet.ktorx.usecases.localization.GetLocaleForCallUseCase
 import me.nathanfallet.ktorx.usecases.localization.IGetLocaleForCallUseCase
 import me.nathanfallet.ktorx.usecases.users.IGetUserForCallUseCase
@@ -60,6 +56,11 @@ fun Application.configureKoin() {
             single<IGetLocaleForCallUseCase> { GetLocaleForCallUseCase() }
 
             // Auth
+            single<IHashPasswordUseCase> { HashPasswordUseCase() }
+            single<IVerifyPasswordUseCase> { VerifyPasswordUseCase() }
+            single<IGetJWTPrincipalForCallUseCase> { GetJWTPrincipalForCallUseCase() }
+            single<IGetSessionForCallUseCase> { GetSessionForCallUseCase() }
+            single<ILoginUseCase<LoginPayload>> { LoginUseCase(get(), get()) }
             single<IRegisterUseCase<RegisterCodePayload>> { RegisterUseCase(get(), get()) }
             single<IGetCodeRegisterUseCase<RegisterPayload>> { GetCodeRegisterUseCase() }
             single<ICreateCodeRegisterUseCase<RegisterPayload>> {
@@ -72,7 +73,7 @@ fun Application.configureKoin() {
 
             // Users
             single<IRequireUserForCallUseCase> { RequireUserForCallUseCase(get()) }
-            single<IGetUserForCallUseCase> { GetUserForCallUseCase() }
+            single<IGetUserForCallUseCase> { GetUserForCallUseCase(get(), get(), get(named<User>())) }
             single<IGetModelWithContextSuspendUseCase<User, String>>(named<User>()) {
                 GetModelWithContextFromRepositorySuspendUseCase(get<IUsersRepository>())
             }

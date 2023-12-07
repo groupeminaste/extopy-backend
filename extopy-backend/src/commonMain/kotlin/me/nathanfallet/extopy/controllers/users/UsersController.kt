@@ -26,7 +26,7 @@ class UsersController(
 
     override suspend fun get(call: ApplicationCall, id: String): User {
         val user = requireUserForCallUseCase(call) as User
-        return getUserUseCase(id, UserContext(user)) ?: throw ControllerException(
+        return getUserUseCase(id, UserContext(user.id)) ?: throw ControllerException(
             HttpStatusCode.NotFound, "users_not_found"
         )
     }
