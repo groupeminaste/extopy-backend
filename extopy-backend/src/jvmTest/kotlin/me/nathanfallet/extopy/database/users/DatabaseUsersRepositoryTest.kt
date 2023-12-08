@@ -142,7 +142,7 @@ class DatabaseUsersRepositoryTest {
             displayName = "displayName2",
             biography = "biography2",
         )
-        val payload = UpdateUserPayload("username2", "displayName2", "biography2", null, null)
+        val payload = UpdateUserPayload("username2", "displayName2", null, "biography2")
         assertEquals(true, repository.update(user.id, payload))
         val userFromDatabase = database.dbQuery {
             Users
@@ -163,7 +163,7 @@ class DatabaseUsersRepositoryTest {
     fun updateUserNotExists() = runBlocking {
         val database = Database(protocol = "h2", name = "updateUserNotExists")
         val repository = DatabaseUsersRepository(database)
-        val payload = UpdateUserPayload("username2", "displayName2", "biography2", null, null)
+        val payload = UpdateUserPayload("username2", "displayName2", null, "biography2")
         assertEquals(false, repository.update("userId", payload))
     }
 

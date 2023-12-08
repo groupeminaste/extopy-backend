@@ -23,6 +23,7 @@ import me.nathanfallet.extopy.usecases.application.SendEmailUseCase
 import me.nathanfallet.extopy.usecases.auth.*
 import me.nathanfallet.extopy.usecases.users.CreateUserUseCase
 import me.nathanfallet.extopy.usecases.users.GetUserForCallUseCase
+import me.nathanfallet.extopy.usecases.users.UpdateUserUseCase
 import me.nathanfallet.i18n.usecases.localization.TranslateUseCase
 import me.nathanfallet.ktorx.controllers.IModelController
 import me.nathanfallet.ktorx.controllers.auth.AuthWithCodeController
@@ -39,7 +40,6 @@ import me.nathanfallet.usecases.models.create.ICreateModelSuspendUseCase
 import me.nathanfallet.usecases.models.get.context.GetModelWithContextFromRepositorySuspendUseCase
 import me.nathanfallet.usecases.models.get.context.IGetModelWithContextSuspendUseCase
 import me.nathanfallet.usecases.models.update.IUpdateModelSuspendUseCase
-import me.nathanfallet.usecases.models.update.UpdateModelFromRepositorySuspendUseCase
 import org.koin.core.qualifier.named
 import org.koin.dsl.module
 import org.koin.ktor.plugin.Koin
@@ -107,7 +107,7 @@ fun Application.configureKoin() {
                 CreateUserUseCase(get(), get())
             }
             single<IUpdateModelSuspendUseCase<User, String, UpdateUserPayload>>(named<User>()) {
-                UpdateModelFromRepositorySuspendUseCase(get<IUsersRepository>())
+                UpdateUserUseCase(get(), get())
             }
         }
         val controllerModule = module {
