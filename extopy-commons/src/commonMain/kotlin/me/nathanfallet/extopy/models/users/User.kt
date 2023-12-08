@@ -30,7 +30,7 @@ data class User(
 
     companion object {
 
-        val usernameRegex = Regex("[a-zA-Z0-9_]+")
+        const val USERNAME_REGEX = "[a-zA-Z0-9_]+"
 
     }
 

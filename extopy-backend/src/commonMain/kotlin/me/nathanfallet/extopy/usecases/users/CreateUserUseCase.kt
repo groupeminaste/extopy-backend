@@ -14,19 +14,6 @@ class CreateUserUseCase(
 ) : ICreateModelSuspendUseCase<User, CreateUserPayload> {
 
     override suspend fun invoke(input: CreateUserPayload): User? {
-        // TODO: Update with https://github.com/nathanfallet/usecases/issues/16
-        if (input.username.length > 25) throw ControllerException(
-            HttpStatusCode.BadRequest,
-            "auth_register_username_too_long"
-        )
-        if (input.displayName.length > 40) throw ControllerException(
-            HttpStatusCode.BadRequest,
-            "auth_register_displayName_too_long"
-        )
-        if (!User.usernameRegex.matches(input.username)) throw ControllerException(
-            HttpStatusCode.BadRequest,
-            "auth_register_username_invalid"
-        )
         repository.getForUsernameOrEmail(input.username, false)?.let {
             throw ControllerException(
                 HttpStatusCode.BadRequest,
