@@ -56,11 +56,24 @@ class DatabaseUsersRepository(
     override suspend fun update(id: String, payload: UpdateUserPayload, context: IContext?): Boolean {
         return database.dbQuery {
             Users.update({ Users.id eq id }) {
-                payload.displayName?.let { displayName -> it[Users.displayName] = displayName }
-                payload.username?.let { username -> it[Users.username] = username }
-                payload.biography?.let { biography -> it[Users.biography] = biography }
-                payload.avatar?.let { avatar -> it[Users.avatar] = avatar }
-                payload.personal?.let { personal -> it[Users.personal] = personal }
+                payload.username?.let { username ->
+                    it[Users.username] = username
+                }
+                payload.displayName?.let { displayName ->
+                    it[Users.displayName] = displayName
+                }
+                payload.password?.let { password ->
+                    it[Users.password] = password
+                }
+                payload.biography?.let { biography ->
+                    it[Users.biography] = biography
+                }
+                payload.avatar?.let { avatar ->
+                    it[Users.avatar] = avatar
+                }
+                payload.personal?.let { personal ->
+                    it[Users.personal] = personal
+                }
             }
         } == 1
     }

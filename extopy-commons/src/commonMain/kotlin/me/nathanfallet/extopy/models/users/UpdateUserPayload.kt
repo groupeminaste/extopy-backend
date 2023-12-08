@@ -9,6 +9,7 @@ data class UpdateUserPayload(
     val username: String? = null,
     @StringPropertyValidator(maxLength = 40)
     val displayName: String? = null,
+    val password: String? = null,
     val biography: String? = null,
     val avatar: String? = null,
     val personal: Boolean? = null,
