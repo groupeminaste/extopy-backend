@@ -8,19 +8,26 @@ import me.nathanfallet.extopy.controllers.users.UsersController
 import me.nathanfallet.extopy.controllers.users.UsersRouter
 import me.nathanfallet.extopy.database.Database
 import me.nathanfallet.extopy.database.application.DatabaseCodesInEmailsRepository
+import me.nathanfallet.extopy.database.posts.DatabasePostsRepository
 import me.nathanfallet.extopy.database.users.DatabaseUsersRepository
 import me.nathanfallet.extopy.models.auth.LoginPayload
 import me.nathanfallet.extopy.models.auth.RegisterCodePayload
 import me.nathanfallet.extopy.models.auth.RegisterPayload
+import me.nathanfallet.extopy.models.posts.Post
+import me.nathanfallet.extopy.models.posts.PostPayload
 import me.nathanfallet.extopy.models.users.CreateUserPayload
 import me.nathanfallet.extopy.models.users.UpdateUserPayload
 import me.nathanfallet.extopy.models.users.User
 import me.nathanfallet.extopy.repositories.application.ICodesInEmailsRepository
+import me.nathanfallet.extopy.repositories.posts.IPostsRepository
 import me.nathanfallet.extopy.repositories.users.IUsersRepository
 import me.nathanfallet.extopy.services.emails.EmailsService
 import me.nathanfallet.extopy.services.emails.IEmailsService
 import me.nathanfallet.extopy.usecases.application.SendEmailUseCase
 import me.nathanfallet.extopy.usecases.auth.*
+import me.nathanfallet.extopy.usecases.posts.CreatePostUseCase
+import me.nathanfallet.extopy.usecases.posts.DeletePostUseCase
+import me.nathanfallet.extopy.usecases.posts.UpdatePostUseCase
 import me.nathanfallet.extopy.usecases.users.CreateUserUseCase
 import me.nathanfallet.extopy.usecases.users.GetUserForCallUseCase
 import me.nathanfallet.extopy.usecases.users.UpdateUserUseCase
@@ -37,6 +44,8 @@ import me.nathanfallet.ktorx.usecases.users.RequireUserForCallUseCase
 import me.nathanfallet.usecases.emails.ISendEmailUseCase
 import me.nathanfallet.usecases.localization.ITranslateUseCase
 import me.nathanfallet.usecases.models.create.ICreateModelSuspendUseCase
+import me.nathanfallet.usecases.models.create.context.ICreateModelWithContextSuspendUseCase
+import me.nathanfallet.usecases.models.delete.IDeleteModelSuspendUseCase
 import me.nathanfallet.usecases.models.get.context.GetModelWithContextFromRepositorySuspendUseCase
 import me.nathanfallet.usecases.models.get.context.IGetModelWithContextSuspendUseCase
 import me.nathanfallet.usecases.models.update.IUpdateModelSuspendUseCase
@@ -69,6 +78,7 @@ fun Application.configureKoin() {
         val repositoryModule = module {
             single<ICodesInEmailsRepository> { DatabaseCodesInEmailsRepository(get()) }
             single<IUsersRepository> { DatabaseUsersRepository(get()) }
+            single<IPostsRepository> { DatabasePostsRepository(get()) }
         }
         val useCaseModule = module {
             // Application
@@ -108,6 +118,20 @@ fun Application.configureKoin() {
             }
             single<IUpdateModelSuspendUseCase<User, String, UpdateUserPayload>>(named<User>()) {
                 UpdateUserUseCase(get(), get())
+            }
+
+            // Posts
+            single<IGetModelWithContextSuspendUseCase<Post, String>>(named<Post>()) {
+                GetModelWithContextFromRepositorySuspendUseCase(get<IPostsRepository>())
+            }
+            single<ICreateModelWithContextSuspendUseCase<Post, PostPayload>>(named<Post>()) {
+                CreatePostUseCase(get())
+            }
+            single<IUpdateModelSuspendUseCase<Post, String, PostPayload>>(named<Post>()) {
+                UpdatePostUseCase(get())
+            }
+            single<IDeleteModelSuspendUseCase<Post, String>>(named<Post>()) {
+                DeletePostUseCase(get())
             }
         }
         val controllerModule = module {

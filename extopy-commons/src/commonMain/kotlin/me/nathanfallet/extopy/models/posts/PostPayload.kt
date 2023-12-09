@@ -7,6 +7,6 @@ import me.nathanfallet.usecases.models.annotations.validators.StringPropertyVali
 data class PostPayload(
     @StringPropertyValidator(maxLength = 20_000)
     val body: String,
-    val repliedToId: String?,
-    val repostOfId: String?,
+    val repliedToId: String? = null,
+    val repostOfId: String? = null,
 )

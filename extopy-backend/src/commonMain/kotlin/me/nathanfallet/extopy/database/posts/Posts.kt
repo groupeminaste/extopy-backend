@@ -58,18 +58,4 @@ object Posts : Table() {
         row.getOrNull(likesIn)?.let { it >= 1L }
     )
 
-    fun delete(id: String) {
-        LikesInPosts.deleteWhere {
-            Op.build { postId eq id }
-        }
-        Posts.deleteWhere {
-            Op.build { Posts.id eq id }
-        }
-        Posts.select {
-            repliedToId eq id or (repostOfId eq id)
-        }.forEach {
-            delete(it[Posts.id])
-        }
-    }
-
 }
