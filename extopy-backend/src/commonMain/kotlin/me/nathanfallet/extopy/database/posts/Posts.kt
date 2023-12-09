@@ -1,7 +1,6 @@
 package me.nathanfallet.extopy.database.posts
 
 import kotlinx.datetime.toInstant
-import me.nathanfallet.extopy.database.users.Users
 import me.nathanfallet.extopy.extensions.generateId
 import me.nathanfallet.extopy.models.posts.Post
 import me.nathanfallet.extopy.models.users.User
@@ -10,7 +9,7 @@ import org.jetbrains.exposed.sql.*
 object Posts : Table() {
 
     val id = varchar("id", 32)
-    val userId = varchar("user_id", 32)
+    val userId = varchar("user_id", 32).index()
     val repliedToId = varchar("replied_to_id", 32).nullable()
     val repostOfId = varchar("repost_of_id", 32).nullable()
     val body = text("body")
@@ -41,7 +40,7 @@ object Posts : Table() {
 
     fun toPost(
         row: ResultRow,
-        user: User?,
+        user: User? = null,
     ) = Post(
         row[id],
         row.getOrNull(userId),
@@ -73,37 +72,4 @@ object Posts : Table() {
         }
     }
 
-    fun customJoinnable(viewedBy: String): ColumnSet {
-        return Posts.join(Users, JoinType.INNER, userId, Users.id)
-            .join(LikesInPosts, JoinType.LEFT, id, LikesInPosts.postId)
-            .join(replies, JoinType.LEFT, id, replies[repliedToId])
-            .join(reposts, JoinType.LEFT, id, reposts[repostOfId])
-            .join(
-                LikesInPosts.likesIn,
-                JoinType.LEFT,
-                id,
-                LikesInPosts.likesIn[LikesInPosts.postId],
-                { LikesInPosts.likesIn[LikesInPosts.userId] eq viewedBy }
-            )
-    }
-
-    fun customJoin(viewedBy: String): FieldSet {
-        return customJoinnable(viewedBy).customPostsSlice()
-    }
-}
-
-fun ColumnSet.customPostsSlice(additionalFields: List<Expression<*>> = listOf()): FieldSet {
-    return slice(
-        Posts.columns +
-                Users.id +
-                Users.displayName +
-                Users.username +
-                Users.avatar +
-                Users.verified +
-                Posts.likesCount +
-                Posts.repliesCount +
-                Posts.repostsCount +
-                Posts.likesIn +
-                additionalFields
-    )
 }
