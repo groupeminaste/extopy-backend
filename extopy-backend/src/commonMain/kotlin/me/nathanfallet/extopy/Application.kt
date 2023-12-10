@@ -16,6 +16,7 @@ fun Application.module() {
     configureTemplating()
     configureRouting()
     configureSockets()
+    configureMonitoring()
 
     configureNotifications()
 }
