@@ -3,6 +3,7 @@ package me.nathanfallet.extopy.plugins
 import io.ktor.server.application.*
 import me.nathanfallet.extopy.controllers.auth.AuthRouter
 import me.nathanfallet.extopy.controllers.notifications.NotificationsRouter
+import me.nathanfallet.extopy.controllers.posts.PostsController
 import me.nathanfallet.extopy.controllers.posts.PostsRouter
 import me.nathanfallet.extopy.controllers.users.UsersController
 import me.nathanfallet.extopy.controllers.users.UsersRouter
@@ -156,12 +157,23 @@ fun Application.configureKoin() {
                     get(named<User>())
                 )
             }
+
+            // Posts
+            single<IModelController<Post, String, PostPayload, PostPayload>>(named<Post>()) {
+                PostsController(
+                    get(),
+                    get(named<Post>()),
+                    get(named<Post>()),
+                    get(named<Post>()),
+                    get(named<Post>())
+                )
+            }
         }
         val routerModule = module {
             single { AuthRouter(get(), get()) }
             single { UsersRouter(get(named<User>())) }
+            single { PostsRouter(get(named<Post>())) }
             single { NotificationsRouter() }
-            single { PostsRouter() }
         }
 
         modules(

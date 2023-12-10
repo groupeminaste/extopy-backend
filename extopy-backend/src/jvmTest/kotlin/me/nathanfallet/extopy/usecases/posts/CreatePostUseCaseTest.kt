@@ -129,4 +129,17 @@ class CreatePostUseCaseTest {
         assertEquals("posts_repost_of_not_found", exception.key)
     }
 
+    @Test
+    fun testInvokeReplyRepost() = runBlocking {
+        val repository = mockk<IPostsRepository>()
+        val useCase = CreatePostUseCase(repository)
+        val payload = PostPayload("body", repliedToId = "replyId", repostOfId = "repostId")
+        val context = mockk<UserContext>()
+        val exception = assertFailsWith<ControllerException> {
+            useCase(payload, context)
+        }
+        assertEquals(HttpStatusCode.BadRequest, exception.code)
+        assertEquals("posts_can_only_one_in_reply_or_repost", exception.key)
+    }
+
 }
