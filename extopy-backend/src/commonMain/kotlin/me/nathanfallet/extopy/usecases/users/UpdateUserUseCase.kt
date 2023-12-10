@@ -15,7 +15,9 @@ class UpdateUserUseCase(
 
     override suspend fun invoke(input1: String, input2: UpdateUserPayload): User? {
         input2.username?.let {
-            repository.getForUsernameOrEmail(it, false)?.let {
+            repository.getForUsernameOrEmail(it, false)?.takeIf { result ->
+                result.id != input1
+            }?.let {
                 throw ControllerException(
                     HttpStatusCode.BadRequest,
                     "auth_register_username_taken"
