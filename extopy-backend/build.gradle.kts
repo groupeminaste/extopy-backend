@@ -1,9 +1,9 @@
 plugins {
     kotlin("multiplatform")
     kotlin("plugin.serialization")
-    id("application")
     id("org.jetbrains.kotlinx.kover")
     id("com.google.devtools.ksp")
+    id("io.ktor.plugin") version "2.3.7"
 }
 
 application {
