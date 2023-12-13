@@ -8,7 +8,7 @@ class JWTServiceTest {
 
     @Test
     fun testGenerateJWT() {
-        val service = JWTService("secret", "issuer", 1000L, 2000L)
+        val service = JWTService("secret", "issuer")
         val token = service.generateJWT("uid", "cid", "access")
         val verifier = JWT.require(Algorithm.HMAC256("secret"))
             .withIssuer("issuer")

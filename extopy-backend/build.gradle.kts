@@ -28,7 +28,7 @@ kotlin {
     val koinVersion = "3.5.0"
     val exposedVersion = "0.40.1"
     val logbackVersion = "0.9.30"
-    val ktorxVersion = "1.7.3"
+    val ktorxVersion = "1.7.4"
 
     sourceSets {
         val commonMain by getting {

@@ -20,7 +20,13 @@ class AuthRouter(
             LoginPayload::class,
             RegisterPayload::class,
             RegisterCodePayload::class,
-            AuthMapping(loginTemplate = "auth/login.ftl", registerTemplate = "auth/register.ftl"),
+            AuthMapping(
+                loginTemplate = "auth/login.ftl",
+                registerTemplate = "auth/register.ftl",
+                authorizeTemplate = "auth/authorize.ftl",
+                redirectTemplate = "auth/redirect.ftl",
+                redirectUnauthorizedToUrl = "/auth/login?redirect={path}",
+            ),
             { template, model -> respondTemplate(template, model) },
             controller,
             getLocaleForCallUseCase

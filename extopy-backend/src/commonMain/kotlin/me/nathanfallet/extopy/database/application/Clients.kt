@@ -11,6 +11,7 @@ object Clients : Table() {
     val id = varchar("id", 32)
     val ownerId = varchar("owner_id", 32)
     val name = varchar("name", 255)
+    val description = text("description")
     val secret = varchar("secret", 255)
     val redirectUri = text("redirect_uri")
 
@@ -27,6 +28,7 @@ object Clients : Table() {
         row[id],
         row[ownerId],
         row[name],
+        row[description],
         row[secret],
         row[redirectUri]
     )

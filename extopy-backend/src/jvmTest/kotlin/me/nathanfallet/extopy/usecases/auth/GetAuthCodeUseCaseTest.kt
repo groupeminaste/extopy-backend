@@ -28,7 +28,7 @@ class GetAuthCodeUseCaseTest {
         val getUserUseCase = mockk<IGetModelWithContextSuspendUseCase<User, String>>()
         val useCase = GetAuthCodeUseCase(repository, getClientUseCase, getUserUseCase)
         val clientForUser = ClientForUser(
-            Client("cid", "oid", "name", "secret", "redirect"),
+            Client("cid", "oid", "name", "description", "secret", "redirect"),
             User("uid", "displayName", "username")
         )
         coEvery { repository.get("code") } returns ClientInUser("code", "uid", "cid", tomorrow)
@@ -70,7 +70,7 @@ class GetAuthCodeUseCaseTest {
         val getUserUseCase = mockk<IGetModelWithContextSuspendUseCase<User, String>>()
         val useCase = GetAuthCodeUseCase(repository, getClientUseCase, getUserUseCase)
         val clientForUser = ClientForUser(
-            Client("cid", "oid", "name", "secret", "redirect"),
+            Client("cid", "oid", "name", "description", "secret", "redirect"),
             User("uid", "displayName", "username")
         )
         coEvery { repository.get("code") } returns ClientInUser("code", "uid", "cid", tomorrow)

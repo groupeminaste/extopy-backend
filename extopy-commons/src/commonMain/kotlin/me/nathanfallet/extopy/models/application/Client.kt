@@ -9,6 +9,7 @@ data class Client(
     override val id: String,
     val ownerId: String,
     val name: String,
+    val description: String,
     val secret: String,
     override val redirectUri: String,
 ) : IClient, IModel<String, Unit, Unit> {

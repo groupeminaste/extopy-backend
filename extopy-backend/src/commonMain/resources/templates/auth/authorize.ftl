@@ -1,23 +1,27 @@
 <#import "template.ftl" as template>
 <@template.form>
-    <h1 class="h3 mb-3 fw-normal">Authorize ${client.name} to access to your account?</h1>
-
     <#if error??>
-        <div class="alert alert-danger" role="alert">${error}</div>
+        <div id="alert-error" class="alert alert-danger" role="alert"><@t key=error /></div>
     </#if>
 
-    <div class="mb-4">
-        ${client.description}
-    </div>
+    <#if client??>
+        <h1 class="h3 mb-3 fw-normal"><@t key="auth_authorize_title" args=[client.name] /></h1>
 
-    <button class="w-100 btn btn-lg btn-danger" type="submit">Authorize</button>
-    <div class="mt-4">
-        Connected as: ${user.displayname} (${user.username})
-    </div>
-    <div class="mt-3">
-        <a href="logout?redirect=/account/authorize?clientId=${client.id}" class="text-danger">Use another account</a>
-    </div>
-    <div class="mt-3 small">
-        If you don't want to authorize this client, just close your browser.
-    </div>
+        <div class="mb-4">
+            ${client.description}
+        </div>
+
+        <button class="w-100 btn btn-lg btn-danger" type="submit"><@t key="auth_field_authorize" /></button>
+        <div class="mt-4">
+            <@t key="auth_hint_authorize_connected_as" args=["${user.displayName} (@${user.username})"] />
+        </div>
+        <div class="mt-3">
+            <a href="logout?redirect=/account/authorize?clientId=${client.id}" class="text-danger">
+                <@t key="auth_hint_authorize_not_you" />
+            </a>
+        </div>
+        <div class="mt-3 small">
+            <@t key="auth_hint_authorize_close" />
+        </div>
+    </#if>
 </@template.form>

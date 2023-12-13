@@ -18,6 +18,7 @@ class DatabaseClientsRepositoryTest {
                 it[id] = "id"
                 it[ownerId] = "ownerId"
                 it[name] = "name"
+                it[description] = "description"
                 it[secret] = "secret"
                 it[redirectUri] = "redirectUri"
             }.resultedValues?.map(Clients::toClient)?.singleOrNull()
@@ -26,6 +27,7 @@ class DatabaseClientsRepositoryTest {
         assertEquals(client.id, result?.id)
         assertEquals(client.ownerId, result?.ownerId)
         assertEquals(client.name, result?.name)
+        assertEquals(client.description, result?.description)
         assertEquals(client.secret, result?.secret)
         assertEquals(client.redirectUri, result?.redirectUri)
     }

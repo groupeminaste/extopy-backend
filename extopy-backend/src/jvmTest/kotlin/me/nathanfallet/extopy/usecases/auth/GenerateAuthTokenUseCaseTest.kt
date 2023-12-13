@@ -27,7 +27,7 @@ class GenerateAuthTokenUseCaseTest {
             ),
             userCase(
                 ClientForUser(
-                    Client("cid", "oid", "name", "secret", "redirect"),
+                    Client("cid", "oid", "name", "description", "secret", "redirect"),
                     User("uid", "displayName", "username")
                 )
             )
