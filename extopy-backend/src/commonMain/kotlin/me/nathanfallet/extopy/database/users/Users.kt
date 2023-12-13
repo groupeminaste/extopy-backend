@@ -2,7 +2,6 @@ package me.nathanfallet.extopy.database.users
 
 import kotlinx.datetime.toInstant
 import kotlinx.datetime.toLocalDate
-import kotlinx.serialization.Serializable
 import me.nathanfallet.extopy.database.posts.Posts
 import me.nathanfallet.extopy.extensions.generateId
 import me.nathanfallet.extopy.models.users.User
@@ -65,9 +64,3 @@ object Users : Table() {
     )
 
 }
-
-@Serializable
-data class UserAuthorize(val client_id: String, val client_secret: String, val code: String)
-
-//@Serializable
-//data class UserAuthorizeRequest(val client: Client, val user: User)

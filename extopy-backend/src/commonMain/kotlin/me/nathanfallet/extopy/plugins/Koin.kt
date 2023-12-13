@@ -8,9 +8,12 @@ import me.nathanfallet.extopy.controllers.posts.PostsRouter
 import me.nathanfallet.extopy.controllers.users.UsersController
 import me.nathanfallet.extopy.controllers.users.UsersRouter
 import me.nathanfallet.extopy.database.Database
+import me.nathanfallet.extopy.database.application.DatabaseClientsRepository
 import me.nathanfallet.extopy.database.application.DatabaseCodesInEmailsRepository
 import me.nathanfallet.extopy.database.posts.DatabasePostsRepository
+import me.nathanfallet.extopy.database.users.DatabaseClientsInUsersRepository
 import me.nathanfallet.extopy.database.users.DatabaseUsersRepository
+import me.nathanfallet.extopy.models.application.Client
 import me.nathanfallet.extopy.models.auth.LoginPayload
 import me.nathanfallet.extopy.models.auth.RegisterCodePayload
 import me.nathanfallet.extopy.models.auth.RegisterPayload
@@ -21,9 +24,12 @@ import me.nathanfallet.extopy.models.users.UpdateUserPayload
 import me.nathanfallet.extopy.models.users.User
 import me.nathanfallet.extopy.repositories.application.ICodesInEmailsRepository
 import me.nathanfallet.extopy.repositories.posts.IPostsRepository
+import me.nathanfallet.extopy.repositories.users.IClientsInUsersRepository
 import me.nathanfallet.extopy.repositories.users.IUsersRepository
 import me.nathanfallet.extopy.services.emails.EmailsService
 import me.nathanfallet.extopy.services.emails.IEmailsService
+import me.nathanfallet.extopy.services.jwt.IJWTService
+import me.nathanfallet.extopy.services.jwt.JWTService
 import me.nathanfallet.extopy.usecases.application.SendEmailUseCase
 import me.nathanfallet.extopy.usecases.auth.*
 import me.nathanfallet.extopy.usecases.posts.CreatePostUseCase
@@ -47,8 +53,11 @@ import me.nathanfallet.usecases.localization.ITranslateUseCase
 import me.nathanfallet.usecases.models.create.ICreateModelSuspendUseCase
 import me.nathanfallet.usecases.models.create.context.ICreateModelWithContextSuspendUseCase
 import me.nathanfallet.usecases.models.delete.IDeleteModelSuspendUseCase
+import me.nathanfallet.usecases.models.get.GetModelFromRepositorySuspendUseCase
+import me.nathanfallet.usecases.models.get.IGetModelSuspendUseCase
 import me.nathanfallet.usecases.models.get.context.GetModelWithContextFromRepositorySuspendUseCase
 import me.nathanfallet.usecases.models.get.context.IGetModelWithContextSuspendUseCase
+import me.nathanfallet.usecases.models.repositories.IModelSuspendRepository
 import me.nathanfallet.usecases.models.update.IUpdateModelSuspendUseCase
 import org.koin.core.qualifier.named
 import org.koin.dsl.module
@@ -75,10 +84,25 @@ fun Application.configureKoin() {
                     environment.config.property("email.password").getString()
                 )
             }
+            single<IJWTService> {
+                JWTService(
+                    environment.config.property("jwt.secret").getString(),
+                    environment.config.property("jwt.issuer").getString()
+                )
+            }
         }
         val repositoryModule = module {
+            // Application
             single<ICodesInEmailsRepository> { DatabaseCodesInEmailsRepository(get()) }
+            single<IModelSuspendRepository<Client, String, Unit, Unit>>(named<Client>()) {
+                DatabaseClientsRepository(get())
+            }
+
+            // Users
             single<IUsersRepository> { DatabaseUsersRepository(get()) }
+            single<IClientsInUsersRepository> { DatabaseClientsInUsersRepository(get()) }
+
+            // Posts
             single<IPostsRepository> { DatabasePostsRepository(get()) }
         }
         val useCaseModule = module {
@@ -86,6 +110,9 @@ fun Application.configureKoin() {
             single<ISendEmailUseCase> { SendEmailUseCase(get()) }
             single<ITranslateUseCase> { TranslateUseCase() }
             single<IGetLocaleForCallUseCase> { GetLocaleForCallUseCase() }
+            single<IGetModelSuspendUseCase<Client, String>>(named<Client>()) {
+                GetModelFromRepositorySuspendUseCase(get(named<Client>()))
+            }
 
             // Auth
             single<IHashPasswordUseCase> { HashPasswordUseCase() }
@@ -107,6 +134,13 @@ fun Application.configureKoin() {
                 )
             }
             single<IDeleteCodeRegisterUseCase> { DeleteCodeRegisterUseCase(get()) }
+            single<IGetClientUseCase> { GetClientFromModelUseCase<Client>(get(named<Client>())) }
+            single<ICreateAuthCodeUseCase> { CreateAuthCodeUseCase(get()) }
+            single<IGetAuthCodeUseCase> { GetAuthCodeUseCase(get(), get(), get(named<User>())) }
+            single<IDeleteAuthCodeUseCase> { DeleteAuthCodeUseCase(get()) }
+            single<IGenerateAuthTokenUseCase> {
+                GenerateAuthTokenUseCase(get())
+            }
 
             // Users
             single<IRequireUserForCallUseCase> { RequireUserForCallUseCase(get()) }
@@ -139,6 +173,12 @@ fun Application.configureKoin() {
             // Auth
             single<IAuthWithCodeController<LoginPayload, RegisterPayload, RegisterCodePayload>> {
                 AuthWithCodeController(
+                    get(),
+                    get(),
+                    get(),
+                    get(),
+                    get(),
+                    get(),
                     get(),
                     get(),
                     get(),

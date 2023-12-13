@@ -1,11 +1,13 @@
 package me.nathanfallet.extopy.database
 
 import kotlinx.coroutines.Dispatchers
+import me.nathanfallet.extopy.database.application.Clients
 import me.nathanfallet.extopy.database.application.CodesInEmails
 import me.nathanfallet.extopy.database.notifications.Notifications
 import me.nathanfallet.extopy.database.notifications.TokensInNotifications
 import me.nathanfallet.extopy.database.posts.LikesInPosts
 import me.nathanfallet.extopy.database.posts.Posts
+import me.nathanfallet.extopy.database.users.ClientsInUsers
 import me.nathanfallet.extopy.database.users.FollowersInUsers
 import me.nathanfallet.extopy.database.users.Users
 import org.jetbrains.exposed.sql.SchemaUtils
@@ -20,34 +22,31 @@ class Database(
     password: String = "",
 ) {
 
-    private val database: org.jetbrains.exposed.sql.Database
+    // Connect to database
+    private val database: org.jetbrains.exposed.sql.Database = when (protocol) {
+        "mysql" -> org.jetbrains.exposed.sql.Database.connect(
+            "jdbc:mysql://$host:3306/$name", "com.mysql.cj.jdbc.Driver",
+            user, password
+        )
+
+        "h2" -> org.jetbrains.exposed.sql.Database.connect(
+            "jdbc:h2:mem:$name;DB_CLOSE_DELAY=-1;", "org.h2.Driver"
+        )
+
+        else -> throw Exception("Unsupported database protocol: $protocol")
+    }
 
     init {
-        // Connect to database
-        database = when (protocol) {
-            "mysql" -> org.jetbrains.exposed.sql.Database.connect(
-                "jdbc:mysql://$host:3306/$name", "com.mysql.cj.jdbc.Driver",
-                user, password
-            )
-
-            "h2" -> org.jetbrains.exposed.sql.Database.connect(
-                "jdbc:h2:mem:$name;DB_CLOSE_DELAY=-1;", "org.h2.Driver"
-            )
-
-            else -> throw Exception("Unsupported database protocol: $protocol")
-        }
-
-        // Create tables (if needed)
         transaction(database) {
-            //SchemaUtils.create(Authorizes)
-            //SchemaUtils.create(Clients)
+            SchemaUtils.create(Clients)
             SchemaUtils.create(CodesInEmails)
+            SchemaUtils.create(Users)
+            SchemaUtils.create(ClientsInUsers)
+            SchemaUtils.create(FollowersInUsers)
             SchemaUtils.create(Notifications)
             SchemaUtils.create(TokensInNotifications)
             SchemaUtils.create(Posts)
             SchemaUtils.create(LikesInPosts)
-            SchemaUtils.create(Users)
-            SchemaUtils.create(FollowersInUsers)
         }
     }
 

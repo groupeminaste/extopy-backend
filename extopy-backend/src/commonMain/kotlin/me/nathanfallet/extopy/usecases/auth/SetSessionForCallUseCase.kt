@@ -4,7 +4,7 @@ import io.ktor.server.application.*
 import io.ktor.server.sessions.*
 import me.nathanfallet.extopy.models.auth.SessionPayload
 import me.nathanfallet.ktorx.usecases.auth.ISetSessionForCallUseCase
-import me.nathanfallet.usecases.users.ISessionPayload
+import me.nathanfallet.usecases.auth.ISessionPayload
 
 class SetSessionForCallUseCase : ISetSessionForCallUseCase {
 
