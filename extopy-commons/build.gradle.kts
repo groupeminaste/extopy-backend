@@ -59,7 +59,7 @@ kotlin {
 
     applyDefaultHierarchyTemplate()
 
-    val usecasesVersion = "1.5.1"
+    val usecasesVersion = "1.5.3"
 
     sourceSets {
         val commonMain by getting {

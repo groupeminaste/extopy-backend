@@ -15,11 +15,8 @@ fun Application.configureSecurity() {
                 this@configureSecurity.environment.config.property("jwt.secret").getString()
             val issuer =
                 this@configureSecurity.environment.config.property("jwt.issuer").getString()
-            val audience =
-                this@configureSecurity.environment.config.property("jwt.audience").getString()
             verifier(
                 JWT.require(Algorithm.HMAC256(secret))
-                    .withAudience(audience)
                     .withIssuer(issuer)
                     .build()
             )
