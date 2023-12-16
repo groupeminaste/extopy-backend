@@ -9,10 +9,10 @@ import io.ktor.server.config.*
 import io.ktor.server.testing.*
 import io.mockk.coEvery
 import io.mockk.mockk
+import me.nathanfallet.extopy.models.application.ExtopyJson
 import me.nathanfallet.extopy.models.users.CreateUserPayload
 import me.nathanfallet.extopy.models.users.UpdateUserPayload
 import me.nathanfallet.extopy.models.users.User
-import me.nathanfallet.extopy.plugins.Serialization
 import me.nathanfallet.extopy.plugins.configureSerialization
 import me.nathanfallet.ktorx.controllers.IModelController
 import me.nathanfallet.usecases.models.UnitModel
@@ -32,7 +32,7 @@ class UsersRouterTest {
         }
         return application.createClient {
             install(ContentNegotiation) {
-                json(Serialization.json)
+                json(ExtopyJson.json)
             }
         }
     }
