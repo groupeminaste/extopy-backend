@@ -59,7 +59,8 @@ kotlin {
 
     applyDefaultHierarchyTemplate()
 
-    val usecasesVersion = "1.5.3"
+    val ktorxVersion = "1.8.1"
+    val usecasesVersion = "1.5.5"
 
     sourceSets {
         val commonMain by getting {
@@ -67,6 +68,7 @@ kotlin {
                 implementation("org.jetbrains.kotlinx:kotlinx-serialization-json:1.6.0")
 
                 api("me.nathanfallet.usecases:usecases:$usecasesVersion")
+                api("me.nathanfallet.ktorx:ktor-routers-client:$ktorxVersion")
             }
         }
         val jvmTest by getting {

@@ -1,6 +1,7 @@
 package me.nathanfallet.extopy.controllers.auth
 
 import io.ktor.server.freemarker.*
+import io.ktor.util.reflect.*
 import me.nathanfallet.extopy.models.auth.LoginPayload
 import me.nathanfallet.extopy.models.auth.RegisterCodePayload
 import me.nathanfallet.extopy.models.auth.RegisterPayload
@@ -17,9 +18,9 @@ class AuthRouter(
 ) : ConcatUnitRouter(
     listOf(
         LocalizedAuthWithCodeTemplateRouter(
-            LoginPayload::class,
-            RegisterPayload::class,
-            RegisterCodePayload::class,
+            typeInfo<LoginPayload>(),
+            typeInfo<RegisterPayload>(),
+            typeInfo<RegisterCodePayload>(),
             AuthMapping(
                 loginTemplate = "auth/login.ftl",
                 registerTemplate = "auth/register.ftl",
