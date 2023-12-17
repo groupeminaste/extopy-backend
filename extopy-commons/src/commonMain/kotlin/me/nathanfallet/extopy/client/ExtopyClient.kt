@@ -2,10 +2,10 @@ package me.nathanfallet.extopy.client
 
 import me.nathanfallet.extopy.models.application.ExtopyEnvironment
 import me.nathanfallet.extopy.models.application.ExtopyJson
-import me.nathanfallet.extopy.repositories.auth.AuthRemoteRepository
 import me.nathanfallet.extopy.repositories.posts.PostsRemoteRepository
 import me.nathanfallet.extopy.repositories.users.UsersRemoteRepository
 import me.nathanfallet.ktorx.models.api.AbstractAPIClient
+import me.nathanfallet.ktorx.repositories.auth.AuthAPIRemoteRepository
 import me.nathanfallet.ktorx.usecases.api.IGetTokenUseCase
 
 class ExtopyClient(
@@ -17,7 +17,7 @@ class ExtopyClient(
     ExtopyJson.json
 ), IExtopyClient {
 
-    override val auth = AuthRemoteRepository(this)
+    override val auth = AuthAPIRemoteRepository(this, prefix = "/api/v1")
     override val users = UsersRemoteRepository(this)
     override val posts = PostsRemoteRepository(this)
 
