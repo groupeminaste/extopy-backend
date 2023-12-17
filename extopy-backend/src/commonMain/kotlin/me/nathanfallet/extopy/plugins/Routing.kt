@@ -9,6 +9,7 @@ import io.swagger.v3.oas.models.OpenAPI
 import io.swagger.v3.oas.models.servers.Server
 import me.nathanfallet.extopy.controllers.auth.AuthRouter
 import me.nathanfallet.extopy.controllers.posts.PostsRouter
+import me.nathanfallet.extopy.controllers.timelines.TimelinesRouter
 import me.nathanfallet.extopy.controllers.users.UsersRouter
 import me.nathanfallet.ktorx.extensions.info
 import me.nathanfallet.ktorx.routers.openapi.OpenAPIRouter
@@ -31,6 +32,7 @@ fun Application.configureRouting() {
         val authRouter by inject<AuthRouter>()
         val usersRouter by inject<UsersRouter>()
         val postsRouter by inject<PostsRouter>()
+        val timelinesRouter by inject<TimelinesRouter>()
 
         val openAPIRouter = OpenAPIRouter()
 
@@ -38,6 +40,7 @@ fun Application.configureRouting() {
             authRouter.createRoutes(this, openAPI)
             usersRouter.createRoutes(this, openAPI)
             postsRouter.createRoutes(this, openAPI)
+            timelinesRouter.createRoutes(this, openAPI)
 
             openAPIRouter.createRoutes(this, openAPI)
         }

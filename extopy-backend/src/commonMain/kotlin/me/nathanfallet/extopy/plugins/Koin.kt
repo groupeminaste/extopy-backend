@@ -5,6 +5,8 @@ import me.nathanfallet.extopy.controllers.auth.AuthRouter
 import me.nathanfallet.extopy.controllers.notifications.NotificationsRouter
 import me.nathanfallet.extopy.controllers.posts.PostsController
 import me.nathanfallet.extopy.controllers.posts.PostsRouter
+import me.nathanfallet.extopy.controllers.timelines.TimelinesController
+import me.nathanfallet.extopy.controllers.timelines.TimelinesRouter
 import me.nathanfallet.extopy.controllers.users.UsersController
 import me.nathanfallet.extopy.controllers.users.UsersRouter
 import me.nathanfallet.extopy.database.Database
@@ -19,6 +21,7 @@ import me.nathanfallet.extopy.models.auth.RegisterCodePayload
 import me.nathanfallet.extopy.models.auth.RegisterPayload
 import me.nathanfallet.extopy.models.posts.Post
 import me.nathanfallet.extopy.models.posts.PostPayload
+import me.nathanfallet.extopy.models.timelines.Timeline
 import me.nathanfallet.extopy.models.users.CreateUserPayload
 import me.nathanfallet.extopy.models.users.UpdateUserPayload
 import me.nathanfallet.extopy.models.users.User
@@ -35,6 +38,8 @@ import me.nathanfallet.extopy.usecases.auth.*
 import me.nathanfallet.extopy.usecases.posts.CreatePostUseCase
 import me.nathanfallet.extopy.usecases.posts.DeletePostUseCase
 import me.nathanfallet.extopy.usecases.posts.UpdatePostUseCase
+import me.nathanfallet.extopy.usecases.timelines.GetDefaultTimelineUseCase
+import me.nathanfallet.extopy.usecases.timelines.IGetDefaultTimelineUseCase
 import me.nathanfallet.extopy.usecases.users.CreateUserUseCase
 import me.nathanfallet.extopy.usecases.users.GetUserForCallUseCase
 import me.nathanfallet.extopy.usecases.users.UpdateUserUseCase
@@ -168,6 +173,9 @@ fun Application.configureKoin() {
             single<IDeleteModelSuspendUseCase<Post, String>>(named<Post>()) {
                 DeletePostUseCase(get())
             }
+
+            // Timelines
+            single<IGetDefaultTimelineUseCase> { GetDefaultTimelineUseCase() }
         }
         val controllerModule = module {
             // Auth
@@ -208,11 +216,20 @@ fun Application.configureKoin() {
                     get(named<Post>())
                 )
             }
+
+            // Timelines
+            single<IModelController<Timeline, String, Unit, Unit>>(named<Timeline>()) {
+                TimelinesController(
+                    get(),
+                    get()
+                )
+            }
         }
         val routerModule = module {
             single { AuthRouter(get(), get()) }
             single { UsersRouter(get(named<User>())) }
             single { PostsRouter(get(named<Post>())) }
+            single { TimelinesRouter(get(named<Timeline>())) }
             single { NotificationsRouter() }
         }
 
