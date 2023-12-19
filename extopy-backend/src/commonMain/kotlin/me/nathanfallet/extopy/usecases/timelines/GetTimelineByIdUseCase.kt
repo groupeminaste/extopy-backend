@@ -18,7 +18,13 @@ class GetTimelineByIdUseCase(
             "default" -> Timeline(
                 "default",
                 "default",
-                posts = postsRepository.list(input3, input4, input2)
+                posts = postsRepository.listDefault(input3, input4, input2)
+            )
+
+            "trends" -> Timeline(
+                "trends",
+                "trends",
+                posts = postsRepository.listTrends(input3, input4, input2)
             )
 
             else -> null

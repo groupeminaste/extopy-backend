@@ -13,10 +13,19 @@ import kotlin.test.assertEquals
 class GetTimelineByIdUseCaseTest {
 
     @Test
+    fun testGetUnknownTypeTimeline() = runBlocking {
+        val useCase = GetTimelineByIdUseCase(mockk(), mockk())
+        assertEquals(
+            null,
+            useCase("unknown", UserContext("userId"), 25, 0)
+        )
+    }
+
+    @Test
     fun testGetDefaultTimeline() = runBlocking {
         val postsRepository = mockk<IPostsRepository>()
         val useCase = GetTimelineByIdUseCase(mockk(), postsRepository)
-        coEvery { postsRepository.list(25, 0, UserContext("userId")) } returns listOf(
+        coEvery { postsRepository.listDefault(25, 0, UserContext("userId")) } returns listOf(
             Post("postId")
         )
         assertEquals(
@@ -32,11 +41,21 @@ class GetTimelineByIdUseCaseTest {
     }
 
     @Test
-    fun testGetUnknownTypeTimeline() = runBlocking {
-        val useCase = GetTimelineByIdUseCase(mockk(), mockk())
+    fun testGetTrendsTimeline() = runBlocking {
+        val postsRepository = mockk<IPostsRepository>()
+        val useCase = GetTimelineByIdUseCase(mockk(), postsRepository)
+        coEvery { postsRepository.listTrends(25, 0, UserContext("userId")) } returns listOf(
+            Post("postId")
+        )
         assertEquals(
-            null,
-            useCase("unknown", UserContext("userId"), 25, 0)
+            Timeline(
+                "trends",
+                "trends",
+                posts = listOf(
+                    Post("postId")
+                )
+            ),
+            useCase("trends", UserContext("userId"), 25, 0)
         )
     }
 

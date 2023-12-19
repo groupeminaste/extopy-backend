@@ -15,8 +15,7 @@ class DatabasePostsRepository(
     private val database: Database,
 ) : IPostsRepository {
 
-    override suspend fun list(limit: Long, offset: Long, context: IContext?): List<Post> {
-        if (context !is UserContext) return emptyList()
+    override suspend fun listDefault(limit: Long, offset: Long, context: UserContext): List<Post> {
         return database.dbQuery {
             customJoinColumnSet(context.userId)
                 .join(
@@ -33,6 +32,17 @@ class DatabasePostsRepository(
                 }
                 .groupBy(Posts.id)
                 .orderBy(Posts.published to SortOrder.DESC)
+                .limit(limit.toInt(), offset)
+                .map { Posts.toPost(it, Users.toUser(it)) }
+        }
+    }
+
+    override suspend fun listTrends(limit: Long, offset: Long, context: UserContext): List<Post> {
+        return database.dbQuery {
+            customJoin(context.userId)
+                .selectAll()
+                .groupBy(Posts.id)
+                .orderBy(Posts.trendsCount to SortOrder.DESC)
                 .limit(limit.toInt(), offset)
                 .map { Posts.toPost(it, Users.toUser(it)) }
         }
