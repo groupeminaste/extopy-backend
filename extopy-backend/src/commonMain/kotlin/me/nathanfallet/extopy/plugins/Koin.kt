@@ -3,10 +3,12 @@ package me.nathanfallet.extopy.plugins
 import io.ktor.server.application.*
 import me.nathanfallet.extopy.controllers.auth.AuthRouter
 import me.nathanfallet.extopy.controllers.notifications.NotificationsRouter
+import me.nathanfallet.extopy.controllers.posts.IPostsController
 import me.nathanfallet.extopy.controllers.posts.PostsController
 import me.nathanfallet.extopy.controllers.posts.PostsRouter
 import me.nathanfallet.extopy.controllers.timelines.TimelinesController
 import me.nathanfallet.extopy.controllers.timelines.TimelinesRouter
+import me.nathanfallet.extopy.controllers.users.IUsersController
 import me.nathanfallet.extopy.controllers.users.UsersController
 import me.nathanfallet.extopy.controllers.users.UsersRouter
 import me.nathanfallet.extopy.database.Database
@@ -35,14 +37,10 @@ import me.nathanfallet.extopy.services.jwt.IJWTService
 import me.nathanfallet.extopy.services.jwt.JWTService
 import me.nathanfallet.extopy.usecases.application.SendEmailUseCase
 import me.nathanfallet.extopy.usecases.auth.*
-import me.nathanfallet.extopy.usecases.posts.CreatePostUseCase
-import me.nathanfallet.extopy.usecases.posts.DeletePostUseCase
-import me.nathanfallet.extopy.usecases.posts.UpdatePostUseCase
+import me.nathanfallet.extopy.usecases.posts.*
 import me.nathanfallet.extopy.usecases.timelines.GetTimelineByIdUseCase
 import me.nathanfallet.extopy.usecases.timelines.IGetTimelineByIdUseCase
-import me.nathanfallet.extopy.usecases.users.CreateUserUseCase
-import me.nathanfallet.extopy.usecases.users.GetUserForCallUseCase
-import me.nathanfallet.extopy.usecases.users.UpdateUserUseCase
+import me.nathanfallet.extopy.usecases.users.*
 import me.nathanfallet.i18n.usecases.localization.TranslateUseCase
 import me.nathanfallet.ktorx.controllers.IModelController
 import me.nathanfallet.ktorx.controllers.auth.AuthWithCodeController
@@ -159,6 +157,7 @@ fun Application.configureKoin() {
             single<IUpdateModelSuspendUseCase<User, String, UpdateUserPayload>>(named<User>()) {
                 UpdateUserUseCase(get(), get())
             }
+            single<IGetUserPostsUseCase> { GetUserPostsUseCase(get()) }
 
             // Posts
             single<IGetModelWithContextSuspendUseCase<Post, String>>(named<Post>()) {
@@ -173,9 +172,10 @@ fun Application.configureKoin() {
             single<IDeleteModelSuspendUseCase<Post, String>>(named<Post>()) {
                 DeletePostUseCase(get())
             }
+            single<IGetPostRepliesUseCase> { GetPostRepliesUseCase(get()) }
 
             // Timelines
-            single<IGetTimelineByIdUseCase> { GetTimelineByIdUseCase(get(), get()) }
+            single<IGetTimelineByIdUseCase> { GetTimelineByIdUseCase(get()) }
         }
         val controllerModule = module {
             // Auth
@@ -198,22 +198,24 @@ fun Application.configureKoin() {
             }
 
             // Users
-            single<IModelController<User, String, CreateUserPayload, UpdateUserPayload>>(named<User>()) {
+            single<IUsersController> {
                 UsersController(
                     get(),
                     get(named<User>()),
-                    get(named<User>())
+                    get(named<User>()),
+                    get()
                 )
             }
 
             // Posts
-            single<IModelController<Post, String, PostPayload, PostPayload>>(named<Post>()) {
+            single<IPostsController> {
                 PostsController(
                     get(),
                     get(named<Post>()),
                     get(named<Post>()),
                     get(named<Post>()),
-                    get(named<Post>())
+                    get(named<Post>()),
+                    get()
                 )
             }
 
@@ -227,8 +229,8 @@ fun Application.configureKoin() {
         }
         val routerModule = module {
             single { AuthRouter(get(), get()) }
-            single { UsersRouter(get(named<User>())) }
-            single { PostsRouter(get(named<Post>())) }
+            single { UsersRouter(get()) }
+            single { PostsRouter(get()) }
             single { TimelinesRouter(get(named<Timeline>())) }
             single { NotificationsRouter() }
         }

@@ -6,7 +6,7 @@ import me.nathanfallet.extopy.models.posts.Post
 import me.nathanfallet.extopy.models.posts.PostPayload
 import me.nathanfallet.extopy.models.users.User
 import me.nathanfallet.extopy.models.users.UserContext
-import me.nathanfallet.ktorx.controllers.IModelController
+import me.nathanfallet.extopy.usecases.posts.IGetPostRepliesUseCase
 import me.nathanfallet.ktorx.models.exceptions.ControllerException
 import me.nathanfallet.ktorx.usecases.users.IRequireUserForCallUseCase
 import me.nathanfallet.usecases.models.create.context.ICreateModelWithContextSuspendUseCase
@@ -20,7 +20,8 @@ class PostsController(
     private val getPostUseCase: IGetModelWithContextSuspendUseCase<Post, String>,
     private val updatePostUseCase: IUpdateModelSuspendUseCase<Post, String, PostPayload>,
     private val deletePostUseCase: IDeleteModelSuspendUseCase<Post, String>,
-) : IModelController<Post, String, PostPayload, PostPayload> {
+    private val getPostRepliesUseCase: IGetPostRepliesUseCase,
+) : IPostsController {
 
     override suspend fun list(call: ApplicationCall): List<Post> {
         throw ControllerException(HttpStatusCode.MethodNotAllowed, "posts_list_not_allowed")
@@ -65,6 +66,16 @@ class PostsController(
         )
         if (!deletePostUseCase(id)) throw ControllerException(
             HttpStatusCode.InternalServerError, "error_internal"
+        )
+    }
+
+    override suspend fun getReplies(call: ApplicationCall, id: String): List<Post> {
+        val user = requireUserForCallUseCase(call) as User
+        return getPostRepliesUseCase(
+            id,
+            call.parameters["limit"]?.toLongOrNull() ?: 25,
+            call.parameters["offset"]?.toLongOrNull() ?: 0,
+            UserContext(user.id)
         )
     }
 

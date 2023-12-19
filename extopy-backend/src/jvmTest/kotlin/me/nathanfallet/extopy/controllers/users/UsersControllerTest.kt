@@ -25,7 +25,7 @@ class UsersControllerTest {
 
     @Test
     fun testList() = runBlocking {
-        val controller = UsersController(mockk(), mockk(), mockk())
+        val controller = UsersController(mockk(), mockk(), mockk(), mockk())
         val exception = assertFailsWith(ControllerException::class) {
             controller.list(mockk())
         }
@@ -35,7 +35,7 @@ class UsersControllerTest {
 
     @Test
     fun testCreate() = runBlocking {
-        val controller = UsersController(mockk(), mockk(), mockk())
+        val controller = UsersController(mockk(), mockk(), mockk(), mockk())
         val exception = assertFailsWith(ControllerException::class) {
             controller.create(
                 mockk(),
@@ -51,7 +51,7 @@ class UsersControllerTest {
 
     @Test
     fun testDelete() = runBlocking {
-        val controller = UsersController(mockk(), mockk(), mockk())
+        val controller = UsersController(mockk(), mockk(), mockk(), mockk())
         val exception = assertFailsWith(ControllerException::class) {
             controller.delete(mockk(), "userId")
         }
@@ -69,6 +69,7 @@ class UsersControllerTest {
         val controller = UsersController(
             requireUserForCallUseCase,
             getUserUseCase,
+            mockk(),
             mockk()
         )
         assertEquals(targetUser, controller.get(call, targetUser.id))
@@ -84,6 +85,7 @@ class UsersControllerTest {
         val controller = UsersController(
             requireUserForCallUseCase,
             getUserUseCase,
+            mockk(),
             mockk()
         )
         val exception = assertFailsWith(ControllerException::class) {
@@ -110,7 +112,8 @@ class UsersControllerTest {
         val controller = UsersController(
             requireUserForCallUseCase,
             mockk(),
-            updateUserUseCase
+            updateUserUseCase,
+            mockk()
         )
         assertEquals(updatedUser, controller.update(call, user.id, payload))
     }
@@ -122,6 +125,7 @@ class UsersControllerTest {
         coEvery { requireUserForCallUseCase(call) } returns user
         val controller = UsersController(
             requireUserForCallUseCase,
+            mockk(),
             mockk(),
             mockk()
         )
@@ -145,7 +149,8 @@ class UsersControllerTest {
         val controller = UsersController(
             requireUserForCallUseCase,
             mockk(),
-            updateUserUseCase
+            updateUserUseCase,
+            mockk()
         )
         val exception = assertFailsWith(ControllerException::class) {
             controller.update(call, user.id, payload)

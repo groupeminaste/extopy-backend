@@ -10,11 +10,8 @@ import io.ktor.server.testing.*
 import io.mockk.coEvery
 import io.mockk.mockk
 import me.nathanfallet.extopy.models.application.ExtopyJson
-import me.nathanfallet.extopy.models.users.CreateUserPayload
-import me.nathanfallet.extopy.models.users.UpdateUserPayload
 import me.nathanfallet.extopy.models.users.User
 import me.nathanfallet.extopy.plugins.configureSerialization
-import me.nathanfallet.ktorx.controllers.IModelController
 import me.nathanfallet.usecases.models.UnitModel
 import kotlin.test.Test
 import kotlin.test.assertEquals
@@ -40,7 +37,7 @@ class UsersRouterTest {
     @Test
     fun testGetAPIv1() = testApplication {
         val client = installApp(this)
-        val controller = mockk<IModelController<User, String, CreateUserPayload, UpdateUserPayload>>()
+        val controller = mockk<IUsersController>()
         val router = UsersRouter(controller)
         coEvery { controller.get(any(), UnitModel, "id") } returns user
         routing {

@@ -28,7 +28,7 @@ class PostsControllerTest {
 
     @Test
     fun testList() = runBlocking {
-        val controller = PostsController(mockk(), mockk(), mockk(), mockk(), mockk())
+        val controller = PostsController(mockk(), mockk(), mockk(), mockk(), mockk(), mockk())
         val exception = assertFailsWith(ControllerException::class) {
             controller.list(mockk())
         }
@@ -40,7 +40,8 @@ class PostsControllerTest {
     fun testCreate() = runBlocking {
         val requireUserForCallUseCase = mockk<IRequireUserForCallUseCase>()
         val createPostUseCase = mockk<ICreateModelWithContextSuspendUseCase<Post, PostPayload>>()
-        val controller = PostsController(requireUserForCallUseCase, createPostUseCase, mockk(), mockk(), mockk())
+        val controller =
+            PostsController(requireUserForCallUseCase, createPostUseCase, mockk(), mockk(), mockk(), mockk())
         val call = mockk<ApplicationCall>()
         val payload = PostPayload("body")
         coEvery { requireUserForCallUseCase(call) } returns user
@@ -52,7 +53,8 @@ class PostsControllerTest {
     fun testCreateInternalError() = runBlocking {
         val requireUserForCallUseCase = mockk<IRequireUserForCallUseCase>()
         val createPostUseCase = mockk<ICreateModelWithContextSuspendUseCase<Post, PostPayload>>()
-        val controller = PostsController(requireUserForCallUseCase, createPostUseCase, mockk(), mockk(), mockk())
+        val controller =
+            PostsController(requireUserForCallUseCase, createPostUseCase, mockk(), mockk(), mockk(), mockk())
         val call = mockk<ApplicationCall>()
         val payload = PostPayload("body")
         coEvery { requireUserForCallUseCase(call) } returns user
@@ -71,7 +73,7 @@ class PostsControllerTest {
         val call = mockk<ApplicationCall>()
         coEvery { requireUserForCallUseCase(call) } returns user
         coEvery { getPostUseCase(post.id, UserContext(user.id)) } returns post
-        val controller = PostsController(requireUserForCallUseCase, mockk(), getPostUseCase, mockk(), mockk())
+        val controller = PostsController(requireUserForCallUseCase, mockk(), getPostUseCase, mockk(), mockk(), mockk())
         assertEquals(post, controller.get(call, post.id))
     }
 
@@ -82,7 +84,7 @@ class PostsControllerTest {
         val call = mockk<ApplicationCall>()
         coEvery { requireUserForCallUseCase(call) } returns user
         coEvery { getPostUseCase(post.id, UserContext(user.id)) } returns null
-        val controller = PostsController(requireUserForCallUseCase, mockk(), getPostUseCase, mockk(), mockk())
+        val controller = PostsController(requireUserForCallUseCase, mockk(), getPostUseCase, mockk(), mockk(), mockk())
         val exception = assertFailsWith(ControllerException::class) {
             controller.get(call, post.id)
         }
@@ -103,7 +105,8 @@ class PostsControllerTest {
         coEvery { requireUserForCallUseCase(call) } returns user
         coEvery { getPostUseCase(post.id, UserContext(user.id)) } returns post
         coEvery { updatePostUseCase(post.id, payload) } returns updatedPost
-        val controller = PostsController(requireUserForCallUseCase, mockk(), getPostUseCase, updatePostUseCase, mockk())
+        val controller =
+            PostsController(requireUserForCallUseCase, mockk(), getPostUseCase, updatePostUseCase, mockk(), mockk())
         assertEquals(updatedPost, controller.update(call, post.id, payload))
     }
 
@@ -115,7 +118,7 @@ class PostsControllerTest {
         val payload = PostPayload("newBody")
         coEvery { requireUserForCallUseCase(call) } returns user
         coEvery { getPostUseCase(post.id, UserContext(user.id)) } returns null
-        val controller = PostsController(requireUserForCallUseCase, mockk(), getPostUseCase, mockk(), mockk())
+        val controller = PostsController(requireUserForCallUseCase, mockk(), getPostUseCase, mockk(), mockk(), mockk())
         val exception = assertFailsWith(ControllerException::class) {
             controller.update(call, post.id, payload)
         }
@@ -131,7 +134,7 @@ class PostsControllerTest {
         val payload = PostPayload("newBody")
         coEvery { requireUserForCallUseCase(call) } returns user
         coEvery { getPostUseCase(otherPost.id, UserContext(user.id)) } returns otherPost
-        val controller = PostsController(requireUserForCallUseCase, mockk(), getPostUseCase, mockk(), mockk())
+        val controller = PostsController(requireUserForCallUseCase, mockk(), getPostUseCase, mockk(), mockk(), mockk())
         val exception = assertFailsWith(ControllerException::class) {
             controller.update(call, otherPost.id, payload)
         }
@@ -149,7 +152,8 @@ class PostsControllerTest {
         coEvery { requireUserForCallUseCase(call) } returns user
         coEvery { getPostUseCase(post.id, UserContext(user.id)) } returns post
         coEvery { updatePostUseCase(post.id, payload) } returns null
-        val controller = PostsController(requireUserForCallUseCase, mockk(), getPostUseCase, updatePostUseCase, mockk())
+        val controller =
+            PostsController(requireUserForCallUseCase, mockk(), getPostUseCase, updatePostUseCase, mockk(), mockk())
         val exception = assertFailsWith(ControllerException::class) {
             controller.update(call, post.id, payload)
         }
@@ -166,7 +170,8 @@ class PostsControllerTest {
         coEvery { requireUserForCallUseCase(call) } returns user
         coEvery { getPostUseCase(post.id, UserContext(user.id)) } returns post
         coEvery { deletePostUseCase(post.id) } returns true
-        val controller = PostsController(requireUserForCallUseCase, mockk(), getPostUseCase, mockk(), deletePostUseCase)
+        val controller =
+            PostsController(requireUserForCallUseCase, mockk(), getPostUseCase, mockk(), deletePostUseCase, mockk())
         controller.delete(call, post.id)
         coVerify { deletePostUseCase(post.id) }
     }
@@ -178,7 +183,7 @@ class PostsControllerTest {
         val call = mockk<ApplicationCall>()
         coEvery { requireUserForCallUseCase(call) } returns user
         coEvery { getPostUseCase(post.id, UserContext(user.id)) } returns null
-        val controller = PostsController(requireUserForCallUseCase, mockk(), getPostUseCase, mockk(), mockk())
+        val controller = PostsController(requireUserForCallUseCase, mockk(), getPostUseCase, mockk(), mockk(), mockk())
         val exception = assertFailsWith(ControllerException::class) {
             controller.delete(call, post.id)
         }
@@ -193,7 +198,7 @@ class PostsControllerTest {
         val call = mockk<ApplicationCall>()
         coEvery { requireUserForCallUseCase(call) } returns user
         coEvery { getPostUseCase(otherPost.id, UserContext(user.id)) } returns otherPost
-        val controller = PostsController(requireUserForCallUseCase, mockk(), getPostUseCase, mockk(), mockk())
+        val controller = PostsController(requireUserForCallUseCase, mockk(), getPostUseCase, mockk(), mockk(), mockk())
         val exception = assertFailsWith(ControllerException::class) {
             controller.delete(call, otherPost.id)
         }
@@ -210,7 +215,8 @@ class PostsControllerTest {
         coEvery { requireUserForCallUseCase(call) } returns user
         coEvery { getPostUseCase(post.id, UserContext(user.id)) } returns post
         coEvery { deletePostUseCase(post.id) } returns false
-        val controller = PostsController(requireUserForCallUseCase, mockk(), getPostUseCase, mockk(), deletePostUseCase)
+        val controller =
+            PostsController(requireUserForCallUseCase, mockk(), getPostUseCase, mockk(), deletePostUseCase, mockk())
         val exception = assertFailsWith(ControllerException::class) {
             controller.delete(call, post.id)
         }
