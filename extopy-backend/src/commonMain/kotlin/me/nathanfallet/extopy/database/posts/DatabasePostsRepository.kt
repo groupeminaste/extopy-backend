@@ -48,6 +48,28 @@ class DatabasePostsRepository(
         }
     }
 
+    override suspend fun listUserPosts(userId: String, limit: Long, offset: Long, context: UserContext): List<Post> {
+        return database.dbQuery {
+            customJoin(context.userId)
+                .select { Posts.userId eq userId }
+                .groupBy(Posts.id)
+                .orderBy(Posts.published to SortOrder.DESC)
+                .limit(limit.toInt(), offset)
+                .map { Posts.toPost(it, Users.toUser(it)) }
+        }
+    }
+
+    override suspend fun listReplies(postId: String, limit: Long, offset: Long, context: UserContext): List<Post> {
+        return database.dbQuery {
+            customJoin(context.userId)
+                .select { Posts.repliedToId eq postId }
+                .groupBy(Posts.id)
+                .orderBy(Posts.published to SortOrder.DESC)
+                .limit(limit.toInt(), offset)
+                .map { Posts.toPost(it, Users.toUser(it)) }
+        }
+    }
+
     override suspend fun get(id: String, context: IContext?): Post? {
         if (context !is UserContext) return null
         return database.dbQuery {

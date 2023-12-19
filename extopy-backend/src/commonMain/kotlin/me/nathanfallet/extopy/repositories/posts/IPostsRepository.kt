@@ -9,5 +9,7 @@ interface IPostsRepository : IModelSuspendRepository<Post, String, PostPayload, 
 
     suspend fun listDefault(limit: Long, offset: Long, context: UserContext): List<Post>
     suspend fun listTrends(limit: Long, offset: Long, context: UserContext): List<Post>
+    suspend fun listUserPosts(userId: String, limit: Long, offset: Long, context: UserContext): List<Post>
+    suspend fun listReplies(postId: String, limit: Long, offset: Long, context: UserContext): List<Post>
 
 }

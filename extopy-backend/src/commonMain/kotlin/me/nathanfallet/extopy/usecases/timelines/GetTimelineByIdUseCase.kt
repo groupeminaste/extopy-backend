@@ -27,6 +27,25 @@ class GetTimelineByIdUseCase(
                 posts = postsRepository.listTrends(input3, input4, input2)
             )
 
+            "users" -> id?.let {
+                val user = usersRepository.get(it, input2) ?: return@let null
+                Timeline(
+                    it,
+                    "users",
+                    users = listOf(user),
+                    posts = postsRepository.listUserPosts(it, input3, input4, input2)
+                )
+            }
+
+            "posts" -> id?.let {
+                val post = postsRepository.get(it, input2) ?: return@let null
+                Timeline(
+                    it,
+                    "posts",
+                    posts = listOf(post) + postsRepository.listReplies(it, input3, input4, input2)
+                )
+            }
+
             else -> null
         }
     }
