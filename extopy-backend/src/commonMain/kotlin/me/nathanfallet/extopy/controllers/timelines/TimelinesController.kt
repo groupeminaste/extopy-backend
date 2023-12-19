@@ -5,14 +5,14 @@ import io.ktor.server.application.*
 import me.nathanfallet.extopy.models.timelines.Timeline
 import me.nathanfallet.extopy.models.users.User
 import me.nathanfallet.extopy.models.users.UserContext
-import me.nathanfallet.extopy.usecases.timelines.IGetDefaultTimelineUseCase
+import me.nathanfallet.extopy.usecases.timelines.IGetTimelineByIdUseCase
 import me.nathanfallet.ktorx.controllers.IModelController
 import me.nathanfallet.ktorx.models.exceptions.ControllerException
 import me.nathanfallet.ktorx.usecases.users.IRequireUserForCallUseCase
 
 class TimelinesController(
     private val requireUserForCallUseCase: IRequireUserForCallUseCase,
-    private val getDefaultTimelineUseCase: IGetDefaultTimelineUseCase,
+    private val getTimelineUseCase: IGetTimelineByIdUseCase,
 ) : IModelController<Timeline, String, Unit, Unit> {
 
     override suspend fun list(call: ApplicationCall): List<Timeline> {
@@ -21,10 +21,14 @@ class TimelinesController(
 
     override suspend fun get(call: ApplicationCall, id: String): Timeline {
         val user = requireUserForCallUseCase(call) as User
-        return when (id) {
-            "default" -> getDefaultTimelineUseCase(UserContext(user.id))
-            else -> null // TODO: Add custom timelines
-        } ?: throw ControllerException(HttpStatusCode.NotFound, "timelines_not_found")
+        return getTimelineUseCase(
+            id,
+            UserContext(user.id),
+            call.parameters["limit"]?.toLongOrNull() ?: 25,
+            call.parameters["offset"]?.toLongOrNull() ?: 0
+        ) ?: throw ControllerException(
+            HttpStatusCode.NotFound, "timelines_not_found"
+        )
     }
 
     override suspend fun create(call: ApplicationCall, payload: Unit): Timeline {

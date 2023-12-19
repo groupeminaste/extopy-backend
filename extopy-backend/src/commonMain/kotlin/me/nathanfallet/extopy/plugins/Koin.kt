@@ -38,8 +38,8 @@ import me.nathanfallet.extopy.usecases.auth.*
 import me.nathanfallet.extopy.usecases.posts.CreatePostUseCase
 import me.nathanfallet.extopy.usecases.posts.DeletePostUseCase
 import me.nathanfallet.extopy.usecases.posts.UpdatePostUseCase
-import me.nathanfallet.extopy.usecases.timelines.GetDefaultTimelineUseCase
-import me.nathanfallet.extopy.usecases.timelines.IGetDefaultTimelineUseCase
+import me.nathanfallet.extopy.usecases.timelines.GetTimelineByIdUseCase
+import me.nathanfallet.extopy.usecases.timelines.IGetTimelineByIdUseCase
 import me.nathanfallet.extopy.usecases.users.CreateUserUseCase
 import me.nathanfallet.extopy.usecases.users.GetUserForCallUseCase
 import me.nathanfallet.extopy.usecases.users.UpdateUserUseCase
@@ -175,7 +175,7 @@ fun Application.configureKoin() {
             }
 
             // Timelines
-            single<IGetDefaultTimelineUseCase> { GetDefaultTimelineUseCase() }
+            single<IGetTimelineByIdUseCase> { GetTimelineByIdUseCase(get(), get()) }
         }
         val controllerModule = module {
             // Auth

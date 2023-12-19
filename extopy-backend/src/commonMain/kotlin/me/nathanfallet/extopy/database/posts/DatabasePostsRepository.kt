@@ -2,6 +2,7 @@ package me.nathanfallet.extopy.database.posts
 
 import kotlinx.datetime.Clock
 import me.nathanfallet.extopy.database.Database
+import me.nathanfallet.extopy.database.users.FollowersInUsers
 import me.nathanfallet.extopy.database.users.Users
 import me.nathanfallet.extopy.models.posts.Post
 import me.nathanfallet.extopy.models.posts.PostPayload
@@ -13,6 +14,29 @@ import org.jetbrains.exposed.sql.*
 class DatabasePostsRepository(
     private val database: Database,
 ) : IPostsRepository {
+
+    override suspend fun list(limit: Long, offset: Long, context: IContext?): List<Post> {
+        if (context !is UserContext) return emptyList()
+        return database.dbQuery {
+            customJoinColumnSet(context.userId)
+                .join(
+                    FollowersInUsers,
+                    JoinType.LEFT,
+                    Posts.userId,
+                    FollowersInUsers.targetId
+                )
+                .customPostsSlice()
+                .select {
+                    Posts.userId eq context.userId or
+                            (FollowersInUsers.userId eq context.userId and
+                                    (FollowersInUsers.accepted eq true))
+                }
+                .groupBy(Posts.id)
+                .orderBy(Posts.published to SortOrder.DESC)
+                .limit(limit.toInt(), offset)
+                .map { Posts.toPost(it, Users.toUser(it)) }
+        }
+    }
 
     override suspend fun get(id: String, context: IContext?): Post? {
         if (context !is UserContext) return null
