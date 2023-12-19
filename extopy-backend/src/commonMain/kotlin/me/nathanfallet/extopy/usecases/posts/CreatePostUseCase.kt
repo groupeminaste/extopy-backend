@@ -22,13 +22,13 @@ class CreatePostUseCase(
             "posts_can_only_one_in_reply_or_repost"
         )
         input1.repliedToId?.let { repliedToId ->
-            if (repository.get(repliedToId) == null) throw ControllerException(
+            if (repository.get(repliedToId, input2) == null) throw ControllerException(
                 HttpStatusCode.BadRequest,
                 "posts_replied_to_not_found"
             )
         }
         input1.repostOfId?.let { repostOfId ->
-            if (repository.get(repostOfId) == null) throw ControllerException(
+            if (repository.get(repostOfId, input2) == null) throw ControllerException(
                 HttpStatusCode.BadRequest,
                 "posts_repost_of_not_found"
             )

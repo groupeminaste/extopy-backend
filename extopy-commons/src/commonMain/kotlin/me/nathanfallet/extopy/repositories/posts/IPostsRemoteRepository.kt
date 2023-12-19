@@ -9,5 +9,6 @@ interface IPostsRemoteRepository {
     suspend fun create(payload: PostPayload): Post?
     suspend fun update(id: String, payload: PostPayload): Post?
     suspend fun delete(id: String): Boolean
+    suspend fun getReplies(id: String, limit: Long, offset: Long): List<Post>
 
 }

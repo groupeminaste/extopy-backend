@@ -1,4 +1,4 @@
-package me.nathanfallet.extopy.controllers.users
+package me.nathanfallet.extopy.controllers.posts
 
 import io.ktor.client.*
 import io.ktor.client.call.*
@@ -13,16 +13,15 @@ import io.mockk.mockk
 import io.swagger.v3.oas.models.OpenAPI
 import me.nathanfallet.extopy.models.application.ExtopyJson
 import me.nathanfallet.extopy.models.posts.Post
-import me.nathanfallet.extopy.models.users.User
 import me.nathanfallet.extopy.plugins.configureSerialization
 import me.nathanfallet.usecases.models.UnitModel
 import kotlin.test.Test
 import kotlin.test.assertEquals
 
-class UsersRouterTest {
+class PostsRouterTest {
 
-    private val user = User("id", "displayName", "username")
-    private val post = Post("postId", "id", user, body = "body")
+    private val post = Post("id", "userId", body = "body")
+    private val reply = Post("replyId", "userId", body = "body")
 
     private fun installApp(application: ApplicationTestBuilder): HttpClient {
         application.environment {
@@ -41,48 +40,48 @@ class UsersRouterTest {
     @Test
     fun testGetAPIv1() = testApplication {
         val client = installApp(this)
-        val controller = mockk<IUsersController>()
-        val router = UsersRouter(controller)
-        coEvery { controller.get(any(), UnitModel, "id") } returns user
+        val controller = mockk<IPostsController>()
+        val router = PostsRouter(controller)
+        coEvery { controller.get(any(), UnitModel, "id") } returns post
         routing {
             router.createRoutes(this)
         }
-        assertEquals(user, client.get("/api/v1/users/id").body())
+        assertEquals(post, client.get("/api/v1/posts/id").body())
     }
 
     @Test
-    fun testGetPosts() = testApplication {
+    fun testGetReplies() = testApplication {
         val client = installApp(this)
-        val controller = mockk<IUsersController>()
-        val router = UsersRouter(controller)
-        coEvery { controller.get(any(), UnitModel, "id") } returns user
-        coEvery { controller.getPosts(any(), "id") } returns listOf(post)
+        val controller = mockk<IPostsController>()
+        val router = PostsRouter(controller)
+        coEvery { controller.get(any(), UnitModel, "id") } returns post
+        coEvery { controller.getReplies(any(), "id") } returns listOf(reply)
         routing {
             router.createRoutes(this)
         }
-        val response = client.get("/api/v1/users/id/posts")
+        val response = client.get("/api/v1/posts/id/replies")
         assertEquals(HttpStatusCode.OK, response.status)
-        assertEquals(listOf(post), response.body())
+        assertEquals(listOf(reply), response.body())
     }
 
     @Test
-    fun testGetPostsOpenAPI() = testApplication {
+    fun testGetRepliesOpenAPI() = testApplication {
         val client = installApp(this)
-        val controller = mockk<IUsersController>()
-        val router = UsersRouter(controller)
+        val controller = mockk<IPostsController>()
+        val router = PostsRouter(controller)
         val openAPI = OpenAPI()
-        coEvery { controller.get(any(), UnitModel, "id") } returns user
-        coEvery { controller.getPosts(any(), "id") } returns listOf(post)
+        coEvery { controller.get(any(), UnitModel, "id") } returns post
+        coEvery { controller.getReplies(any(), "id") } returns listOf(reply)
         routing {
             router.createRoutes(this, openAPI)
         }
-        client.get("/api/v1/users/id/posts")
-        val get = openAPI.paths["/api/v1/users/{userId}/posts"]?.get
-        assertEquals("getUserPostsById", get?.operationId)
-        assertEquals(listOf("User"), get?.tags)
-        assertEquals("Get user posts by id", get?.description)
+        client.get("/api/v1/posts/id/replies")
+        val get = openAPI.paths["/api/v1/posts/{postId}/replies"]?.get
+        assertEquals("getPostRepliesById", get?.operationId)
+        assertEquals(listOf("Post"), get?.tags)
+        assertEquals("Get post replies by id", get?.description)
         assertEquals(1, get?.parameters?.size)
-        assertEquals("userId", get?.parameters?.firstOrNull()?.name)
+        assertEquals("postId", get?.parameters?.firstOrNull()?.name)
         assertEquals(1, get?.responses?.size)
         assertEquals(
             "#/components/schemas/${Post::class.qualifiedName}",
