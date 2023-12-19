@@ -11,6 +11,13 @@ application {
     mainClass.set("me.nathanfallet.extopy.ApplicationKt")
 }
 
+ktor {
+    docker {
+        jreVersion.set(JavaVersion.VERSION_19)
+        localImageName.set("extopy-backend")
+    }
+}
+
 publishing {
     publications.withType<MavenPublication> {
         pom {
