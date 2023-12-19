@@ -22,12 +22,11 @@ class GetTimelineByIdUseCaseTest {
         assertEquals(
             Timeline(
                 "default",
-                "default",
                 posts = listOf(
                     Post("postId")
                 )
             ),
-            useCase("default", UserContext("userId"), 25, 0)
+            useCase("default", 25, 0, UserContext("userId"))
         )
     }
 
@@ -41,12 +40,11 @@ class GetTimelineByIdUseCaseTest {
         assertEquals(
             Timeline(
                 "trends",
-                "trends",
                 posts = listOf(
                     Post("postId")
                 )
             ),
-            useCase("trends", UserContext("userId"), 25, 0)
+            useCase("trends", 25, 0, UserContext("userId"))
         )
     }
 

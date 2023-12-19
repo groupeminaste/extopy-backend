@@ -11,8 +11,6 @@ import me.nathanfallet.usecases.models.annotations.Schema
 data class Timeline(
     @Schema("Id of the Timeline", "123abc")
     override val id: String,
-    @Schema("Type of the Timeline", "default")
-    val type: String,
     @Schema("Users returned for this timeline", "[]")
     val users: List<User>? = null,
     @Schema("Posts returned for this timeline", "[]")

@@ -34,7 +34,6 @@ class PostsRouter(
     }
 
     fun createAPIGetRepliesRoute(root: Route, openAPI: OpenAPI?) {
-        if (!mapping.getEnabled) return
         root.get("$fullRoute/{$id}/replies") {
             try {
                 call.respond(controller.getReplies(call, get(call).id))

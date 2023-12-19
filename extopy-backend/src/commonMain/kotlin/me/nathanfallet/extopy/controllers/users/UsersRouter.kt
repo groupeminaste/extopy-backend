@@ -38,7 +38,6 @@ class UsersRouter(
     }
 
     fun createAPIGetPostsRoute(root: Route, openAPI: OpenAPI?) {
-        if (!mapping.getEnabled) return
         root.get("$fullRoute/{$id}/posts") {
             try {
                 call.respond(controller.getPosts(call, get(call).id))

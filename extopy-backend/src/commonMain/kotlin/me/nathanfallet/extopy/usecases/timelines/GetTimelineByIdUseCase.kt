@@ -8,18 +8,16 @@ class GetTimelineByIdUseCase(
     private val postsRepository: IPostsRepository,
 ) : IGetTimelineByIdUseCase {
 
-    override suspend fun invoke(input1: String, input2: UserContext, input3: Long, input4: Long): Timeline? {
+    override suspend fun invoke(input1: String, input2: Long, input3: Long, input4: UserContext): Timeline? {
         return when (input1) {
             "default" -> Timeline(
                 "default",
-                "default",
-                posts = postsRepository.listDefault(input3, input4, input2)
+                posts = postsRepository.listDefault(input2, input3, input4)
             )
 
             "trends" -> Timeline(
                 "trends",
-                "trends",
-                posts = postsRepository.listTrends(input3, input4, input2)
+                posts = postsRepository.listTrends(input2, input3, input4)
             )
 
             else -> null // TODO: Custom timelines

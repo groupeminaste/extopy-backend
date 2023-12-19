@@ -23,9 +23,9 @@ class TimelinesController(
         val user = requireUserForCallUseCase(call) as User
         return getTimelineUseCase(
             id,
-            UserContext(user.id),
             call.parameters["limit"]?.toLongOrNull() ?: 25,
-            call.parameters["offset"]?.toLongOrNull() ?: 0
+            call.parameters["offset"]?.toLongOrNull() ?: 0,
+            UserContext(user.id)
         ) ?: throw ControllerException(
             HttpStatusCode.NotFound, "timelines_not_found"
         )

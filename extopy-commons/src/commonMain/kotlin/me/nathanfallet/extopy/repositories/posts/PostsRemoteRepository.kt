@@ -1,10 +1,14 @@
 package me.nathanfallet.extopy.repositories.posts
 
+import io.ktor.client.call.*
+import io.ktor.http.*
 import io.ktor.util.reflect.*
 import me.nathanfallet.extopy.client.IExtopyClient
 import me.nathanfallet.extopy.models.posts.Post
 import me.nathanfallet.extopy.models.posts.PostPayload
 import me.nathanfallet.ktorx.repositories.api.APIModelRemoteRepository
+import me.nathanfallet.usecases.models.UnitModel
+import me.nathanfallet.usecases.models.id.RecursiveId
 
 class PostsRemoteRepository(
     client: IExtopyClient,
@@ -31,6 +35,12 @@ class PostsRemoteRepository(
 
     override suspend fun delete(id: String): Boolean {
         return delete(id, null)
+    }
+
+    override suspend fun getReplies(id: String, limit: Long, offset: Long): List<Post> {
+        return client
+            .request(HttpMethod.Get, "${constructFullRoute(RecursiveId<UnitModel, Unit, Unit>(Unit))}/$id/replies")
+            .body()
     }
 
 }
