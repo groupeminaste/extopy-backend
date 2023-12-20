@@ -15,6 +15,14 @@ ktor {
     docker {
         jreVersion.set(JavaVersion.VERSION_19)
         localImageName.set("extopy-backend")
+
+        externalRegistry.set(
+            io.ktor.plugin.features.DockerImageRegistry.dockerHub(
+                appName = provider { "extopy-backend" },
+                username = provider { "nathanfallet" },
+                password = providers.environmentVariable("DOCKER_HUB_PASSWORD")
+            )
+        )
     }
 }
 
