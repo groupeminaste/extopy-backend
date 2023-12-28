@@ -8,7 +8,7 @@ import org.jetbrains.exposed.sql.Table
 object CodesInEmails : Table() {
 
     val email = varchar("email", 255)
-    val code = varchar("code", 32)
+    val code = varchar("code", 32).index()
     val expiresAt = varchar("expires_at", 255)
 
     override val primaryKey = PrimaryKey(email)

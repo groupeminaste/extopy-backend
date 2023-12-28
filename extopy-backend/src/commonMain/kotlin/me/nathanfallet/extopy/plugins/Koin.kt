@@ -8,14 +8,13 @@ import me.nathanfallet.extopy.controllers.posts.PostsController
 import me.nathanfallet.extopy.controllers.posts.PostsRouter
 import me.nathanfallet.extopy.controllers.timelines.TimelinesController
 import me.nathanfallet.extopy.controllers.timelines.TimelinesRouter
-import me.nathanfallet.extopy.controllers.users.IUsersController
-import me.nathanfallet.extopy.controllers.users.UsersController
-import me.nathanfallet.extopy.controllers.users.UsersRouter
+import me.nathanfallet.extopy.controllers.users.*
 import me.nathanfallet.extopy.database.Database
 import me.nathanfallet.extopy.database.application.DatabaseClientsRepository
 import me.nathanfallet.extopy.database.application.DatabaseCodesInEmailsRepository
 import me.nathanfallet.extopy.database.posts.DatabasePostsRepository
 import me.nathanfallet.extopy.database.users.DatabaseClientsInUsersRepository
+import me.nathanfallet.extopy.database.users.DatabaseFollowersInUsersRepository
 import me.nathanfallet.extopy.database.users.DatabaseUsersRepository
 import me.nathanfallet.extopy.models.application.Client
 import me.nathanfallet.extopy.models.auth.LoginPayload
@@ -25,11 +24,13 @@ import me.nathanfallet.extopy.models.posts.Post
 import me.nathanfallet.extopy.models.posts.PostPayload
 import me.nathanfallet.extopy.models.timelines.Timeline
 import me.nathanfallet.extopy.models.users.CreateUserPayload
+import me.nathanfallet.extopy.models.users.FollowerInUser
 import me.nathanfallet.extopy.models.users.UpdateUserPayload
 import me.nathanfallet.extopy.models.users.User
 import me.nathanfallet.extopy.repositories.application.ICodesInEmailsRepository
 import me.nathanfallet.extopy.repositories.posts.IPostsRepository
 import me.nathanfallet.extopy.repositories.users.IClientsInUsersRepository
+import me.nathanfallet.extopy.repositories.users.IFollowersInUsersRepository
 import me.nathanfallet.extopy.repositories.users.IUsersRepository
 import me.nathanfallet.extopy.services.emails.EmailsService
 import me.nathanfallet.extopy.services.emails.IEmailsService
@@ -54,12 +55,17 @@ import me.nathanfallet.ktorx.usecases.users.RequireUserForCallUseCase
 import me.nathanfallet.usecases.emails.ISendEmailUseCase
 import me.nathanfallet.usecases.localization.ITranslateUseCase
 import me.nathanfallet.usecases.models.create.ICreateModelSuspendUseCase
+import me.nathanfallet.usecases.models.create.context.ICreateChildModelWithContextSuspendUseCase
 import me.nathanfallet.usecases.models.create.context.ICreateModelWithContextSuspendUseCase
+import me.nathanfallet.usecases.models.delete.DeleteChildModelFromRepositorySuspendUseCase
+import me.nathanfallet.usecases.models.delete.IDeleteChildModelSuspendUseCase
 import me.nathanfallet.usecases.models.delete.IDeleteModelSuspendUseCase
 import me.nathanfallet.usecases.models.get.GetModelFromRepositorySuspendUseCase
 import me.nathanfallet.usecases.models.get.IGetModelSuspendUseCase
 import me.nathanfallet.usecases.models.get.context.GetModelWithContextFromRepositorySuspendUseCase
 import me.nathanfallet.usecases.models.get.context.IGetModelWithContextSuspendUseCase
+import me.nathanfallet.usecases.models.list.slice.IListSliceChildModelSuspendUseCase
+import me.nathanfallet.usecases.models.list.slice.ListSliceChildModelFromRepositorySuspendUseCase
 import me.nathanfallet.usecases.models.repositories.IModelSuspendRepository
 import me.nathanfallet.usecases.models.update.IUpdateModelSuspendUseCase
 import org.koin.core.qualifier.named
@@ -104,6 +110,7 @@ fun Application.configureKoin() {
             // Users
             single<IUsersRepository> { DatabaseUsersRepository(get()) }
             single<IClientsInUsersRepository> { DatabaseClientsInUsersRepository(get()) }
+            single<IFollowersInUsersRepository> { DatabaseFollowersInUsersRepository(get()) }
 
             // Posts
             single<IPostsRepository> { DatabasePostsRepository(get()) }
@@ -158,6 +165,16 @@ fun Application.configureKoin() {
                 UpdateUserUseCase(get(), get())
             }
             single<IGetUserPostsUseCase> { GetUserPostsUseCase(get()) }
+            single<ICreateChildModelWithContextSuspendUseCase<FollowerInUser, Unit, String>>(named<FollowerInUser>()) {
+                CreateFollowerInUserUseCase(get(), get())
+            }
+            single<IDeleteChildModelSuspendUseCase<FollowerInUser, String, String>>(named<FollowerInUser>()) {
+                DeleteChildModelFromRepositorySuspendUseCase(get<IFollowersInUsersRepository>())
+            }
+            single<IListSliceChildModelSuspendUseCase<FollowerInUser, String>>(named<FollowerInUser>()) {
+                ListSliceChildModelFromRepositorySuspendUseCase(get<IFollowersInUsersRepository>())
+            }
+            single<IListFollowingInUserUseCase> { ListFollowingInUserUseCase(get()) }
 
             // Posts
             single<IGetModelWithContextSuspendUseCase<Post, String>>(named<Post>()) {
@@ -206,6 +223,15 @@ fun Application.configureKoin() {
                     get()
                 )
             }
+            single<IFollowersInUsersController> {
+                FollowersInUsersController(
+                    get(),
+                    get(named<FollowerInUser>()),
+                    get(),
+                    get(named<FollowerInUser>()),
+                    get(named<FollowerInUser>())
+                )
+            }
 
             // Posts
             single<IPostsController> {
@@ -230,6 +256,7 @@ fun Application.configureKoin() {
         val routerModule = module {
             single { AuthRouter(get(), get()) }
             single { UsersRouter(get()) }
+            single { FollowersInUsersRouter(get(), get()) }
             single { PostsRouter(get()) }
             single { TimelinesRouter(get(named<Timeline>())) }
             single { NotificationsRouter() }

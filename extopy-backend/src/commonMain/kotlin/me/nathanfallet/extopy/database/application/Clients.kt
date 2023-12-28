@@ -9,7 +9,7 @@ import org.jetbrains.exposed.sql.select
 object Clients : Table() {
 
     val id = varchar("id", 32)
-    val ownerId = varchar("owner_id", 32)
+    val ownerId = varchar("owner_id", 32).index()
     val name = varchar("name", 255)
     val description = text("description")
     val secret = varchar("secret", 255)
