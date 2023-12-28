@@ -39,8 +39,8 @@ class FollowersInUsersRemoteRepository(
         return create(Unit, RecursiveId<User, String, Unit>(userId), null)
     }
 
-    override suspend fun delete(userId: String, followerInUserId: String): Boolean {
-        return delete(followerInUserId, RecursiveId<User, String, Unit>(userId), null)
+    override suspend fun delete(userId: String, followerId: String): Boolean {
+        return delete(followerId, RecursiveId<User, String, Unit>(userId), null)
     }
 
 }

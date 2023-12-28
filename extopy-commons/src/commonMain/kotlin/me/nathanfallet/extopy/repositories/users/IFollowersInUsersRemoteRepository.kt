@@ -7,6 +7,6 @@ interface IFollowersInUsersRemoteRepository {
     suspend fun list(userId: String): List<FollowerInUser>
     suspend fun listFollowing(userId: String): List<FollowerInUser>
     suspend fun create(userId: String): FollowerInUser?
-    suspend fun delete(userId: String, followerInUserId: String): Boolean
+    suspend fun delete(userId: String, followerId: String): Boolean
 
 }

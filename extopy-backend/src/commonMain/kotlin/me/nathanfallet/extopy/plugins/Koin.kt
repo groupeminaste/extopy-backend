@@ -3,15 +3,14 @@ package me.nathanfallet.extopy.plugins
 import io.ktor.server.application.*
 import me.nathanfallet.extopy.controllers.auth.AuthRouter
 import me.nathanfallet.extopy.controllers.notifications.NotificationsRouter
-import me.nathanfallet.extopy.controllers.posts.IPostsController
-import me.nathanfallet.extopy.controllers.posts.PostsController
-import me.nathanfallet.extopy.controllers.posts.PostsRouter
+import me.nathanfallet.extopy.controllers.posts.*
 import me.nathanfallet.extopy.controllers.timelines.TimelinesController
 import me.nathanfallet.extopy.controllers.timelines.TimelinesRouter
 import me.nathanfallet.extopy.controllers.users.*
 import me.nathanfallet.extopy.database.Database
 import me.nathanfallet.extopy.database.application.DatabaseClientsRepository
 import me.nathanfallet.extopy.database.application.DatabaseCodesInEmailsRepository
+import me.nathanfallet.extopy.database.posts.DatabaseLikesInPostsRepository
 import me.nathanfallet.extopy.database.posts.DatabasePostsRepository
 import me.nathanfallet.extopy.database.users.DatabaseClientsInUsersRepository
 import me.nathanfallet.extopy.database.users.DatabaseFollowersInUsersRepository
@@ -20,6 +19,7 @@ import me.nathanfallet.extopy.models.application.Client
 import me.nathanfallet.extopy.models.auth.LoginPayload
 import me.nathanfallet.extopy.models.auth.RegisterCodePayload
 import me.nathanfallet.extopy.models.auth.RegisterPayload
+import me.nathanfallet.extopy.models.posts.LikeInPost
 import me.nathanfallet.extopy.models.posts.Post
 import me.nathanfallet.extopy.models.posts.PostPayload
 import me.nathanfallet.extopy.models.timelines.Timeline
@@ -43,6 +43,7 @@ import me.nathanfallet.extopy.usecases.timelines.GetTimelineByIdUseCase
 import me.nathanfallet.extopy.usecases.timelines.IGetTimelineByIdUseCase
 import me.nathanfallet.extopy.usecases.users.*
 import me.nathanfallet.i18n.usecases.localization.TranslateUseCase
+import me.nathanfallet.ktorx.controllers.IChildModelController
 import me.nathanfallet.ktorx.controllers.IModelController
 import me.nathanfallet.ktorx.controllers.auth.AuthWithCodeController
 import me.nathanfallet.ktorx.controllers.auth.IAuthWithCodeController
@@ -55,6 +56,7 @@ import me.nathanfallet.ktorx.usecases.users.RequireUserForCallUseCase
 import me.nathanfallet.usecases.emails.ISendEmailUseCase
 import me.nathanfallet.usecases.localization.ITranslateUseCase
 import me.nathanfallet.usecases.models.create.ICreateModelSuspendUseCase
+import me.nathanfallet.usecases.models.create.context.CreateChildModelWithContextFromRepositorySuspendUseCase
 import me.nathanfallet.usecases.models.create.context.ICreateChildModelWithContextSuspendUseCase
 import me.nathanfallet.usecases.models.create.context.ICreateModelWithContextSuspendUseCase
 import me.nathanfallet.usecases.models.delete.DeleteChildModelFromRepositorySuspendUseCase
@@ -66,6 +68,7 @@ import me.nathanfallet.usecases.models.get.context.GetModelWithContextFromReposi
 import me.nathanfallet.usecases.models.get.context.IGetModelWithContextSuspendUseCase
 import me.nathanfallet.usecases.models.list.slice.IListSliceChildModelSuspendUseCase
 import me.nathanfallet.usecases.models.list.slice.ListSliceChildModelFromRepositorySuspendUseCase
+import me.nathanfallet.usecases.models.repositories.IChildModelSuspendRepository
 import me.nathanfallet.usecases.models.repositories.IModelSuspendRepository
 import me.nathanfallet.usecases.models.update.IUpdateModelSuspendUseCase
 import org.koin.core.qualifier.named
@@ -114,6 +117,9 @@ fun Application.configureKoin() {
 
             // Posts
             single<IPostsRepository> { DatabasePostsRepository(get()) }
+            single<IChildModelSuspendRepository<LikeInPost, String, Unit, Unit, String>>(named<LikeInPost>()) {
+                DatabaseLikesInPostsRepository(get())
+            }
         }
         val useCaseModule = module {
             // Application
@@ -190,6 +196,17 @@ fun Application.configureKoin() {
                 DeletePostUseCase(get())
             }
             single<IGetPostRepliesUseCase> { GetPostRepliesUseCase(get()) }
+            single<IListSliceChildModelSuspendUseCase<LikeInPost, String>>(named<LikeInPost>()) {
+                ListSliceChildModelFromRepositorySuspendUseCase(
+                    get<IChildModelSuspendRepository<LikeInPost, String, Unit, Unit, String>>(named<LikeInPost>())
+                )
+            }
+            single<ICreateChildModelWithContextSuspendUseCase<LikeInPost, Unit, String>>(named<LikeInPost>()) {
+                CreateChildModelWithContextFromRepositorySuspendUseCase(get(named<LikeInPost>()))
+            }
+            single<IDeleteChildModelSuspendUseCase<LikeInPost, String, String>>(named<LikeInPost>()) {
+                DeleteChildModelFromRepositorySuspendUseCase(get(named<LikeInPost>()))
+            }
 
             // Timelines
             single<IGetTimelineByIdUseCase> { GetTimelineByIdUseCase(get()) }
@@ -244,6 +261,14 @@ fun Application.configureKoin() {
                     get()
                 )
             }
+            single<IChildModelController<LikeInPost, String, Unit, Unit, Post, String>>(named<LikeInPost>()) {
+                LikesInPostsController(
+                    get(),
+                    get(named<LikeInPost>()),
+                    get(named<LikeInPost>()),
+                    get(named<LikeInPost>())
+                )
+            }
 
             // Timelines
             single<IModelController<Timeline, String, Unit, Unit>>(named<Timeline>()) {
@@ -258,6 +283,7 @@ fun Application.configureKoin() {
             single { UsersRouter(get()) }
             single { FollowersInUsersRouter(get(), get()) }
             single { PostsRouter(get()) }
+            single { LikesInPostsRouter(get(named<LikeInPost>()), get()) }
             single { TimelinesRouter(get(named<Timeline>())) }
             single { NotificationsRouter() }
         }

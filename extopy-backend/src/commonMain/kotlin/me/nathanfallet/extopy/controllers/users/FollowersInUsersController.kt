@@ -38,9 +38,6 @@ class FollowersInUsersController(
 
     override suspend fun create(call: ApplicationCall, parent: User, payload: Unit): FollowerInUser {
         val user = requireUserForCallUseCase(call) as User
-        if (user.id == parent.id) throw ControllerException(
-            HttpStatusCode.Forbidden, "followers_in_users_follow_self_not_allowed"
-        )
         return createFollowerInUserUseCase(
             payload,
             parent.id,

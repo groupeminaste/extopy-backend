@@ -29,6 +29,7 @@ class FollowersInUsersRouter(
         updateEnabled = false
     ),
     route = "followers",
+    id = "followerId",
     prefix = "/api/v1"
 ) {
 
