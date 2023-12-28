@@ -1,15 +1,16 @@
 package me.nathanfallet.extopy.database.posts
 
-import me.nathanfallet.extopy.database.users.Users
 import me.nathanfallet.extopy.models.posts.LikeInPost
 import me.nathanfallet.extopy.models.posts.Post
 import me.nathanfallet.extopy.models.users.User
-import org.jetbrains.exposed.sql.*
+import org.jetbrains.exposed.sql.ResultRow
+import org.jetbrains.exposed.sql.Table
+import org.jetbrains.exposed.sql.alias
 
 object LikesInPosts : Table() {
 
-    val postId = varchar("post_id", 32)
-    val userId = varchar("user_id", 32)
+    val postId = varchar("post_id", 32).index()
+    val userId = varchar("user_id", 32).index()
 
     val likesIn = LikesInPosts.alias("PostsLikesIn")
 
@@ -25,20 +26,5 @@ object LikesInPosts : Table() {
         post,
         user
     )
-
-    fun customJoin(additionalFields: List<Expression<*>> = listOf()): FieldSet {
-        return LikesInPosts
-            .join(Users, JoinType.LEFT, userId, Users.id)
-            .slice(
-                additionalFields +
-                        postId +
-                        userId +
-                        Users.id +
-                        Users.displayName +
-                        Users.username +
-                        Users.avatar +
-                        Users.verified
-            )
-    }
 
 }

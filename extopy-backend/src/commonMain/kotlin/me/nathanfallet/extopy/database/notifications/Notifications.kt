@@ -10,7 +10,7 @@ import org.jetbrains.exposed.sql.select
 object Notifications : Table() {
 
     val id = varchar("id", 32)
-    val userId = varchar("user_id", 32)
+    val userId = varchar("user_id", 32).index()
     val type = varchar("type", 255)
     val body = varchar("body", 255)
     val contentId = varchar("contentId", 32).nullable()
