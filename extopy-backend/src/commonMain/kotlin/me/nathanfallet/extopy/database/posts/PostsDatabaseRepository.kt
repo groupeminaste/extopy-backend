@@ -10,6 +10,7 @@ import me.nathanfallet.extopy.repositories.posts.IPostsRepository
 import me.nathanfallet.ktorx.database.IDatabase
 import me.nathanfallet.usecases.context.IContext
 import org.jetbrains.exposed.sql.*
+import org.jetbrains.exposed.sql.SqlExpressionBuilder.eq
 
 class PostsDatabaseRepository(
     private val database: IDatabase,
@@ -112,7 +113,7 @@ class PostsDatabaseRepository(
     override suspend fun delete(id: String, context: IContext?): Boolean {
         return database.dbQuery {
             Posts.deleteWhere {
-                Op.build { Posts.id eq id }
+                Posts.id eq id
             }
         } == 1
     }

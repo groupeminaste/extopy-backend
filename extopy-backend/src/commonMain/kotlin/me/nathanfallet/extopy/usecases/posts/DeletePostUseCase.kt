@@ -13,10 +13,10 @@ class DeletePostUseCase(
         /*
         // TODO: Delete related data
         LikesInPosts.deleteWhere {
-            Op.build { postId eq id }
+           postId eq id
         }
         Posts.deleteWhere {
-            Op.build { Posts.id eq id }
+            Posts.id eq id
         }
         Posts.selectAll().where {
             repliedToId eq id or (repostOfId eq id)

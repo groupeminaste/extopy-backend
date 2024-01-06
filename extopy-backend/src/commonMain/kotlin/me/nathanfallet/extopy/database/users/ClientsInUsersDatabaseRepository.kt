@@ -4,7 +4,7 @@ import kotlinx.datetime.Instant
 import me.nathanfallet.extopy.models.users.ClientInUser
 import me.nathanfallet.extopy.repositories.users.IClientsInUsersRepository
 import me.nathanfallet.ktorx.database.IDatabase
-import org.jetbrains.exposed.sql.Op
+import org.jetbrains.exposed.sql.SqlExpressionBuilder.eq
 import org.jetbrains.exposed.sql.deleteWhere
 import org.jetbrains.exposed.sql.insert
 import org.jetbrains.exposed.sql.selectAll
@@ -37,7 +37,7 @@ class ClientsInUsersDatabaseRepository(
     override suspend fun delete(code: String): Boolean {
         return database.dbQuery {
             ClientsInUsers.deleteWhere {
-                Op.build { ClientsInUsers.code eq code }
+                ClientsInUsers.code eq code
             }
         } == 1
     }

@@ -62,13 +62,13 @@ class Database(
     private suspend fun doExpiration() {
         dbQuery {
             Authorizes.deleteWhere {
-                Op.build { expiration less Clock.System.now().toString() }
+                expiration less Clock.System.now().toString()
             }
             Notifications.deleteWhere {
-                Op.build { expiration less Clock.System.now().toString() }
+                expiration less Clock.System.now().toString()
             }
             NotificationsTokens.deleteWhere {
-                Op.build { expiration less Clock.System.now().toString() }
+                expiration less Clock.System.now().toString()
             }
             Posts.selectAll().where {
                 Posts.expiration less Clock.System.now().toString()
