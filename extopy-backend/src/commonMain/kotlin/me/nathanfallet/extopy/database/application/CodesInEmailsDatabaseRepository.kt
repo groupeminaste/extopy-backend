@@ -1,19 +1,24 @@
 package me.nathanfallet.extopy.database.application
 
 import kotlinx.datetime.Instant
-import me.nathanfallet.extopy.database.Database
 import me.nathanfallet.extopy.models.application.CodeInEmail
 import me.nathanfallet.extopy.repositories.application.ICodesInEmailsRepository
-import org.jetbrains.exposed.sql.*
+import me.nathanfallet.ktorx.database.IDatabase
+import org.jetbrains.exposed.sql.SqlExpressionBuilder.eq
+import org.jetbrains.exposed.sql.deleteWhere
+import org.jetbrains.exposed.sql.insert
+import org.jetbrains.exposed.sql.selectAll
+import org.jetbrains.exposed.sql.update
 
-class DatabaseCodesInEmailsRepository(
-    private val database: Database,
+class CodesInEmailsDatabaseRepository(
+    private val database: IDatabase,
 ) : ICodesInEmailsRepository {
 
     override suspend fun getCodeInEmail(code: String): CodeInEmail? {
         return database.dbQuery {
             CodesInEmails
-                .select { CodesInEmails.code eq code }
+                .selectAll()
+                .where { CodesInEmails.code eq code }
                 .map(CodesInEmails::toCodeInEmail)
                 .singleOrNull()
         }
@@ -22,7 +27,8 @@ class DatabaseCodesInEmailsRepository(
     override suspend fun getCodesInEmailsExpiringBefore(date: Instant): List<CodeInEmail> {
         return database.dbQuery {
             CodesInEmails
-                .select { CodesInEmails.expiresAt less date.toString() }
+                .selectAll()
+                .where { CodesInEmails.expiresAt less date.toString() }
                 .map(CodesInEmails::toCodeInEmail)
         }
     }
@@ -57,7 +63,7 @@ class DatabaseCodesInEmailsRepository(
     override suspend fun deleteCodeInEmail(code: String) {
         database.dbQuery {
             CodesInEmails.deleteWhere {
-                Op.build { CodesInEmails.code eq code }
+                CodesInEmails.code eq code
             }
         }
     }

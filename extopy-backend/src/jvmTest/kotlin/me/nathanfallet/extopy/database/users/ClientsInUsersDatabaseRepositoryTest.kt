@@ -8,14 +8,14 @@ import kotlin.test.Test
 import kotlin.test.assertEquals
 import kotlin.test.fail
 
-class DatabaseClientsInUsersRepositoryTest {
+class ClientsInUsersDatabaseRepositoryTest {
 
     private val now = Clock.System.now()
 
     @Test
     fun createClientInUser() = runBlocking {
         val database = Database(protocol = "h2", name = "createClientInUser")
-        val repository = DatabaseClientsInUsersRepository(database)
+        val repository = ClientsInUsersDatabaseRepository(database)
         val clientInUser = repository.create("userId", "clientId", now)
         val clientInUserFromDatabase = database.dbQuery {
             ClientsInUsers
@@ -35,7 +35,7 @@ class DatabaseClientsInUsersRepositoryTest {
     @Test
     fun getClientInUser() = runBlocking {
         val database = Database(protocol = "h2", name = "getClientInUser")
-        val repository = DatabaseClientsInUsersRepository(database)
+        val repository = ClientsInUsersDatabaseRepository(database)
         val clientInUser = repository.create(
             "userId", "clientId", now
         ) ?: fail("Unable to create clientInUser")
@@ -49,7 +49,7 @@ class DatabaseClientsInUsersRepositoryTest {
     @Test
     fun getClientInUserNotFound() = runBlocking {
         val database = Database(protocol = "h2", name = "getClientInUserNotFound")
-        val repository = DatabaseClientsInUsersRepository(database)
+        val repository = ClientsInUsersDatabaseRepository(database)
         val result = repository.get("code")
         assertEquals(null, result)
     }
@@ -57,7 +57,7 @@ class DatabaseClientsInUsersRepositoryTest {
     @Test
     fun deleteClientInUser() = runBlocking {
         val database = Database(protocol = "h2", name = "deleteClientInUser")
-        val repository = DatabaseClientsInUsersRepository(database)
+        val repository = ClientsInUsersDatabaseRepository(database)
         val clientInUser = repository.create(
             "userId", "clientId", now
         ) ?: fail("Unable to create clientInUser")
@@ -71,14 +71,14 @@ class DatabaseClientsInUsersRepositoryTest {
     @Test
     fun deleteClientInUserNotFound() = runBlocking {
         val database = Database(protocol = "h2", name = "deleteClientInUserNotFound")
-        val repository = DatabaseClientsInUsersRepository(database)
+        val repository = ClientsInUsersDatabaseRepository(database)
         assertEquals(false, repository.delete("code"))
     }
 
     @Test
     fun deleteClientInUserWrong() = runBlocking {
         val database = Database(protocol = "h2", name = "deleteClientInUserWrong")
-        val repository = DatabaseClientsInUsersRepository(database)
+        val repository = ClientsInUsersDatabaseRepository(database)
         repository.create(
             "userId", "clientId", now
         ) ?: fail("Unable to create clientInUser")

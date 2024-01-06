@@ -18,7 +18,7 @@ class DeletePostUseCase(
         Posts.deleteWhere {
             Op.build { Posts.id eq id }
         }
-        Posts.select {
+        Posts.selectAll().where {
             repliedToId eq id or (repostOfId eq id)
         }.forEach {
             delete(it[Posts.id])

@@ -1,18 +1,18 @@
 package me.nathanfallet.extopy.database.posts
 
 import kotlinx.datetime.Clock
-import me.nathanfallet.extopy.database.Database
 import me.nathanfallet.extopy.database.users.FollowersInUsers
 import me.nathanfallet.extopy.database.users.Users
 import me.nathanfallet.extopy.models.posts.Post
 import me.nathanfallet.extopy.models.posts.PostPayload
 import me.nathanfallet.extopy.models.users.UserContext
 import me.nathanfallet.extopy.repositories.posts.IPostsRepository
+import me.nathanfallet.ktorx.database.IDatabase
 import me.nathanfallet.usecases.context.IContext
 import org.jetbrains.exposed.sql.*
 
-class DatabasePostsRepository(
-    private val database: Database,
+class PostsDatabaseRepository(
+    private val database: IDatabase,
 ) : IPostsRepository {
 
     override suspend fun listDefault(limit: Long, offset: Long, context: UserContext): List<Post> {
@@ -25,7 +25,7 @@ class DatabasePostsRepository(
                     FollowersInUsers.targetId
                 )
                 .customPostsSlice()
-                .select {
+                .where {
                     Posts.userId eq context.userId or
                             (FollowersInUsers.userId eq context.userId and
                                     (FollowersInUsers.accepted eq true))
@@ -40,7 +40,6 @@ class DatabasePostsRepository(
     override suspend fun listTrends(limit: Long, offset: Long, context: UserContext): List<Post> {
         return database.dbQuery {
             customJoin(context.userId)
-                .selectAll()
                 .groupBy(Posts.id)
                 .orderBy(Posts.trendsCount to SortOrder.DESC)
                 .limit(limit.toInt(), offset)
@@ -51,7 +50,7 @@ class DatabasePostsRepository(
     override suspend fun listUserPosts(userId: String, limit: Long, offset: Long, context: UserContext): List<Post> {
         return database.dbQuery {
             customJoin(context.userId)
-                .select { Posts.userId eq userId }
+                .where { Posts.userId eq userId }
                 .groupBy(Posts.id)
                 .orderBy(Posts.published to SortOrder.DESC)
                 .limit(limit.toInt(), offset)
@@ -62,7 +61,7 @@ class DatabasePostsRepository(
     override suspend fun listReplies(postId: String, limit: Long, offset: Long, context: UserContext): List<Post> {
         return database.dbQuery {
             customJoin(context.userId)
-                .select { Posts.repliedToId eq postId }
+                .where { Posts.repliedToId eq postId }
                 .groupBy(Posts.id)
                 .orderBy(Posts.published to SortOrder.DESC)
                 .limit(limit.toInt(), offset)
@@ -74,7 +73,7 @@ class DatabasePostsRepository(
         if (context !is UserContext) return null
         return database.dbQuery {
             customJoin(context.userId)
-                .select { Posts.id eq id }
+                .where { Posts.id eq id }
                 .groupBy(Posts.id)
                 .map { Posts.toPost(it, Users.toUser(it)) }
                 .singleOrNull()
@@ -118,7 +117,7 @@ class DatabasePostsRepository(
         } == 1
     }
 
-    private fun customJoin(viewedBy: String): FieldSet {
+    private fun customJoin(viewedBy: String): Query {
         return customJoinColumnSet(viewedBy).customPostsSlice()
     }
 
@@ -135,8 +134,8 @@ class DatabasePostsRepository(
             ) { LikesInPosts.likesIn[LikesInPosts.userId] eq viewedBy }
     }
 
-    private fun ColumnSet.customPostsSlice(additionalFields: List<Expression<*>> = listOf()): FieldSet {
-        return slice(
+    private fun ColumnSet.customPostsSlice(additionalFields: List<Expression<*>> = listOf()): Query {
+        return select(
             Posts.columns +
                     Users.id +
                     Users.displayName +

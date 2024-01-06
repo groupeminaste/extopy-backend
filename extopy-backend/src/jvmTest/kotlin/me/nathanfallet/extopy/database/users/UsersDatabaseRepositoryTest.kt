@@ -11,12 +11,12 @@ import kotlin.test.Test
 import kotlin.test.assertEquals
 import kotlin.test.fail
 
-class DatabaseUsersRepositoryTest {
+class UsersDatabaseRepositoryTest {
 
     @Test
     fun createUser() = runBlocking {
         val database = Database(protocol = "h2", name = "createUser")
-        val repository = DatabaseUsersRepository(database)
+        val repository = UsersDatabaseRepository(database)
         val user = repository.create(
             CreateUserPayload(
                 "username", "displayName", "email", "password",
@@ -47,7 +47,7 @@ class DatabaseUsersRepositoryTest {
     @Test
     fun getUser() = runBlocking {
         val database = Database(protocol = "h2", name = "getUser")
-        val repository = DatabaseUsersRepository(database)
+        val repository = UsersDatabaseRepository(database)
         val user = repository.create(
             CreateUserPayload(
                 "username", "displayName", "email", "password",
@@ -66,7 +66,7 @@ class DatabaseUsersRepositoryTest {
     @Test
     fun getUserNotExists() = runBlocking {
         val database = Database(protocol = "h2", name = "getUserNotExists")
-        val repository = DatabaseUsersRepository(database)
+        val repository = UsersDatabaseRepository(database)
         val user = repository.create(
             CreateUserPayload(
                 "username", "displayName", "email", "password",
@@ -79,7 +79,7 @@ class DatabaseUsersRepositoryTest {
     @Test
     fun getUserNoContext() = runBlocking {
         val database = Database(protocol = "h2", name = "getUserNoContext")
-        val repository = DatabaseUsersRepository(database)
+        val repository = UsersDatabaseRepository(database)
         val user = repository.create(
             CreateUserPayload(
                 "username", "displayName", "email", "password",
@@ -92,7 +92,7 @@ class DatabaseUsersRepositoryTest {
     @Test
     fun getUserForEmail() = runBlocking {
         val database = Database(protocol = "h2", name = "getUserForEmail")
-        val repository = DatabaseUsersRepository(database)
+        val repository = UsersDatabaseRepository(database)
         val user = repository.create(
             CreateUserPayload(
                 "username", "displayName", "email", "password",
@@ -111,7 +111,7 @@ class DatabaseUsersRepositoryTest {
     @Test
     fun getUserForEmailWithPassword() = runBlocking {
         val database = Database(protocol = "h2", name = "getUserForEmailWithPassword")
-        val repository = DatabaseUsersRepository(database)
+        val repository = UsersDatabaseRepository(database)
         val user = repository.create(
             CreateUserPayload(
                 "username", "displayName", "email", "password",
@@ -130,7 +130,7 @@ class DatabaseUsersRepositoryTest {
     @Test
     fun updateUser() = runBlocking {
         val database = Database(protocol = "h2", name = "updateUser")
-        val repository = DatabaseUsersRepository(database)
+        val repository = UsersDatabaseRepository(database)
         val user = repository.create(
             CreateUserPayload(
                 "username", "displayName", "email", "password",
@@ -162,7 +162,7 @@ class DatabaseUsersRepositoryTest {
     @Test
     fun updateUserNotExists() = runBlocking {
         val database = Database(protocol = "h2", name = "updateUserNotExists")
-        val repository = DatabaseUsersRepository(database)
+        val repository = UsersDatabaseRepository(database)
         val payload = UpdateUserPayload("username2", "displayName2", null, "biography2")
         assertEquals(false, repository.update("userId", payload))
     }

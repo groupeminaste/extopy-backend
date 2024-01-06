@@ -51,9 +51,8 @@ kotlin {
     val coroutinesVersion = "1.7.3"
     val ktorVersion = "2.3.7"
     val koinVersion = "3.5.0"
-    val exposedVersion = "0.40.1"
     val logbackVersion = "0.9.30"
-    val ktorxVersion = "1.8.5"
+    val ktorxVersion = "1.9.0"
 
     sourceSets {
         val commonMain by getting {
@@ -78,14 +77,11 @@ kotlin {
                 implementation("io.insert-koin:koin-core:$koinVersion")
                 implementation("io.insert-koin:koin-ktor:$koinVersion")
 
-                implementation("org.jetbrains.exposed:exposed-core:$exposedVersion")
-                implementation("org.jetbrains.exposed:exposed-jdbc:$exposedVersion")
-                implementation("org.jetbrains.exposed:exposed-dao:$exposedVersion")
-
                 implementation("ch.qos.logback:logback-core:$logbackVersion")
                 implementation("ch.qos.logback:logback-classic:$logbackVersion")
 
                 implementation("me.nathanfallet.i18n:i18n:1.0.9")
+                implementation("me.nathanfallet.ktorx:ktor-databases:$ktorxVersion")
                 implementation("me.nathanfallet.ktorx:ktor-i18n:$ktorxVersion")
                 implementation("me.nathanfallet.ktorx:ktor-i18n-freemarker:$ktorxVersion")
                 implementation("me.nathanfallet.ktorx:ktor-routers:$ktorxVersion")

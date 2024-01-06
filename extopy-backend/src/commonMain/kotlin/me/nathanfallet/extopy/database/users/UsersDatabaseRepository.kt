@@ -1,25 +1,25 @@
 package me.nathanfallet.extopy.database.users
 
 import kotlinx.datetime.Clock
-import me.nathanfallet.extopy.database.Database
 import me.nathanfallet.extopy.database.posts.Posts
 import me.nathanfallet.extopy.models.users.CreateUserPayload
 import me.nathanfallet.extopy.models.users.UpdateUserPayload
 import me.nathanfallet.extopy.models.users.User
 import me.nathanfallet.extopy.models.users.UserContext
 import me.nathanfallet.extopy.repositories.users.IUsersRepository
+import me.nathanfallet.ktorx.database.IDatabase
 import me.nathanfallet.usecases.context.IContext
 import org.jetbrains.exposed.sql.*
 
-class DatabaseUsersRepository(
-    private val database: Database,
+class UsersDatabaseRepository(
+    private val database: IDatabase,
 ) : IUsersRepository {
 
     override suspend fun get(id: String, context: IContext?): User? {
         if (context !is UserContext) return null
         return database.dbQuery {
             customJoin(context.userId)
-                .select { Users.id eq id }
+                .where { Users.id eq id }
                 .groupBy(Users.id)
                 .map(Users::toUser)
                 .singleOrNull()
@@ -29,7 +29,8 @@ class DatabaseUsersRepository(
     override suspend fun getForUsernameOrEmail(username: String, includePassword: Boolean): User? {
         return database.dbQuery {
             Users
-                .select { Users.username eq username or (Users.email eq username) }
+                .selectAll()
+                .where { Users.username eq username or (Users.email eq username) }
                 .map {
                     Users.toUser(it, includePassword)
                 }
@@ -82,7 +83,7 @@ class DatabaseUsersRepository(
         TODO("Not yet implemented")
     }
 
-    private fun customJoin(viewedBy: String, additionalFields: List<Expression<*>> = listOf()): FieldSet {
+    private fun customJoin(viewedBy: String, additionalFields: List<Expression<*>> = listOf()): Query {
         return Users.join(Posts, JoinType.LEFT, Users.id, Posts.userId)
             .join(FollowersInUsers, JoinType.LEFT, Users.id, FollowersInUsers.targetId)
             .join(
@@ -109,7 +110,7 @@ class DatabaseUsersRepository(
                 FollowersInUsers.followingIn[FollowersInUsers.targetId] eq viewedBy and
                         (FollowersInUsers.followingIn[FollowersInUsers.accepted] eq true)
             }
-            .slice(
+            .select(
                 additionalFields +
                         Users.id +
                         Users.displayName +

@@ -7,12 +7,12 @@ import kotlin.test.Test
 import kotlin.test.assertEquals
 import kotlin.test.fail
 
-class DatabaseClientsRepositoryTest {
+class ClientsDatabaseRepositoryTest {
 
     @Test
     fun getClient() = runBlocking {
         val database = Database(protocol = "h2", name = "getClient")
-        val repository = DatabaseClientsRepository(database)
+        val repository = ClientsDatabaseRepository(database)
         val client = database.dbQuery {
             Clients.insert {
                 it[id] = "id"

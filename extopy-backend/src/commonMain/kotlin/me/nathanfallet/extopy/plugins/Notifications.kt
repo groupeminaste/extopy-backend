@@ -38,7 +38,7 @@ object NotificationsPlugin {
                         NotificationsTokens.userId,
                         Users.id
                     )
-                        .select { NotificationsTokens.userId eq userId }
+                        .selectAll().where { NotificationsTokens.userId eq userId }
                         .map { NotificationToken(it, User(it)) }
                 }
             }

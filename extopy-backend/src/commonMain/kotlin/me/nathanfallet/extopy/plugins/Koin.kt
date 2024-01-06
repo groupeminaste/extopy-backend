@@ -8,13 +8,13 @@ import me.nathanfallet.extopy.controllers.timelines.TimelinesController
 import me.nathanfallet.extopy.controllers.timelines.TimelinesRouter
 import me.nathanfallet.extopy.controllers.users.*
 import me.nathanfallet.extopy.database.Database
-import me.nathanfallet.extopy.database.application.DatabaseClientsRepository
-import me.nathanfallet.extopy.database.application.DatabaseCodesInEmailsRepository
-import me.nathanfallet.extopy.database.posts.DatabaseLikesInPostsRepository
-import me.nathanfallet.extopy.database.posts.DatabasePostsRepository
-import me.nathanfallet.extopy.database.users.DatabaseClientsInUsersRepository
-import me.nathanfallet.extopy.database.users.DatabaseFollowersInUsersRepository
-import me.nathanfallet.extopy.database.users.DatabaseUsersRepository
+import me.nathanfallet.extopy.database.application.ClientsDatabaseRepository
+import me.nathanfallet.extopy.database.application.CodesInEmailsDatabaseRepository
+import me.nathanfallet.extopy.database.posts.LikesInPostsDatabaseRepository
+import me.nathanfallet.extopy.database.posts.PostsDatabaseRepository
+import me.nathanfallet.extopy.database.users.ClientsInUsersDatabaseRepository
+import me.nathanfallet.extopy.database.users.FollowersInUsersDatabaseRepository
+import me.nathanfallet.extopy.database.users.UsersDatabaseRepository
 import me.nathanfallet.extopy.models.application.Client
 import me.nathanfallet.extopy.models.auth.LoginPayload
 import me.nathanfallet.extopy.models.auth.RegisterCodePayload
@@ -47,6 +47,9 @@ import me.nathanfallet.ktorx.controllers.IChildModelController
 import me.nathanfallet.ktorx.controllers.IModelController
 import me.nathanfallet.ktorx.controllers.auth.AuthWithCodeController
 import me.nathanfallet.ktorx.controllers.auth.IAuthWithCodeController
+import me.nathanfallet.ktorx.database.IDatabase
+import me.nathanfallet.ktorx.database.sessions.SessionsDatabaseRepository
+import me.nathanfallet.ktorx.repositories.sessions.ISessionsRepository
 import me.nathanfallet.ktorx.usecases.auth.*
 import me.nathanfallet.ktorx.usecases.localization.GetLocaleForCallUseCase
 import me.nathanfallet.ktorx.usecases.localization.IGetLocaleForCallUseCase
@@ -78,7 +81,7 @@ import org.koin.ktor.plugin.Koin
 fun Application.configureKoin() {
     install(Koin) {
         val databaseModule = module {
-            single {
+            single<IDatabase> {
                 Database(
                     environment.config.property("database.protocol").getString(),
                     environment.config.property("database.host").getString(),
@@ -105,20 +108,21 @@ fun Application.configureKoin() {
         }
         val repositoryModule = module {
             // Application
-            single<ICodesInEmailsRepository> { DatabaseCodesInEmailsRepository(get()) }
+            single<ICodesInEmailsRepository> { CodesInEmailsDatabaseRepository(get()) }
             single<IModelSuspendRepository<Client, String, Unit, Unit>>(named<Client>()) {
-                DatabaseClientsRepository(get())
+                ClientsDatabaseRepository(get())
             }
+            single<ISessionsRepository> { SessionsDatabaseRepository(get()) }
 
             // Users
-            single<IUsersRepository> { DatabaseUsersRepository(get()) }
-            single<IClientsInUsersRepository> { DatabaseClientsInUsersRepository(get()) }
-            single<IFollowersInUsersRepository> { DatabaseFollowersInUsersRepository(get()) }
+            single<IUsersRepository> { UsersDatabaseRepository(get()) }
+            single<IClientsInUsersRepository> { ClientsInUsersDatabaseRepository(get()) }
+            single<IFollowersInUsersRepository> { FollowersInUsersDatabaseRepository(get()) }
 
             // Posts
-            single<IPostsRepository> { DatabasePostsRepository(get()) }
+            single<IPostsRepository> { PostsDatabaseRepository(get()) }
             single<IChildModelSuspendRepository<LikeInPost, String, Unit, Unit, String>>(named<LikeInPost>()) {
-                DatabaseLikesInPostsRepository(get())
+                LikesInPostsDatabaseRepository(get())
             }
         }
         val useCaseModule = module {

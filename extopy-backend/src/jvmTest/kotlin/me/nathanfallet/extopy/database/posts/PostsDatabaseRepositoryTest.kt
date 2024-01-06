@@ -4,7 +4,7 @@ import kotlinx.coroutines.runBlocking
 import kotlinx.datetime.Clock
 import kotlinx.datetime.LocalDate
 import me.nathanfallet.extopy.database.Database
-import me.nathanfallet.extopy.database.users.DatabaseUsersRepository
+import me.nathanfallet.extopy.database.users.UsersDatabaseRepository
 import me.nathanfallet.extopy.models.posts.PostPayload
 import me.nathanfallet.extopy.models.users.CreateUserPayload
 import me.nathanfallet.extopy.models.users.UserContext
@@ -14,13 +14,13 @@ import kotlin.test.assertEquals
 import kotlin.test.assertTrue
 import kotlin.test.fail
 
-class DatabasePostsRepositoryTest {
+class PostsDatabaseRepositoryTest {
 
     @Test
     fun createPost() = runBlocking {
         val database = Database(protocol = "h2", name = "createPost")
-        val repository = DatabasePostsRepository(database)
-        val user = DatabaseUsersRepository(database).create(
+        val repository = PostsDatabaseRepository(database)
+        val user = UsersDatabaseRepository(database).create(
             CreateUserPayload(
                 "username", "displayName", "email", "password",
                 LocalDate(2002, 12, 24)
@@ -57,7 +57,7 @@ class DatabasePostsRepositoryTest {
     @Test
     fun createPostNoContext() = runBlocking {
         val database = Database(protocol = "h2", name = "createPostNoContext")
-        val repository = DatabasePostsRepository(database)
+        val repository = PostsDatabaseRepository(database)
         assertEquals(
             null, repository.create(
                 PostPayload("body", null, null)
@@ -68,8 +68,8 @@ class DatabasePostsRepositoryTest {
     @Test
     fun getPost() = runBlocking {
         val database = Database(protocol = "h2", name = "getPost")
-        val repository = DatabasePostsRepository(database)
-        val user = DatabaseUsersRepository(database).create(
+        val repository = PostsDatabaseRepository(database)
+        val user = UsersDatabaseRepository(database).create(
             CreateUserPayload(
                 "username", "displayName", "email", "password",
                 LocalDate(2002, 12, 24)
@@ -97,8 +97,8 @@ class DatabasePostsRepositoryTest {
     @Test
     fun getPostNotExists() = runBlocking {
         val database = Database(protocol = "h2", name = "getPostNotExists")
-        val repository = DatabasePostsRepository(database)
-        val user = DatabaseUsersRepository(database).create(
+        val repository = PostsDatabaseRepository(database)
+        val user = UsersDatabaseRepository(database).create(
             CreateUserPayload(
                 "username", "displayName", "email", "password",
                 LocalDate(2002, 12, 24)
@@ -114,8 +114,8 @@ class DatabasePostsRepositoryTest {
     @Test
     fun getPostNoContext() = runBlocking {
         val database = Database(protocol = "h2", name = "getPostNoContext")
-        val repository = DatabasePostsRepository(database)
-        val user = DatabaseUsersRepository(database).create(
+        val repository = PostsDatabaseRepository(database)
+        val user = UsersDatabaseRepository(database).create(
             CreateUserPayload(
                 "username", "displayName", "email", "password",
                 LocalDate(2002, 12, 24)
@@ -131,8 +131,8 @@ class DatabasePostsRepositoryTest {
     @Test
     fun updatePost() = runBlocking {
         val database = Database(protocol = "h2", name = "updatePost")
-        val repository = DatabasePostsRepository(database)
-        val user = DatabaseUsersRepository(database).create(
+        val repository = PostsDatabaseRepository(database)
+        val user = UsersDatabaseRepository(database).create(
             CreateUserPayload(
                 "username", "displayName", "email", "password",
                 LocalDate(2002, 12, 24)
@@ -172,8 +172,8 @@ class DatabasePostsRepositoryTest {
     @Test
     fun updatePostNotExists() = runBlocking {
         val database = Database(protocol = "h2", name = "updatePostNotExists")
-        val repository = DatabasePostsRepository(database)
-        val user = DatabaseUsersRepository(database).create(
+        val repository = PostsDatabaseRepository(database)
+        val user = UsersDatabaseRepository(database).create(
             CreateUserPayload(
                 "username", "displayName", "email", "password",
                 LocalDate(2002, 12, 24)
@@ -194,8 +194,8 @@ class DatabasePostsRepositoryTest {
     @Test
     fun deletePost() = runBlocking {
         val database = Database(protocol = "h2", name = "deletePost")
-        val repository = DatabasePostsRepository(database)
-        val user = DatabaseUsersRepository(database).create(
+        val repository = PostsDatabaseRepository(database)
+        val user = UsersDatabaseRepository(database).create(
             CreateUserPayload(
                 "username", "displayName", "email", "password",
                 LocalDate(2002, 12, 24)
@@ -217,8 +217,8 @@ class DatabasePostsRepositoryTest {
     @Test
     fun deletePostNotExists() = runBlocking {
         val database = Database(protocol = "h2", name = "deletePostNotExists")
-        val repository = DatabasePostsRepository(database)
-        val user = DatabaseUsersRepository(database).create(
+        val repository = PostsDatabaseRepository(database)
+        val user = UsersDatabaseRepository(database).create(
             CreateUserPayload(
                 "username", "displayName", "email", "password",
                 LocalDate(2002, 12, 24)

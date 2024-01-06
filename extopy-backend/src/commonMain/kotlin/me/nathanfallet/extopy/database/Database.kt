@@ -10,6 +10,8 @@ import me.nathanfallet.extopy.database.posts.Posts
 import me.nathanfallet.extopy.database.users.ClientsInUsers
 import me.nathanfallet.extopy.database.users.FollowersInUsers
 import me.nathanfallet.extopy.database.users.Users
+import me.nathanfallet.ktorx.database.IDatabase
+import me.nathanfallet.ktorx.database.sessions.Sessions
 import org.jetbrains.exposed.sql.SchemaUtils
 import org.jetbrains.exposed.sql.transactions.experimental.newSuspendedTransaction
 import org.jetbrains.exposed.sql.transactions.transaction
@@ -20,7 +22,7 @@ class Database(
     name: String = "",
     user: String = "",
     password: String = "",
-) {
+) : IDatabase {
 
     // Connect to database
     private val database: org.jetbrains.exposed.sql.Database = when (protocol) {
@@ -38,6 +40,7 @@ class Database(
 
     init {
         transaction(database) {
+            SchemaUtils.create(Sessions)
             SchemaUtils.create(Clients)
             SchemaUtils.create(CodesInEmails)
             SchemaUtils.create(Users)
@@ -50,7 +53,7 @@ class Database(
         }
     }
 
-    suspend fun <T> dbQuery(block: suspend () -> T): T =
+    override suspend fun <T> dbQuery(block: suspend () -> T): T =
         newSuspendedTransaction(Dispatchers.IO, database) { block() }
 
 }
@@ -67,7 +70,7 @@ class Database(
             NotificationsTokens.deleteWhere {
                 Op.build { expiration less Clock.System.now().toString() }
             }
-            Posts.select {
+            Posts.selectAll().where {
                 Posts.expiration less Clock.System.now().toString()
             }.forEach {
                 Posts.delete(it[Posts.id])
