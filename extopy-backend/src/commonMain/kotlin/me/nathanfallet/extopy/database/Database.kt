@@ -1,18 +1,8 @@
 package me.nathanfallet.extopy.database
 
 import kotlinx.coroutines.Dispatchers
-import me.nathanfallet.extopy.database.application.Clients
-import me.nathanfallet.extopy.database.application.CodesInEmails
-import me.nathanfallet.extopy.database.notifications.Notifications
-import me.nathanfallet.extopy.database.notifications.TokensInNotifications
-import me.nathanfallet.extopy.database.posts.LikesInPosts
-import me.nathanfallet.extopy.database.posts.Posts
-import me.nathanfallet.extopy.database.users.ClientsInUsers
-import me.nathanfallet.extopy.database.users.FollowersInUsers
-import me.nathanfallet.extopy.database.users.Users
 import me.nathanfallet.ktorx.database.IDatabase
-import me.nathanfallet.ktorx.database.sessions.Sessions
-import org.jetbrains.exposed.sql.SchemaUtils
+import org.jetbrains.exposed.sql.Transaction
 import org.jetbrains.exposed.sql.transactions.experimental.newSuspendedTransaction
 import org.jetbrains.exposed.sql.transactions.transaction
 
@@ -38,23 +28,10 @@ class Database(
         else -> throw Exception("Unsupported database protocol: $protocol")
     }
 
-    init {
-        transaction(database) {
-            SchemaUtils.create(Sessions)
-            SchemaUtils.create(Clients)
-            SchemaUtils.create(CodesInEmails)
-            SchemaUtils.create(Users)
-            SchemaUtils.create(ClientsInUsers)
-            SchemaUtils.create(FollowersInUsers)
-            SchemaUtils.create(Notifications)
-            SchemaUtils.create(TokensInNotifications)
-            SchemaUtils.create(Posts)
-            SchemaUtils.create(LikesInPosts)
-        }
-    }
+    override fun <T> transaction(statement: Transaction.() -> T): T = transaction(database, statement)
 
-    override suspend fun <T> dbQuery(block: suspend () -> T): T =
-        newSuspendedTransaction(Dispatchers.IO, database) { block() }
+    override suspend fun <T> suspendedTransaction(statement: suspend Transaction.() -> T): T =
+        newSuspendedTransaction(Dispatchers.IO, database) { statement() }
 
 }
 

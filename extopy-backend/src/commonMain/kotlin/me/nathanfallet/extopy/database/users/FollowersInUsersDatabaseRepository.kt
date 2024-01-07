@@ -12,8 +12,14 @@ class FollowersInUsersDatabaseRepository(
     private val database: IDatabase,
 ) : IFollowersInUsersRepository {
 
+    init {
+        database.transaction {
+            SchemaUtils.create(FollowersInUsers)
+        }
+    }
+
     override suspend fun list(limit: Long, offset: Long, parentId: String, context: IContext?): List<FollowerInUser> {
-        return database.dbQuery {
+        return database.suspendedTransaction {
             customFollowersJoin()
                 .where { FollowersInUsers.targetId eq parentId and (FollowersInUsers.accepted eq true) }
                 .limit(limit.toInt(), offset)
@@ -27,7 +33,7 @@ class FollowersInUsersDatabaseRepository(
         parentId: String,
         context: IContext?,
     ): List<FollowerInUser> {
-        return database.dbQuery {
+        return database.suspendedTransaction {
             customFollowingJoin()
                 .where { FollowersInUsers.userId eq parentId and (FollowersInUsers.accepted eq true) }
                 .limit(limit.toInt(), offset)
@@ -37,7 +43,7 @@ class FollowersInUsersDatabaseRepository(
 
     override suspend fun create(payload: Unit, parentId: String, context: IContext?): FollowerInUser? {
         if (context !is FollowerInUserContext) return null
-        return database.dbQuery {
+        return database.suspendedTransaction {
             FollowersInUsers.insert {
                 it[userId] = context.userId
                 it[targetId] = parentId
@@ -47,7 +53,7 @@ class FollowersInUsersDatabaseRepository(
     }
 
     override suspend fun delete(id: String, parentId: String, context: IContext?): Boolean {
-        return database.dbQuery {
+        return database.suspendedTransaction {
             FollowersInUsers.deleteWhere {
                 userId eq id and (targetId eq parentId)
             }

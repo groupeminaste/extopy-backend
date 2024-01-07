@@ -8,7 +8,7 @@ import me.nathanfallet.extopy.models.users.User
 import org.jetbrains.exposed.sql.ResultRow
 import org.jetbrains.exposed.sql.Table
 import org.jetbrains.exposed.sql.countDistinct
-import org.jetbrains.exposed.sql.select
+import org.jetbrains.exposed.sql.selectAll
 
 object Users : Table() {
 
@@ -36,7 +36,7 @@ object Users : Table() {
 
     fun generateId(): String {
         val candidate = String.generateId()
-        return if (select { id eq candidate }.count() > 0) generateId() else candidate
+        return if (selectAll().where { id eq candidate }.count() > 0) generateId() else candidate
     }
 
     fun toUser(

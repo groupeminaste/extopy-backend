@@ -35,7 +35,7 @@ object Posts : Table() {
 
     fun generateId(): String {
         val candidate = String.generateId()
-        return if (select { id eq candidate }.count() > 0) generateId() else candidate
+        return if (selectAll().where { id eq candidate }.count() > 0) generateId() else candidate
     }
 
     fun toPost(

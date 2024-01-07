@@ -8,6 +8,8 @@ import me.nathanfallet.extopy.database.users.UsersDatabaseRepository
 import me.nathanfallet.extopy.models.posts.PostPayload
 import me.nathanfallet.extopy.models.users.CreateUserPayload
 import me.nathanfallet.extopy.models.users.UserContext
+import me.nathanfallet.extopy.repositories.posts.IPostsRepository
+import me.nathanfallet.ktorx.database.IDatabase
 import org.jetbrains.exposed.sql.selectAll
 import kotlin.test.Test
 import kotlin.test.assertEquals
@@ -16,10 +18,15 @@ import kotlin.test.fail
 
 class PostsDatabaseRepositoryTest {
 
+    private fun createRepository(database: IDatabase): IPostsRepository {
+        LikesInPostsDatabaseRepository(database)
+        return PostsDatabaseRepository(database)
+    }
+
     @Test
     fun createPost() = runBlocking {
         val database = Database(protocol = "h2", name = "createPost")
-        val repository = PostsDatabaseRepository(database)
+        val repository = createRepository(database)
         val user = UsersDatabaseRepository(database).create(
             CreateUserPayload(
                 "username", "displayName", "email", "password",
@@ -30,7 +37,7 @@ class PostsDatabaseRepositoryTest {
             PostPayload("body", null, null),
             UserContext(user.id)
         )
-        val postFromDatabase = database.dbQuery {
+        val postFromDatabase = database.suspendedTransaction {
             Posts
                 .selectAll()
                 .map {
@@ -57,7 +64,7 @@ class PostsDatabaseRepositoryTest {
     @Test
     fun createPostNoContext() = runBlocking {
         val database = Database(protocol = "h2", name = "createPostNoContext")
-        val repository = PostsDatabaseRepository(database)
+        val repository = createRepository(database)
         assertEquals(
             null, repository.create(
                 PostPayload("body", null, null)
@@ -68,7 +75,7 @@ class PostsDatabaseRepositoryTest {
     @Test
     fun getPost() = runBlocking {
         val database = Database(protocol = "h2", name = "getPost")
-        val repository = PostsDatabaseRepository(database)
+        val repository = createRepository(database)
         val user = UsersDatabaseRepository(database).create(
             CreateUserPayload(
                 "username", "displayName", "email", "password",
@@ -97,7 +104,7 @@ class PostsDatabaseRepositoryTest {
     @Test
     fun getPostNotExists() = runBlocking {
         val database = Database(protocol = "h2", name = "getPostNotExists")
-        val repository = PostsDatabaseRepository(database)
+        val repository = createRepository(database)
         val user = UsersDatabaseRepository(database).create(
             CreateUserPayload(
                 "username", "displayName", "email", "password",
@@ -114,7 +121,7 @@ class PostsDatabaseRepositoryTest {
     @Test
     fun getPostNoContext() = runBlocking {
         val database = Database(protocol = "h2", name = "getPostNoContext")
-        val repository = PostsDatabaseRepository(database)
+        val repository = createRepository(database)
         val user = UsersDatabaseRepository(database).create(
             CreateUserPayload(
                 "username", "displayName", "email", "password",
@@ -131,7 +138,7 @@ class PostsDatabaseRepositoryTest {
     @Test
     fun updatePost() = runBlocking {
         val database = Database(protocol = "h2", name = "updatePost")
-        val repository = PostsDatabaseRepository(database)
+        val repository = createRepository(database)
         val user = UsersDatabaseRepository(database).create(
             CreateUserPayload(
                 "username", "displayName", "email", "password",
@@ -149,7 +156,7 @@ class PostsDatabaseRepositoryTest {
                 PostPayload("newBody", null, null)
             )
         )
-        val postFromDatabase = database.dbQuery {
+        val postFromDatabase = database.suspendedTransaction {
             Posts
                 .selectAll()
                 .map {
@@ -172,7 +179,7 @@ class PostsDatabaseRepositoryTest {
     @Test
     fun updatePostNotExists() = runBlocking {
         val database = Database(protocol = "h2", name = "updatePostNotExists")
-        val repository = PostsDatabaseRepository(database)
+        val repository = createRepository(database)
         val user = UsersDatabaseRepository(database).create(
             CreateUserPayload(
                 "username", "displayName", "email", "password",
@@ -194,7 +201,7 @@ class PostsDatabaseRepositoryTest {
     @Test
     fun deletePost() = runBlocking {
         val database = Database(protocol = "h2", name = "deletePost")
-        val repository = PostsDatabaseRepository(database)
+        val repository = createRepository(database)
         val user = UsersDatabaseRepository(database).create(
             CreateUserPayload(
                 "username", "displayName", "email", "password",
@@ -206,7 +213,7 @@ class PostsDatabaseRepositoryTest {
             UserContext(user.id)
         ) ?: fail("Unable to create post")
         assertEquals(true, repository.delete(post.id, UserContext(user.id)))
-        val count = database.dbQuery {
+        val count = database.suspendedTransaction {
             Posts
                 .selectAll()
                 .count()
@@ -217,7 +224,7 @@ class PostsDatabaseRepositoryTest {
     @Test
     fun deletePostNotExists() = runBlocking {
         val database = Database(protocol = "h2", name = "deletePostNotExists")
-        val repository = PostsDatabaseRepository(database)
+        val repository = createRepository(database)
         val user = UsersDatabaseRepository(database).create(
             CreateUserPayload(
                 "username", "displayName", "email", "password",
@@ -229,7 +236,7 @@ class PostsDatabaseRepositoryTest {
             UserContext(user.id)
         ) ?: fail("Unable to create post")
         assertEquals(false, repository.delete("postId", UserContext(user.id)))
-        val count = database.dbQuery {
+        val count = database.suspendedTransaction {
             Posts
                 .selectAll()
                 .count()

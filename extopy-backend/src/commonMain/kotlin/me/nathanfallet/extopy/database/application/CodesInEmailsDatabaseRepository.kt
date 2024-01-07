@@ -4,18 +4,21 @@ import kotlinx.datetime.Instant
 import me.nathanfallet.extopy.models.application.CodeInEmail
 import me.nathanfallet.extopy.repositories.application.ICodesInEmailsRepository
 import me.nathanfallet.ktorx.database.IDatabase
+import org.jetbrains.exposed.sql.*
 import org.jetbrains.exposed.sql.SqlExpressionBuilder.eq
-import org.jetbrains.exposed.sql.deleteWhere
-import org.jetbrains.exposed.sql.insert
-import org.jetbrains.exposed.sql.selectAll
-import org.jetbrains.exposed.sql.update
 
 class CodesInEmailsDatabaseRepository(
     private val database: IDatabase,
 ) : ICodesInEmailsRepository {
 
+    init {
+        database.transaction {
+            SchemaUtils.create(CodesInEmails)
+        }
+    }
+
     override suspend fun getCodeInEmail(code: String): CodeInEmail? {
-        return database.dbQuery {
+        return database.suspendedTransaction {
             CodesInEmails
                 .selectAll()
                 .where { CodesInEmails.code eq code }
@@ -25,7 +28,7 @@ class CodesInEmailsDatabaseRepository(
     }
 
     override suspend fun getCodesInEmailsExpiringBefore(date: Instant): List<CodeInEmail> {
-        return database.dbQuery {
+        return database.suspendedTransaction {
             CodesInEmails
                 .selectAll()
                 .where { CodesInEmails.expiresAt less date.toString() }
@@ -38,7 +41,7 @@ class CodesInEmailsDatabaseRepository(
         code: String,
         expiresAt: Instant,
     ): CodeInEmail? {
-        return database.dbQuery {
+        return database.suspendedTransaction {
             CodesInEmails.insert {
                 it[this.email] = email
                 it[this.code] = code
@@ -52,7 +55,7 @@ class CodesInEmailsDatabaseRepository(
         code: String,
         expiresAt: Instant,
     ): Boolean {
-        return database.dbQuery {
+        return database.suspendedTransaction {
             CodesInEmails.update({ CodesInEmails.email eq email }) {
                 it[this.code] = code
                 it[this.expiresAt] = expiresAt.toString()
@@ -61,7 +64,7 @@ class CodesInEmailsDatabaseRepository(
     }
 
     override suspend fun deleteCodeInEmail(code: String) {
-        database.dbQuery {
+        database.suspendedTransaction {
             CodesInEmails.deleteWhere {
                 CodesInEmails.code eq code
             }

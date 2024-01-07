@@ -17,7 +17,7 @@ class ClientsInUsersDatabaseRepositoryTest {
         val database = Database(protocol = "h2", name = "createClientInUser")
         val repository = ClientsInUsersDatabaseRepository(database)
         val clientInUser = repository.create("userId", "clientId", now)
-        val clientInUserFromDatabase = database.dbQuery {
+        val clientInUserFromDatabase = database.suspendedTransaction {
             ClientsInUsers
                 .selectAll()
                 .map(ClientsInUsers::toClientInUser)
@@ -62,7 +62,7 @@ class ClientsInUsersDatabaseRepositoryTest {
             "userId", "clientId", now
         ) ?: fail("Unable to create clientInUser")
         assertEquals(true, repository.delete(clientInUser.code))
-        val count = database.dbQuery {
+        val count = database.suspendedTransaction {
             ClientsInUsers.selectAll().count()
         }
         assertEquals(0, count)
@@ -83,7 +83,7 @@ class ClientsInUsersDatabaseRepositoryTest {
             "userId", "clientId", now
         ) ?: fail("Unable to create clientInUser")
         assertEquals(false, repository.delete("code"))
-        val count = database.dbQuery {
+        val count = database.suspendedTransaction {
             ClientsInUsers.selectAll().count()
         }
         assertEquals(1, count)

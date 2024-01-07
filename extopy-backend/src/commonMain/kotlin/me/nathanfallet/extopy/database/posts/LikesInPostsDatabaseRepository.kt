@@ -13,8 +13,14 @@ class LikesInPostsDatabaseRepository(
     private val database: IDatabase,
 ) : IChildModelSuspendRepository<LikeInPost, String, Unit, Unit, String> {
 
+    init {
+        database.transaction {
+            SchemaUtils.create(LikesInPosts)
+        }
+    }
+
     override suspend fun list(limit: Long, offset: Long, parentId: String, context: IContext?): List<LikeInPost> {
-        return database.dbQuery {
+        return database.suspendedTransaction {
             customJoin()
                 .where { LikesInPosts.postId eq parentId }
                 .limit(limit.toInt(), offset)
@@ -24,7 +30,7 @@ class LikesInPostsDatabaseRepository(
 
     override suspend fun create(payload: Unit, parentId: String, context: IContext?): LikeInPost? {
         if (context !is UserContext) return null
-        return database.dbQuery {
+        return database.suspendedTransaction {
             LikesInPosts.insert {
                 it[postId] = parentId
                 it[userId] = context.userId
@@ -33,7 +39,7 @@ class LikesInPostsDatabaseRepository(
     }
 
     override suspend fun delete(id: String, parentId: String, context: IContext?): Boolean {
-        return database.dbQuery {
+        return database.suspendedTransaction {
             LikesInPosts.deleteWhere {
                 postId eq parentId and (userId eq id)
             }

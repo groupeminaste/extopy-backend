@@ -3,9 +3,12 @@ package me.nathanfallet.extopy.database.users
 import kotlinx.coroutines.runBlocking
 import kotlinx.datetime.LocalDate
 import me.nathanfallet.extopy.database.Database
+import me.nathanfallet.extopy.database.posts.PostsDatabaseRepository
 import me.nathanfallet.extopy.models.users.CreateUserPayload
 import me.nathanfallet.extopy.models.users.UpdateUserPayload
 import me.nathanfallet.extopy.models.users.UserContext
+import me.nathanfallet.extopy.repositories.users.IUsersRepository
+import me.nathanfallet.ktorx.database.IDatabase
 import org.jetbrains.exposed.sql.selectAll
 import kotlin.test.Test
 import kotlin.test.assertEquals
@@ -13,17 +16,23 @@ import kotlin.test.fail
 
 class UsersDatabaseRepositoryTest {
 
+    private fun createRepository(database: IDatabase): IUsersRepository {
+        FollowersInUsersDatabaseRepository(database)
+        PostsDatabaseRepository(database)
+        return UsersDatabaseRepository(database)
+    }
+
     @Test
     fun createUser() = runBlocking {
         val database = Database(protocol = "h2", name = "createUser")
-        val repository = UsersDatabaseRepository(database)
+        val repository = createRepository(database)
         val user = repository.create(
             CreateUserPayload(
                 "username", "displayName", "email", "password",
                 LocalDate(2002, 12, 24)
             )
         )
-        val userFromDatabase = database.dbQuery {
+        val userFromDatabase = database.suspendedTransaction {
             Users
                 .selectAll()
                 .map {
@@ -47,7 +56,7 @@ class UsersDatabaseRepositoryTest {
     @Test
     fun getUser() = runBlocking {
         val database = Database(protocol = "h2", name = "getUser")
-        val repository = UsersDatabaseRepository(database)
+        val repository = createRepository(database)
         val user = repository.create(
             CreateUserPayload(
                 "username", "displayName", "email", "password",
@@ -66,7 +75,7 @@ class UsersDatabaseRepositoryTest {
     @Test
     fun getUserNotExists() = runBlocking {
         val database = Database(protocol = "h2", name = "getUserNotExists")
-        val repository = UsersDatabaseRepository(database)
+        val repository = createRepository(database)
         val user = repository.create(
             CreateUserPayload(
                 "username", "displayName", "email", "password",
@@ -79,7 +88,7 @@ class UsersDatabaseRepositoryTest {
     @Test
     fun getUserNoContext() = runBlocking {
         val database = Database(protocol = "h2", name = "getUserNoContext")
-        val repository = UsersDatabaseRepository(database)
+        val repository = createRepository(database)
         val user = repository.create(
             CreateUserPayload(
                 "username", "displayName", "email", "password",
@@ -92,7 +101,7 @@ class UsersDatabaseRepositoryTest {
     @Test
     fun getUserForEmail() = runBlocking {
         val database = Database(protocol = "h2", name = "getUserForEmail")
-        val repository = UsersDatabaseRepository(database)
+        val repository = createRepository(database)
         val user = repository.create(
             CreateUserPayload(
                 "username", "displayName", "email", "password",
@@ -111,7 +120,7 @@ class UsersDatabaseRepositoryTest {
     @Test
     fun getUserForEmailWithPassword() = runBlocking {
         val database = Database(protocol = "h2", name = "getUserForEmailWithPassword")
-        val repository = UsersDatabaseRepository(database)
+        val repository = createRepository(database)
         val user = repository.create(
             CreateUserPayload(
                 "username", "displayName", "email", "password",
@@ -130,7 +139,7 @@ class UsersDatabaseRepositoryTest {
     @Test
     fun updateUser() = runBlocking {
         val database = Database(protocol = "h2", name = "updateUser")
-        val repository = UsersDatabaseRepository(database)
+        val repository = createRepository(database)
         val user = repository.create(
             CreateUserPayload(
                 "username", "displayName", "email", "password",
@@ -144,7 +153,7 @@ class UsersDatabaseRepositoryTest {
         )
         val payload = UpdateUserPayload("username2", "displayName2", null, "biography2")
         assertEquals(true, repository.update(user.id, payload))
-        val userFromDatabase = database.dbQuery {
+        val userFromDatabase = database.suspendedTransaction {
             Users
                 .selectAll()
                 .map {
@@ -162,7 +171,7 @@ class UsersDatabaseRepositoryTest {
     @Test
     fun updateUserNotExists() = runBlocking {
         val database = Database(protocol = "h2", name = "updateUserNotExists")
-        val repository = UsersDatabaseRepository(database)
+        val repository = createRepository(database)
         val payload = UpdateUserPayload("username2", "displayName2", null, "biography2")
         assertEquals(false, repository.update("userId", payload))
     }

@@ -13,7 +13,7 @@ class ClientsDatabaseRepositoryTest {
     fun getClient() = runBlocking {
         val database = Database(protocol = "h2", name = "getClient")
         val repository = ClientsDatabaseRepository(database)
-        val client = database.dbQuery {
+        val client = database.suspendedTransaction {
             Clients.insert {
                 it[id] = "id"
                 it[ownerId] = "ownerId"

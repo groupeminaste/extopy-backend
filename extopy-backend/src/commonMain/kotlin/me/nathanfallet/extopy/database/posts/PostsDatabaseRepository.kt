@@ -16,8 +16,14 @@ class PostsDatabaseRepository(
     private val database: IDatabase,
 ) : IPostsRepository {
 
+    init {
+        database.transaction {
+            SchemaUtils.create(Posts)
+        }
+    }
+
     override suspend fun listDefault(limit: Long, offset: Long, context: UserContext): List<Post> {
-        return database.dbQuery {
+        return database.suspendedTransaction {
             customJoinColumnSet(context.userId)
                 .join(
                     FollowersInUsers,
@@ -39,7 +45,7 @@ class PostsDatabaseRepository(
     }
 
     override suspend fun listTrends(limit: Long, offset: Long, context: UserContext): List<Post> {
-        return database.dbQuery {
+        return database.suspendedTransaction {
             customJoin(context.userId)
                 .groupBy(Posts.id)
                 .orderBy(Posts.trendsCount to SortOrder.DESC)
@@ -49,7 +55,7 @@ class PostsDatabaseRepository(
     }
 
     override suspend fun listUserPosts(userId: String, limit: Long, offset: Long, context: UserContext): List<Post> {
-        return database.dbQuery {
+        return database.suspendedTransaction {
             customJoin(context.userId)
                 .where { Posts.userId eq userId }
                 .groupBy(Posts.id)
@@ -60,7 +66,7 @@ class PostsDatabaseRepository(
     }
 
     override suspend fun listReplies(postId: String, limit: Long, offset: Long, context: UserContext): List<Post> {
-        return database.dbQuery {
+        return database.suspendedTransaction {
             customJoin(context.userId)
                 .where { Posts.repliedToId eq postId }
                 .groupBy(Posts.id)
@@ -72,7 +78,7 @@ class PostsDatabaseRepository(
 
     override suspend fun get(id: String, context: IContext?): Post? {
         if (context !is UserContext) return null
-        return database.dbQuery {
+        return database.suspendedTransaction {
             customJoin(context.userId)
                 .where { Posts.id eq id }
                 .groupBy(Posts.id)
@@ -83,7 +89,7 @@ class PostsDatabaseRepository(
 
     override suspend fun create(payload: PostPayload, context: IContext?): Post? {
         if (context !is UserContext) return null
-        val id = database.dbQuery {
+        val id = database.suspendedTransaction {
             val id = Posts.generateId()
             Posts.insert {
                 it[Posts.id] = id
@@ -102,7 +108,7 @@ class PostsDatabaseRepository(
     }
 
     override suspend fun update(id: String, payload: PostPayload, context: IContext?): Boolean {
-        return database.dbQuery {
+        return database.suspendedTransaction {
             Posts.update({ Posts.id eq id }) {
                 it[body] = payload.body
                 it[edited] = Clock.System.now().toString()
@@ -111,7 +117,7 @@ class PostsDatabaseRepository(
     }
 
     override suspend fun delete(id: String, context: IContext?): Boolean {
-        return database.dbQuery {
+        return database.suspendedTransaction {
             Posts.deleteWhere {
                 Posts.id eq id
             }

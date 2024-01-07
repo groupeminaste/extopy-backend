@@ -15,9 +15,15 @@ class UsersDatabaseRepository(
     private val database: IDatabase,
 ) : IUsersRepository {
 
+    init {
+        database.transaction {
+            SchemaUtils.create(Users)
+        }
+    }
+
     override suspend fun get(id: String, context: IContext?): User? {
         if (context !is UserContext) return null
-        return database.dbQuery {
+        return database.suspendedTransaction {
             customJoin(context.userId)
                 .where { Users.id eq id }
                 .groupBy(Users.id)
@@ -27,7 +33,7 @@ class UsersDatabaseRepository(
     }
 
     override suspend fun getForUsernameOrEmail(username: String, includePassword: Boolean): User? {
-        return database.dbQuery {
+        return database.suspendedTransaction {
             Users
                 .selectAll()
                 .where { Users.username eq username or (Users.email eq username) }
@@ -39,7 +45,7 @@ class UsersDatabaseRepository(
     }
 
     override suspend fun create(payload: CreateUserPayload, context: IContext?): User? {
-        return database.dbQuery {
+        return database.suspendedTransaction {
             Users.insert {
                 it[id] = generateId()
                 it[displayName] = payload.displayName
@@ -55,7 +61,7 @@ class UsersDatabaseRepository(
     }
 
     override suspend fun update(id: String, payload: UpdateUserPayload, context: IContext?): Boolean {
-        return database.dbQuery {
+        return database.suspendedTransaction {
             Users.update({ Users.id eq id }) {
                 payload.username?.let { username ->
                     it[Users.username] = username

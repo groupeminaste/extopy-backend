@@ -46,7 +46,7 @@ class CodesInEmailsDatabaseRepositoryTest {
         val database = Database(protocol = "h2", name = "createCodeInEmail")
         val repository = CodesInEmailsDatabaseRepository(database)
         val codeInEmail = repository.createCodeInEmail("email", "code", tomorrow)
-        val codeInEmailFromDatabase = database.dbQuery {
+        val codeInEmailFromDatabase = database.suspendedTransaction {
             CodesInEmails
                 .selectAll()
                 .map(CodesInEmails::toCodeInEmail)
@@ -67,7 +67,7 @@ class CodesInEmailsDatabaseRepositoryTest {
             true,
             repository.updateCodeInEmail("email", "newCode", tomorrow)
         )
-        val codeInEmailFromDatabase = database.dbQuery {
+        val codeInEmailFromDatabase = database.suspendedTransaction {
             CodesInEmails
                 .selectAll()
                 .map(CodesInEmails::toCodeInEmail)
@@ -85,7 +85,7 @@ class CodesInEmailsDatabaseRepositoryTest {
         val codeInEmail = repository.createCodeInEmail("email", "code", tomorrow)
             ?: fail("Unable to create code in email")
         repository.deleteCodeInEmail(codeInEmail.code)
-        val count = database.dbQuery {
+        val count = database.suspendedTransaction {
             CodesInEmails
                 .selectAll()
                 .count()

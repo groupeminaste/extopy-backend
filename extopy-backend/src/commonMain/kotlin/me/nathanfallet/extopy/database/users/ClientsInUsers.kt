@@ -5,7 +5,7 @@ import me.nathanfallet.extopy.extensions.generateId
 import me.nathanfallet.extopy.models.users.ClientInUser
 import org.jetbrains.exposed.sql.ResultRow
 import org.jetbrains.exposed.sql.Table
-import org.jetbrains.exposed.sql.select
+import org.jetbrains.exposed.sql.selectAll
 
 object ClientsInUsers : Table() {
 
@@ -18,7 +18,7 @@ object ClientsInUsers : Table() {
 
     fun generateCode(): String {
         val candidate = String.generateId()
-        return if (select { code eq candidate }.count() > 0) generateCode() else candidate
+        return if (selectAll().where { code eq candidate }.count() > 0) generateCode() else candidate
     }
 
     fun toClientInUser(

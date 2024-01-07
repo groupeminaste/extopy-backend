@@ -14,7 +14,7 @@ object NotificationsPlugin {
     suspend fun createNotification(notification: Notification, args: List<String> = listOf()) {
         val now = Clock.System.now()
         val expiration = now.plus(1, DateTimeUnit.YEAR, TimeZone.currentSystemDefault())
-        Database.dbQuery {
+        Database.suspendedTransaction {
             Notifications.insert {
                 it[Notifications.id] = notification.id
                 it[Notifications.userId] = notification.userId!!
@@ -31,7 +31,7 @@ object NotificationsPlugin {
     suspend fun sendNotification(notification: Notification, args: List<String> = listOf()) {
         notification.userId
             ?.let { userId ->
-                Database.dbQuery {
+                Database.suspendedTransaction {
                     NotificationsTokens.join(
                         Users,
                         JoinType.LEFT,
