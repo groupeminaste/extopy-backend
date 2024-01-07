@@ -1,4 +1,4 @@
-package me.nathanfallet.extopy.usecases.users
+package me.nathanfallet.extopy.usecases.auth
 
 import io.ktor.server.application.*
 import io.mockk.coEvery
@@ -10,7 +10,6 @@ import me.nathanfallet.extopy.models.auth.RegisterCodePayload
 import me.nathanfallet.extopy.models.auth.RegisterPayload
 import me.nathanfallet.extopy.models.users.CreateUserPayload
 import me.nathanfallet.extopy.models.users.User
-import me.nathanfallet.extopy.usecases.auth.RegisterUseCase
 import me.nathanfallet.ktorx.usecases.auth.IGetCodeRegisterUseCase
 import me.nathanfallet.usecases.models.create.ICreateModelSuspendUseCase
 import kotlin.test.Test
