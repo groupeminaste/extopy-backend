@@ -18,6 +18,7 @@ import me.nathanfallet.ktorx.routers.openapi.OpenAPIRouter
 import org.koin.ktor.ext.inject
 
 fun Application.configureRouting() {
+    install(IgnoreTrailingSlash)
     routing {
         val openAPI = OpenAPI().info {
             this.title = "Extopy API"
