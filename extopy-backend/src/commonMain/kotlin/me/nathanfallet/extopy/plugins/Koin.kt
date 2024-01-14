@@ -4,6 +4,7 @@ import io.ktor.server.application.*
 import me.nathanfallet.extopy.controllers.auth.AuthRouter
 import me.nathanfallet.extopy.controllers.notifications.NotificationsRouter
 import me.nathanfallet.extopy.controllers.posts.*
+import me.nathanfallet.extopy.controllers.timelines.ITimelinesController
 import me.nathanfallet.extopy.controllers.timelines.TimelinesController
 import me.nathanfallet.extopy.controllers.timelines.TimelinesRouter
 import me.nathanfallet.extopy.controllers.users.*
@@ -22,7 +23,6 @@ import me.nathanfallet.extopy.models.auth.RegisterPayload
 import me.nathanfallet.extopy.models.posts.LikeInPost
 import me.nathanfallet.extopy.models.posts.Post
 import me.nathanfallet.extopy.models.posts.PostPayload
-import me.nathanfallet.extopy.models.timelines.Timeline
 import me.nathanfallet.extopy.models.users.CreateUserPayload
 import me.nathanfallet.extopy.models.users.FollowerInUser
 import me.nathanfallet.extopy.models.users.UpdateUserPayload
@@ -40,11 +40,12 @@ import me.nathanfallet.extopy.usecases.application.SendEmailUseCase
 import me.nathanfallet.extopy.usecases.auth.*
 import me.nathanfallet.extopy.usecases.posts.*
 import me.nathanfallet.extopy.usecases.timelines.GetTimelineByIdUseCase
+import me.nathanfallet.extopy.usecases.timelines.GetTimelinePostsUseCase
 import me.nathanfallet.extopy.usecases.timelines.IGetTimelineByIdUseCase
+import me.nathanfallet.extopy.usecases.timelines.IGetTimelinePostsUseCase
 import me.nathanfallet.extopy.usecases.users.*
 import me.nathanfallet.i18n.usecases.localization.TranslateUseCase
 import me.nathanfallet.ktorx.controllers.IChildModelController
-import me.nathanfallet.ktorx.controllers.IModelController
 import me.nathanfallet.ktorx.controllers.auth.AuthWithCodeController
 import me.nathanfallet.ktorx.controllers.auth.IAuthWithCodeController
 import me.nathanfallet.ktorx.database.IDatabase
@@ -213,7 +214,8 @@ fun Application.configureKoin() {
             }
 
             // Timelines
-            single<IGetTimelineByIdUseCase> { GetTimelineByIdUseCase(get()) }
+            single<IGetTimelineByIdUseCase> { GetTimelineByIdUseCase() }
+            single<IGetTimelinePostsUseCase> { GetTimelinePostsUseCase(get()) }
         }
         val controllerModule = module {
             // Auth
@@ -275,8 +277,9 @@ fun Application.configureKoin() {
             }
 
             // Timelines
-            single<IModelController<Timeline, String, Unit, Unit>>(named<Timeline>()) {
+            single<ITimelinesController> {
                 TimelinesController(
+                    get(),
                     get(),
                     get()
                 )
@@ -288,7 +291,7 @@ fun Application.configureKoin() {
             single { FollowersInUsersRouter(get(), get()) }
             single { PostsRouter(get()) }
             single { LikesInPostsRouter(get(named<LikeInPost>()), get()) }
-            single { TimelinesRouter(get(named<Timeline>())) }
+            single { TimelinesRouter(get()) }
             single { NotificationsRouter() }
         }
 

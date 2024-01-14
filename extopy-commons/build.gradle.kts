@@ -74,7 +74,6 @@ kotlin {
         val jvmTest by getting {
             dependencies {
                 implementation(kotlin("test"))
-                implementation("io.mockative:mockative:2.0.1")
                 implementation("io.mockk:mockk:1.13.8")
             }
         }

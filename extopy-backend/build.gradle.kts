@@ -101,7 +101,6 @@ kotlin {
             dependencies {
                 implementation(kotlin("test"))
                 implementation("io.ktor:ktor-server-test-host:$ktorVersion")
-                implementation("io.mockative:mockative:2.0.1")
                 implementation("io.mockk:mockk:1.13.8")
                 implementation("org.jsoup:jsoup:1.16.2")
                 implementation("com.h2database:h2:2.2.224")

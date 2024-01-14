@@ -1,6 +1,7 @@
 package me.nathanfallet.extopy.repositories.posts
 
 import io.ktor.client.call.*
+import io.ktor.client.request.*
 import io.ktor.http.*
 import io.ktor.util.reflect.*
 import me.nathanfallet.extopy.client.IExtopyClient
@@ -39,7 +40,10 @@ class PostsRemoteRepository(
 
     override suspend fun getReplies(id: String, limit: Long, offset: Long): List<Post> {
         return client
-            .request(HttpMethod.Get, "${constructFullRoute(RecursiveId<UnitModel, Unit, Unit>(Unit))}/$id/replies")
+            .request(HttpMethod.Get, "${constructFullRoute(RecursiveId<UnitModel, Unit, Unit>(Unit))}/$id/replies") {
+                parameter("limit", limit)
+                parameter("offset", offset)
+            }
             .body()
     }
 
