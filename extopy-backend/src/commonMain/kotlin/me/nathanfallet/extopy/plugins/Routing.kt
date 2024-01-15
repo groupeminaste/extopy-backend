@@ -13,6 +13,7 @@ import me.nathanfallet.extopy.controllers.posts.PostsRouter
 import me.nathanfallet.extopy.controllers.timelines.TimelinesRouter
 import me.nathanfallet.extopy.controllers.users.FollowersInUsersRouter
 import me.nathanfallet.extopy.controllers.users.UsersRouter
+import me.nathanfallet.extopy.models.application.ExtopyEnvironment
 import me.nathanfallet.ktorx.extensions.info
 import me.nathanfallet.ktorx.routers.openapi.OpenAPIRouter
 import org.koin.ktor.ext.inject
@@ -27,8 +28,8 @@ fun Application.configureRouting() {
         }
         openAPI.servers(
             listOf(
-                Server().description("Production server").url("https://extopy.com"),
-                Server().description("Staging server").url("https://extopy.dev")
+                Server().description("Production server").url(ExtopyEnvironment.PRODUCTION.baseUrl),
+                Server().description("Staging server").url(ExtopyEnvironment.DEVELOPMENT.baseUrl)
             )
         )
 
