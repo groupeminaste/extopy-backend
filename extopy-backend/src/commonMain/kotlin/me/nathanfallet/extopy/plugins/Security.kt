@@ -25,7 +25,7 @@ fun Application.configureSecurity() {
             }
             challenge { _, _ ->
                 call.response.status(HttpStatusCode.Unauthorized)
-                call.respond(mapOf("error" to "Invalid token"))
+                call.respond(mapOf("error" to "auth_invalid_token"))
             }
         }
     }
