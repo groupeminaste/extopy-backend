@@ -3,7 +3,7 @@ package me.nathanfallet.extopy.database.application
 import kotlinx.datetime.Instant
 import me.nathanfallet.extopy.models.application.CodeInEmail
 import me.nathanfallet.extopy.repositories.application.ICodesInEmailsRepository
-import me.nathanfallet.ktorx.database.IDatabase
+import me.nathanfallet.surexposed.database.IDatabase
 import org.jetbrains.exposed.sql.*
 import org.jetbrains.exposed.sql.SqlExpressionBuilder.eq
 

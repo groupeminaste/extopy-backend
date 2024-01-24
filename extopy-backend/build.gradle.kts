@@ -52,7 +52,7 @@ kotlin {
     val ktorVersion = "2.3.7"
     val koinVersion = "3.5.0"
     val logbackVersion = "0.9.30"
-    val ktorxVersion = "1.9.1"
+    val ktorxVersion = "2.0.0-rc2"
 
     sourceSets {
         val commonMain by getting {
@@ -81,11 +81,13 @@ kotlin {
                 implementation("ch.qos.logback:logback-classic:$logbackVersion")
 
                 implementation("me.nathanfallet.i18n:i18n:1.0.9")
-                implementation("me.nathanfallet.ktorx:ktor-databases:$ktorxVersion")
+                implementation("me.nathanfallet.ktorx:ktor-database-sessions:$ktorxVersion")
                 implementation("me.nathanfallet.ktorx:ktor-i18n:$ktorxVersion")
                 implementation("me.nathanfallet.ktorx:ktor-i18n-freemarker:$ktorxVersion")
                 implementation("me.nathanfallet.ktorx:ktor-routers:$ktorxVersion")
                 implementation("me.nathanfallet.ktorx:ktor-routers-locale:$ktorxVersion")
+                implementation("me.nathanfallet.ktorx:ktor-routers-auth:$ktorxVersion")
+                implementation("me.nathanfallet.ktorx:ktor-routers-auth-locale:$ktorxVersion")
                 implementation("me.nathanfallet.ktorx:ktor-sentry:$ktorxVersion")
                 implementation("me.nathanfallet.cloudflare:cloudflare-api-client:4.2.1")
 

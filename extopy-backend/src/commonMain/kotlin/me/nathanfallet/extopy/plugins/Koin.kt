@@ -1,6 +1,7 @@
 package me.nathanfallet.extopy.plugins
 
 import io.ktor.server.application.*
+import me.nathanfallet.extopy.controllers.auth.AuthController
 import me.nathanfallet.extopy.controllers.auth.AuthRouter
 import me.nathanfallet.extopy.controllers.notifications.NotificationsRouter
 import me.nathanfallet.extopy.controllers.posts.*
@@ -45,10 +46,7 @@ import me.nathanfallet.extopy.usecases.timelines.IGetTimelineByIdUseCase
 import me.nathanfallet.extopy.usecases.timelines.IGetTimelinePostsUseCase
 import me.nathanfallet.extopy.usecases.users.*
 import me.nathanfallet.i18n.usecases.localization.TranslateUseCase
-import me.nathanfallet.ktorx.controllers.IChildModelController
-import me.nathanfallet.ktorx.controllers.auth.AuthWithCodeController
 import me.nathanfallet.ktorx.controllers.auth.IAuthWithCodeController
-import me.nathanfallet.ktorx.database.IDatabase
 import me.nathanfallet.ktorx.database.sessions.SessionsDatabaseRepository
 import me.nathanfallet.ktorx.repositories.sessions.ISessionsRepository
 import me.nathanfallet.ktorx.usecases.auth.*
@@ -57,6 +55,7 @@ import me.nathanfallet.ktorx.usecases.localization.IGetLocaleForCallUseCase
 import me.nathanfallet.ktorx.usecases.users.IGetUserForCallUseCase
 import me.nathanfallet.ktorx.usecases.users.IRequireUserForCallUseCase
 import me.nathanfallet.ktorx.usecases.users.RequireUserForCallUseCase
+import me.nathanfallet.surexposed.database.IDatabase
 import me.nathanfallet.usecases.emails.ISendEmailUseCase
 import me.nathanfallet.usecases.localization.ITranslateUseCase
 import me.nathanfallet.usecases.models.create.ICreateModelSuspendUseCase
@@ -220,7 +219,7 @@ fun Application.configureKoin() {
         val controllerModule = module {
             // Auth
             single<IAuthWithCodeController<LoginPayload, RegisterPayload, RegisterCodePayload>> {
-                AuthWithCodeController(
+                AuthController(
                     get(),
                     get(),
                     get(),
@@ -267,7 +266,7 @@ fun Application.configureKoin() {
                     get()
                 )
             }
-            single<IChildModelController<LikeInPost, String, Unit, Unit, Post, String>>(named<LikeInPost>()) {
+            single<ILikesInPostsController> {
                 LikesInPostsController(
                     get(),
                     get(named<LikeInPost>()),
@@ -290,7 +289,7 @@ fun Application.configureKoin() {
             single { UsersRouter(get()) }
             single { FollowersInUsersRouter(get(), get()) }
             single { PostsRouter(get()) }
-            single { LikesInPostsRouter(get(named<LikeInPost>()), get()) }
+            single { LikesInPostsRouter(get(), get()) }
             single { TimelinesRouter(get()) }
             single { NotificationsRouter() }
         }

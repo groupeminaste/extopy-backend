@@ -29,16 +29,6 @@ class PostsControllerTest {
     private val otherPost = Post("otherPostId", "otherUserId", user, body = "body")
 
     @Test
-    fun testList() = runBlocking {
-        val controller = PostsController(mockk(), mockk(), mockk(), mockk(), mockk(), mockk())
-        val exception = assertFailsWith(ControllerException::class) {
-            controller.list(mockk())
-        }
-        assertEquals(HttpStatusCode.MethodNotAllowed, exception.code)
-        assertEquals("posts_list_not_allowed", exception.key)
-    }
-
-    @Test
     fun testCreate() = runBlocking {
         val requireUserForCallUseCase = mockk<IRequireUserForCallUseCase>()
         val createPostUseCase = mockk<ICreateModelWithContextSuspendUseCase<Post, PostPayload>>()
@@ -244,7 +234,7 @@ class PostsControllerTest {
         val controller = PostsController(
             requireUserForCallUseCase, mockk(), mockk(), mockk(), mockk(), getPostRepliesUseCase
         )
-        assertEquals(listOf(post), controller.getReplies(call, post.id))
+        assertEquals(listOf(post), controller.listReplies(call, post.id))
     }
 
     @Test
@@ -259,7 +249,7 @@ class PostsControllerTest {
         val controller = PostsController(
             requireUserForCallUseCase, mockk(), mockk(), mockk(), mockk(), getPostRepliesUseCase
         )
-        assertEquals(listOf(post), controller.getReplies(call, post.id))
+        assertEquals(listOf(post), controller.listReplies(call, post.id))
     }
 
     @Test
@@ -274,7 +264,7 @@ class PostsControllerTest {
         val controller = PostsController(
             requireUserForCallUseCase, mockk(), mockk(), mockk(), mockk(), getPostRepliesUseCase
         )
-        assertEquals(listOf(post), controller.getReplies(call, post.id))
+        assertEquals(listOf(post), controller.listReplies(call, post.id))
     }
 
 }

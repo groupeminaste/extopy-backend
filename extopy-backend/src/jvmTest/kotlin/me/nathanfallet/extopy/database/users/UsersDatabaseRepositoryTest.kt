@@ -8,7 +8,7 @@ import me.nathanfallet.extopy.models.users.CreateUserPayload
 import me.nathanfallet.extopy.models.users.UpdateUserPayload
 import me.nathanfallet.extopy.models.users.UserContext
 import me.nathanfallet.extopy.repositories.users.IUsersRepository
-import me.nathanfallet.ktorx.database.IDatabase
+import me.nathanfallet.surexposed.database.IDatabase
 import org.jetbrains.exposed.sql.selectAll
 import kotlin.test.Test
 import kotlin.test.assertEquals

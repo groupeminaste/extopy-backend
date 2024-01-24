@@ -23,10 +23,6 @@ class PostsController(
     private val getPostRepliesUseCase: IGetPostRepliesUseCase,
 ) : IPostsController {
 
-    override suspend fun list(call: ApplicationCall): List<Post> {
-        throw ControllerException(HttpStatusCode.MethodNotAllowed, "posts_list_not_allowed")
-    }
-
     override suspend fun create(call: ApplicationCall, payload: PostPayload): Post {
         val user = requireUserForCallUseCase(call) as User
         return createPostUseCase(payload, UserContext(user.id)) ?: throw ControllerException(
@@ -69,7 +65,7 @@ class PostsController(
         )
     }
 
-    override suspend fun getReplies(call: ApplicationCall, id: String): List<Post> {
+    override suspend fun listReplies(call: ApplicationCall, id: String): List<Post> {
         val user = requireUserForCallUseCase(call) as User
         return getPostRepliesUseCase(
             id,

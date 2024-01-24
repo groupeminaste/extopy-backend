@@ -6,7 +6,6 @@ import me.nathanfallet.extopy.models.posts.LikeInPost
 import me.nathanfallet.extopy.models.posts.Post
 import me.nathanfallet.extopy.models.users.User
 import me.nathanfallet.extopy.models.users.UserContext
-import me.nathanfallet.ktorx.controllers.IChildModelController
 import me.nathanfallet.ktorx.models.exceptions.ControllerException
 import me.nathanfallet.ktorx.usecases.users.IRequireUserForCallUseCase
 import me.nathanfallet.usecases.models.create.context.ICreateChildModelWithContextSuspendUseCase
@@ -18,7 +17,7 @@ class LikesInPostsController(
     private val listLikeInPostUseCase: IListSliceChildModelSuspendUseCase<LikeInPost, String>,
     private val createLikeInPostUseCase: ICreateChildModelWithContextSuspendUseCase<LikeInPost, Unit, String>,
     private val deleteLikeInPostUseCase: IDeleteChildModelSuspendUseCase<LikeInPost, String, String>,
-) : IChildModelController<LikeInPost, String, Unit, Unit, Post, String> {
+) : ILikesInPostsController {
 
     override suspend fun list(call: ApplicationCall, parent: Post): List<LikeInPost> {
         return listLikeInPostUseCase(
@@ -45,14 +44,6 @@ class LikesInPostsController(
         if (!deleteLikeInPostUseCase(id, parent.id)) throw ControllerException(
             HttpStatusCode.InternalServerError, "error_internal"
         )
-    }
-
-    override suspend fun get(call: ApplicationCall, parent: Post, id: String): LikeInPost {
-        throw ControllerException(HttpStatusCode.MethodNotAllowed, "likes_in_posts_get_not_allowed")
-    }
-
-    override suspend fun update(call: ApplicationCall, parent: Post, id: String, payload: Unit): LikeInPost {
-        throw ControllerException(HttpStatusCode.MethodNotAllowed, "likes_in_posts_update_not_allowed")
     }
 
 }

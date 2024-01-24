@@ -6,9 +6,7 @@ import io.mockk.coEvery
 import io.mockk.every
 import io.mockk.mockk
 import kotlinx.coroutines.runBlocking
-import kotlinx.datetime.LocalDate
 import me.nathanfallet.extopy.models.posts.Post
-import me.nathanfallet.extopy.models.users.CreateUserPayload
 import me.nathanfallet.extopy.models.users.UpdateUserPayload
 import me.nathanfallet.extopy.models.users.User
 import me.nathanfallet.extopy.models.users.UserContext
@@ -25,42 +23,6 @@ class UsersControllerTest {
 
     private val user = User("id", "displayName", "username")
     private val targetUser = User("targetId", "targetDisplayName", "targetUsername")
-
-    @Test
-    fun testList() = runBlocking {
-        val controller = UsersController(mockk(), mockk(), mockk(), mockk())
-        val exception = assertFailsWith(ControllerException::class) {
-            controller.list(mockk())
-        }
-        assertEquals(HttpStatusCode.MethodNotAllowed, exception.code)
-        assertEquals("users_list_not_allowed", exception.key)
-    }
-
-    @Test
-    fun testCreate() = runBlocking {
-        val controller = UsersController(mockk(), mockk(), mockk(), mockk())
-        val exception = assertFailsWith(ControllerException::class) {
-            controller.create(
-                mockk(),
-                CreateUserPayload(
-                    "username", "displayName", "email", "password",
-                    LocalDate(2002, 12, 24)
-                )
-            )
-        }
-        assertEquals(HttpStatusCode.MethodNotAllowed, exception.code)
-        assertEquals("users_create_not_allowed", exception.key)
-    }
-
-    @Test
-    fun testDelete() = runBlocking {
-        val controller = UsersController(mockk(), mockk(), mockk(), mockk())
-        val exception = assertFailsWith(ControllerException::class) {
-            controller.delete(mockk(), "userId")
-        }
-        assertEquals(HttpStatusCode.MethodNotAllowed, exception.code)
-        assertEquals("users_delete_not_allowed", exception.key)
-    }
 
     @Test
     fun testGet() = runBlocking {
@@ -178,7 +140,7 @@ class UsersControllerTest {
             mockk(),
             getUserPostsUseCase
         )
-        assertEquals(listOf(post), controller.getPosts(call, targetUser.id))
+        assertEquals(listOf(post), controller.listPosts(call, targetUser.id))
     }
 
     @Test
@@ -197,7 +159,7 @@ class UsersControllerTest {
             mockk(),
             getUserPostsUseCase
         )
-        assertEquals(listOf(post), controller.getPosts(call, targetUser.id))
+        assertEquals(listOf(post), controller.listPosts(call, targetUser.id))
     }
 
     @Test
@@ -216,7 +178,7 @@ class UsersControllerTest {
             mockk(),
             getUserPostsUseCase
         )
-        assertEquals(listOf(post), controller.getPosts(call, targetUser.id))
+        assertEquals(listOf(post), controller.listPosts(call, targetUser.id))
     }
 
 }

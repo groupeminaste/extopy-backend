@@ -6,7 +6,7 @@ import java.util.*
 
 fun Application.configureI18n() {
     install(I18n) {
-        supportedLocales = listOf("en").map(Locale::forLanguageTag)
+        supportedLocales = listOf("en", "fr").map(Locale::forLanguageTag)
         useOfUri = true
     }
 }

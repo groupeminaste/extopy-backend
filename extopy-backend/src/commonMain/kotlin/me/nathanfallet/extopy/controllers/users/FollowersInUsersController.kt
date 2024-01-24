@@ -57,12 +57,4 @@ class FollowersInUsersController(
         )
     }
 
-    override suspend fun get(call: ApplicationCall, parent: User, id: String): FollowerInUser {
-        throw ControllerException(HttpStatusCode.MethodNotAllowed, "followers_in_users_get_not_allowed")
-    }
-
-    override suspend fun update(call: ApplicationCall, parent: User, id: String, payload: Unit): FollowerInUser {
-        throw ControllerException(HttpStatusCode.MethodNotAllowed, "followers_in_users_update_not_allowed")
-    }
-
 }

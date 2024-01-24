@@ -15,7 +15,6 @@ import me.nathanfallet.extopy.models.application.ExtopyJson
 import me.nathanfallet.extopy.models.posts.Post
 import me.nathanfallet.extopy.models.users.User
 import me.nathanfallet.extopy.plugins.configureSerialization
-import me.nathanfallet.usecases.models.UnitModel
 import kotlin.test.Test
 import kotlin.test.assertEquals
 
@@ -43,7 +42,7 @@ class UsersRouterTest {
         val client = installApp(this)
         val controller = mockk<IUsersController>()
         val router = UsersRouter(controller)
-        coEvery { controller.get(any(), UnitModel, "id") } returns user
+        coEvery { controller.get(any(), "id") } returns user
         routing {
             router.createRoutes(this)
         }
@@ -55,8 +54,8 @@ class UsersRouterTest {
         val client = installApp(this)
         val controller = mockk<IUsersController>()
         val router = UsersRouter(controller)
-        coEvery { controller.get(any(), UnitModel, "id") } returns user
-        coEvery { controller.getPosts(any(), "id") } returns listOf(post)
+        coEvery { controller.get(any(), "id") } returns user
+        coEvery { controller.listPosts(any(), "id") } returns listOf(post)
         routing {
             router.createRoutes(this)
         }
@@ -71,14 +70,14 @@ class UsersRouterTest {
         val controller = mockk<IUsersController>()
         val router = UsersRouter(controller)
         val openAPI = OpenAPI()
-        coEvery { controller.get(any(), UnitModel, "id") } returns user
-        coEvery { controller.getPosts(any(), "id") } returns listOf(post)
+        coEvery { controller.get(any(), "id") } returns user
+        coEvery { controller.listPosts(any(), "id") } returns listOf(post)
         routing {
             router.createRoutes(this, openAPI)
         }
         client.get("/api/v1/users/id/posts")
         val get = openAPI.paths["/api/v1/users/{userId}/posts"]?.get
-        assertEquals("getUserPostsById", get?.operationId)
+        assertEquals("listUserPost", get?.operationId)
         assertEquals(listOf("User"), get?.tags)
         assertEquals("Get user posts by id", get?.description)
         assertEquals(1, get?.parameters?.size)

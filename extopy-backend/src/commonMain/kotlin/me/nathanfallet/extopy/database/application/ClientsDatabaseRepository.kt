@@ -1,7 +1,7 @@
 package me.nathanfallet.extopy.database.application
 
 import me.nathanfallet.extopy.models.application.Client
-import me.nathanfallet.ktorx.database.IDatabase
+import me.nathanfallet.surexposed.database.IDatabase
 import me.nathanfallet.usecases.context.IContext
 import me.nathanfallet.usecases.models.repositories.IModelSuspendRepository
 import org.jetbrains.exposed.sql.SchemaUtils

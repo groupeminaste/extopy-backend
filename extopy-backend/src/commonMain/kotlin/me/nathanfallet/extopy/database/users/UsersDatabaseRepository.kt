@@ -7,7 +7,7 @@ import me.nathanfallet.extopy.models.users.UpdateUserPayload
 import me.nathanfallet.extopy.models.users.User
 import me.nathanfallet.extopy.models.users.UserContext
 import me.nathanfallet.extopy.repositories.users.IUsersRepository
-import me.nathanfallet.ktorx.database.IDatabase
+import me.nathanfallet.surexposed.database.IDatabase
 import me.nathanfallet.usecases.context.IContext
 import org.jetbrains.exposed.sql.*
 

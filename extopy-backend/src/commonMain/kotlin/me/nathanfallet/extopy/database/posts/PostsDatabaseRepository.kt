@@ -7,7 +7,7 @@ import me.nathanfallet.extopy.models.posts.Post
 import me.nathanfallet.extopy.models.posts.PostPayload
 import me.nathanfallet.extopy.models.users.UserContext
 import me.nathanfallet.extopy.repositories.posts.IPostsRepository
-import me.nathanfallet.ktorx.database.IDatabase
+import me.nathanfallet.surexposed.database.IDatabase
 import me.nathanfallet.usecases.context.IContext
 import org.jetbrains.exposed.sql.*
 import org.jetbrains.exposed.sql.SqlExpressionBuilder.eq

@@ -3,7 +3,7 @@ package me.nathanfallet.extopy.database.posts
 import me.nathanfallet.extopy.database.users.Users
 import me.nathanfallet.extopy.models.posts.LikeInPost
 import me.nathanfallet.extopy.models.users.UserContext
-import me.nathanfallet.ktorx.database.IDatabase
+import me.nathanfallet.surexposed.database.IDatabase
 import me.nathanfallet.usecases.context.IContext
 import me.nathanfallet.usecases.models.repositories.IChildModelSuspendRepository
 import org.jetbrains.exposed.sql.*

@@ -3,7 +3,6 @@ package me.nathanfallet.extopy.controllers.users
 import io.ktor.http.*
 import io.ktor.server.application.*
 import me.nathanfallet.extopy.models.posts.Post
-import me.nathanfallet.extopy.models.users.CreateUserPayload
 import me.nathanfallet.extopy.models.users.UpdateUserPayload
 import me.nathanfallet.extopy.models.users.User
 import me.nathanfallet.extopy.models.users.UserContext
@@ -19,18 +18,6 @@ class UsersController(
     private val updateUserUseCase: IUpdateModelSuspendUseCase<User, String, UpdateUserPayload>,
     private val getUserPostsUseCase: IGetUserPostsUseCase,
 ) : IUsersController {
-
-    override suspend fun list(call: ApplicationCall): List<User> {
-        throw ControllerException(HttpStatusCode.MethodNotAllowed, "users_list_not_allowed")
-    }
-
-    override suspend fun create(call: ApplicationCall, payload: CreateUserPayload): User {
-        throw ControllerException(HttpStatusCode.MethodNotAllowed, "users_create_not_allowed")
-    }
-
-    override suspend fun delete(call: ApplicationCall, id: String) {
-        throw ControllerException(HttpStatusCode.MethodNotAllowed, "users_delete_not_allowed")
-    }
 
     override suspend fun get(call: ApplicationCall, id: String): User {
         val user = requireUserForCallUseCase(call) as User
@@ -52,7 +39,7 @@ class UsersController(
         )
     }
 
-    override suspend fun getPosts(call: ApplicationCall, id: String): List<Post> {
+    override suspend fun listPosts(call: ApplicationCall, id: String): List<Post> {
         val user = requireUserForCallUseCase(call) as User
         return getUserPostsUseCase(
             id,

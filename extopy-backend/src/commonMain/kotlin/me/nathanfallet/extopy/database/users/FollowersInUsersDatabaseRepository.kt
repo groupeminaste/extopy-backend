@@ -3,7 +3,7 @@ package me.nathanfallet.extopy.database.users
 import me.nathanfallet.extopy.models.users.FollowerInUser
 import me.nathanfallet.extopy.models.users.FollowerInUserContext
 import me.nathanfallet.extopy.repositories.users.IFollowersInUsersRepository
-import me.nathanfallet.ktorx.database.IDatabase
+import me.nathanfallet.surexposed.database.IDatabase
 import me.nathanfallet.usecases.context.IContext
 import org.jetbrains.exposed.sql.*
 import org.jetbrains.exposed.sql.SqlExpressionBuilder.eq

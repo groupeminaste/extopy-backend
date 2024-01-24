@@ -14,7 +14,6 @@ import io.swagger.v3.oas.models.OpenAPI
 import me.nathanfallet.extopy.models.application.ExtopyJson
 import me.nathanfallet.extopy.models.posts.Post
 import me.nathanfallet.extopy.plugins.configureSerialization
-import me.nathanfallet.usecases.models.UnitModel
 import kotlin.test.Test
 import kotlin.test.assertEquals
 
@@ -42,7 +41,7 @@ class PostsRouterTest {
         val client = installApp(this)
         val controller = mockk<IPostsController>()
         val router = PostsRouter(controller)
-        coEvery { controller.get(any(), UnitModel, "id") } returns post
+        coEvery { controller.get(any(), "id") } returns post
         routing {
             router.createRoutes(this)
         }
@@ -54,8 +53,8 @@ class PostsRouterTest {
         val client = installApp(this)
         val controller = mockk<IPostsController>()
         val router = PostsRouter(controller)
-        coEvery { controller.get(any(), UnitModel, "id") } returns post
-        coEvery { controller.getReplies(any(), "id") } returns listOf(reply)
+        coEvery { controller.get(any(), "id") } returns post
+        coEvery { controller.listReplies(any(), "id") } returns listOf(reply)
         routing {
             router.createRoutes(this)
         }
@@ -70,14 +69,14 @@ class PostsRouterTest {
         val controller = mockk<IPostsController>()
         val router = PostsRouter(controller)
         val openAPI = OpenAPI()
-        coEvery { controller.get(any(), UnitModel, "id") } returns post
-        coEvery { controller.getReplies(any(), "id") } returns listOf(reply)
+        coEvery { controller.get(any(), "id") } returns post
+        coEvery { controller.listReplies(any(), "id") } returns listOf(reply)
         routing {
             router.createRoutes(this, openAPI)
         }
         client.get("/api/v1/posts/id/replies")
         val get = openAPI.paths["/api/v1/posts/{postId}/replies"]?.get
-        assertEquals("getPostRepliesById", get?.operationId)
+        assertEquals("listPostReply", get?.operationId)
         assertEquals(listOf("Post"), get?.tags)
         assertEquals("Get post replies by id", get?.description)
         assertEquals(1, get?.parameters?.size)

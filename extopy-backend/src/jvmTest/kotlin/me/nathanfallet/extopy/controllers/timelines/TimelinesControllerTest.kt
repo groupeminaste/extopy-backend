@@ -73,7 +73,7 @@ class TimelinesControllerTest {
             mockk(),
             getTimelinePostsUseCase
         )
-        assertEquals(listOf(post), controller.getPosts(call, "default"))
+        assertEquals(listOf(post), controller.listPosts(call, "default"))
     }
 
     @Test
@@ -92,7 +92,7 @@ class TimelinesControllerTest {
             mockk(),
             getTimelinePostsUseCase
         )
-        assertEquals(listOf(post), controller.getPosts(call, "default"))
+        assertEquals(listOf(post), controller.listPosts(call, "default"))
     }
 
     @Test
@@ -111,7 +111,7 @@ class TimelinesControllerTest {
             mockk(),
             getTimelinePostsUseCase
         )
-        assertEquals(listOf(post), controller.getPosts(call, "default"))
+        assertEquals(listOf(post), controller.listPosts(call, "default"))
     }
 
 }

@@ -17,10 +17,6 @@ class TimelinesController(
     private val getTimelinePostsUseCase: IGetTimelinePostsUseCase,
 ) : ITimelinesController {
 
-    override suspend fun list(call: ApplicationCall): List<Timeline> {
-        throw ControllerException(HttpStatusCode.MethodNotAllowed, "timelines_list_not_allowed")
-    }
-
     override suspend fun get(call: ApplicationCall, id: String): Timeline {
         val user = requireUserForCallUseCase(call) as User
         return getTimelineUseCase(id, UserContext(user.id)) ?: throw ControllerException(
@@ -28,7 +24,7 @@ class TimelinesController(
         )
     }
 
-    override suspend fun getPosts(call: ApplicationCall, id: String): List<Post> {
+    override suspend fun listPosts(call: ApplicationCall, id: String): List<Post> {
         val user = requireUserForCallUseCase(call) as User
         return getTimelinePostsUseCase(
             id,
@@ -36,18 +32,6 @@ class TimelinesController(
             call.parameters["offset"]?.toLongOrNull() ?: 0,
             UserContext(user.id)
         )
-    }
-
-    override suspend fun create(call: ApplicationCall, payload: Unit): Timeline {
-        throw ControllerException(HttpStatusCode.MethodNotAllowed, "timelines_create_not_allowed")
-    }
-
-    override suspend fun update(call: ApplicationCall, id: String, payload: Unit): Timeline {
-        throw ControllerException(HttpStatusCode.MethodNotAllowed, "timelines_update_not_allowed")
-    }
-
-    override suspend fun delete(call: ApplicationCall, id: String) {
-        throw ControllerException(HttpStatusCode.MethodNotAllowed, "timelines_delete_not_allowed")
     }
 
 }

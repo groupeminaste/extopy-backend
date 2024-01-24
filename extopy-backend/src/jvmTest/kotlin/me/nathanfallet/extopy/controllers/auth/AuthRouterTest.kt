@@ -12,14 +12,11 @@ import io.mockk.coEvery
 import io.mockk.every
 import io.mockk.mockk
 import me.nathanfallet.extopy.models.application.ExtopyJson
-import me.nathanfallet.extopy.models.auth.LoginPayload
-import me.nathanfallet.extopy.models.auth.RegisterCodePayload
 import me.nathanfallet.extopy.models.auth.RegisterPayload
 import me.nathanfallet.extopy.plugins.configureI18n
 import me.nathanfallet.extopy.plugins.configureSecurity
 import me.nathanfallet.extopy.plugins.configureSerialization
 import me.nathanfallet.extopy.plugins.configureTemplating
-import me.nathanfallet.ktorx.controllers.auth.IAuthWithCodeController
 import me.nathanfallet.ktorx.usecases.localization.IGetLocaleForCallUseCase
 import org.jsoup.Jsoup
 import java.util.*
@@ -93,7 +90,7 @@ class AuthRouterTest {
     @Test
     fun testGetRegisterCodeRoute() = testApplication {
         val client = installApp(this)
-        val controller = mockk<IAuthWithCodeController<LoginPayload, RegisterPayload, RegisterCodePayload>>()
+        val controller = mockk<AuthController>()
         val getLocaleForCallUseCase = mockk<IGetLocaleForCallUseCase>()
         val router = AuthRouter(controller, getLocaleForCallUseCase)
         coEvery { controller.register(any(), "code") } returns RegisterPayload("email@email.com")

@@ -6,7 +6,6 @@ import me.nathanfallet.extopy.models.auth.LoginPayload
 import me.nathanfallet.extopy.models.auth.RegisterCodePayload
 import me.nathanfallet.extopy.models.auth.RegisterPayload
 import me.nathanfallet.ktorx.controllers.auth.IAuthWithCodeController
-import me.nathanfallet.ktorx.models.auth.AuthMapping
 import me.nathanfallet.ktorx.routers.auth.AuthAPIRouter
 import me.nathanfallet.ktorx.routers.auth.LocalizedAuthWithCodeTemplateRouter
 import me.nathanfallet.ktorx.routers.concat.ConcatUnitRouter
@@ -21,20 +20,19 @@ class AuthRouter(
             typeInfo<LoginPayload>(),
             typeInfo<RegisterPayload>(),
             typeInfo<RegisterCodePayload>(),
-            AuthMapping(
-                loginTemplate = "auth/login.ftl",
-                registerTemplate = "auth/register.ftl",
-                authorizeTemplate = "auth/authorize.ftl",
-                redirectTemplate = "auth/redirect.ftl",
-                redirectUnauthorizedToUrl = "/auth/login?redirect={path}",
-            ),
             { template, model -> respondTemplate(template, model) },
+            null,
+            "/auth/login?redirect={path}",
+            "auth/redirect.ftl",
             controller,
+            AuthController::class,
             getLocaleForCallUseCase
         ),
         AuthAPIRouter(
             controller,
+            AuthController::class,
             prefix = "/api/v1"
         )
-    )
+    ),
+    AuthController::class
 )

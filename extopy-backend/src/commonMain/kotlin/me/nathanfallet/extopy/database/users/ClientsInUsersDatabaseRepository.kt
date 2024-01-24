@@ -3,7 +3,7 @@ package me.nathanfallet.extopy.database.users
 import kotlinx.datetime.Instant
 import me.nathanfallet.extopy.models.users.ClientInUser
 import me.nathanfallet.extopy.repositories.users.IClientsInUsersRepository
-import me.nathanfallet.ktorx.database.IDatabase
+import me.nathanfallet.surexposed.database.IDatabase
 import org.jetbrains.exposed.sql.SchemaUtils
 import org.jetbrains.exposed.sql.SqlExpressionBuilder.eq
 import org.jetbrains.exposed.sql.deleteWhere
