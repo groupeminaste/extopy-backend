@@ -13,8 +13,8 @@ class FollowersInUsersRouter(
     typeInfo<Unit>(),
     typeInfo<Unit>(),
     controller,
-    usersRouter,
     IFollowersInUsersController::class,
+    usersRouter,
     route = "followers",
     id = "followerId",
     prefix = "/api/v1"

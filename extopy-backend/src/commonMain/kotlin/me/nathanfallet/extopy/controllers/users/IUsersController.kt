@@ -11,15 +11,22 @@ import me.nathanfallet.ktorx.models.annotations.*
 interface IUsersController : IModelController<User, String, CreateUserPayload, UpdateUserPayload> {
 
     @APIMapping
-    @GetPath
+    @GetModelPath
+    @DocumentedError(401, "auth_invalid_credentials")
+    @DocumentedError(404, "users_not_found")
     suspend fun get(call: ApplicationCall, @Id id: String): User
 
     @APIMapping
-    @UpdatePath
+    @UpdateModelPath
+    @DocumentedError(401, "auth_invalid_credentials")
+    @DocumentedError(403, "users_update_not_allowed")
+    @DocumentedError(404, "users_not_found")
     suspend fun update(call: ApplicationCall, @Id id: String, @Payload payload: UpdateUserPayload): User
 
     @APIMapping("listUserPost", "Get user posts by id")
     @Path("GET", "/{userId}/posts")
+    @DocumentedError(401, "auth_invalid_credentials")
+    @DocumentedError(404, "users_not_found")
     suspend fun listPosts(call: ApplicationCall, @Id id: String): List<Post>
 
 }

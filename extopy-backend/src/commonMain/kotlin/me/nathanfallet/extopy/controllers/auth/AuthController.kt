@@ -80,6 +80,8 @@ class AuthController(
 
     @APIMapping
     @TokenPath
+    @DocumentedError(400, "auth_invalid_code")
+    @DocumentedError(500, "error_internal")
     override suspend fun token(call: ApplicationCall, @Payload request: AuthRequest): AuthToken {
         return super.token(call, request)
     }

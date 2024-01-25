@@ -13,8 +13,8 @@ class LikesInPostsRouter(
     typeInfo<Unit>(),
     typeInfo<Unit>(),
     controller,
-    postsRouter,
     ILikesInPostsController::class,
+    postsRouter,
     route = "likes",
     id = "userId",
     prefix = "/api/v1"

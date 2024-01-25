@@ -33,6 +33,5 @@ class AuthRouter(
             AuthController::class,
             prefix = "/api/v1"
         )
-    ),
-    AuthController::class
+    )
 )

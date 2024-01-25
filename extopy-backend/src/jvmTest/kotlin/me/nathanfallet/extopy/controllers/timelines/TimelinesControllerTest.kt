@@ -26,7 +26,7 @@ class TimelinesControllerTest {
         val getTimelineUseCase = mockk<IGetTimelineByIdUseCase>()
         val call = mockk<ApplicationCall>()
         val user = User("id", "displayName", "username")
-        val timeline = Timeline("id")
+        val timeline = Timeline("default")
         coEvery { requireUserForCallUseCase(call) } returns user
         coEvery { getTimelineUseCase("default", UserContext(user.id)) } returns timeline
         val controller = TimelinesController(
@@ -60,36 +60,62 @@ class TimelinesControllerTest {
     @Test
     fun testGetPosts() = runBlocking {
         val requireUserForCallUseCase = mockk<IRequireUserForCallUseCase>()
+        val getTimelineUseCase = mockk<IGetTimelineByIdUseCase>()
         val getTimelinePostsUseCase = mockk<IGetTimelinePostsUseCase>()
         val call = mockk<ApplicationCall>()
+        val timeline = Timeline("default")
         val user = User("id", "displayName", "username")
         val post = Post("postId", "userId", body = "body")
         coEvery { requireUserForCallUseCase(call) } returns user
+        coEvery { getTimelineUseCase("default", UserContext(user.id)) } returns timeline
         coEvery { getTimelinePostsUseCase("default", 10, 5, UserContext(user.id)) } returns listOf(post)
         every { call.parameters["limit"] } returns "10"
         every { call.parameters["offset"] } returns "5"
         val controller = TimelinesController(
             requireUserForCallUseCase,
-            mockk(),
+            getTimelineUseCase,
             getTimelinePostsUseCase
         )
         assertEquals(listOf(post), controller.listPosts(call, "default"))
     }
 
     @Test
+    fun testGetPostsNotFound() = runBlocking {
+        val requireUserForCallUseCase = mockk<IRequireUserForCallUseCase>()
+        val getTimelineUseCase = mockk<IGetTimelineByIdUseCase>()
+        val call = mockk<ApplicationCall>()
+        val user = User("id", "displayName", "username")
+        coEvery { requireUserForCallUseCase(call) } returns user
+        coEvery { getTimelineUseCase("default", UserContext(user.id)) } returns null
+        val controller = TimelinesController(
+            requireUserForCallUseCase,
+            getTimelineUseCase,
+            mockk()
+        )
+        val exception = assertFailsWith<ControllerException> {
+            controller.listPosts(call, "default")
+        }
+        assertEquals(HttpStatusCode.NotFound, exception.code)
+        assertEquals("timelines_not_found", exception.key)
+    }
+
+    @Test
     fun testGetPostsDefaultLimitOffset() = runBlocking {
         val requireUserForCallUseCase = mockk<IRequireUserForCallUseCase>()
+        val getTimelineUseCase = mockk<IGetTimelineByIdUseCase>()
         val getTimelinePostsUseCase = mockk<IGetTimelinePostsUseCase>()
         val call = mockk<ApplicationCall>()
+        val timeline = Timeline("default")
         val user = User("id", "displayName", "username")
         val post = Post("postId", "userId", body = "body")
         coEvery { requireUserForCallUseCase(call) } returns user
+        coEvery { getTimelineUseCase("default", UserContext(user.id)) } returns timeline
         coEvery { getTimelinePostsUseCase("default", 25, 0, UserContext(user.id)) } returns listOf(post)
         every { call.parameters["limit"] } returns null
         every { call.parameters["offset"] } returns null
         val controller = TimelinesController(
             requireUserForCallUseCase,
-            mockk(),
+            getTimelineUseCase,
             getTimelinePostsUseCase
         )
         assertEquals(listOf(post), controller.listPosts(call, "default"))
@@ -98,17 +124,20 @@ class TimelinesControllerTest {
     @Test
     fun testGetPostsInvalidLimitOffset() = runBlocking {
         val requireUserForCallUseCase = mockk<IRequireUserForCallUseCase>()
+        val getTimelineUseCase = mockk<IGetTimelineByIdUseCase>()
         val getTimelinePostsUseCase = mockk<IGetTimelinePostsUseCase>()
         val call = mockk<ApplicationCall>()
+        val timeline = Timeline("default")
         val user = User("id", "displayName", "username")
         val post = Post("postId", "userId", body = "body")
         coEvery { requireUserForCallUseCase(call) } returns user
+        coEvery { getTimelineUseCase("default", UserContext(user.id)) } returns timeline
         coEvery { getTimelinePostsUseCase("default", 25, 0, UserContext(user.id)) } returns listOf(post)
         every { call.parameters["limit"] } returns "a"
         every { call.parameters["offset"] } returns "b"
         val controller = TimelinesController(
             requireUserForCallUseCase,
-            mockk(),
+            getTimelineUseCase,
             getTimelinePostsUseCase
         )
         assertEquals(listOf(post), controller.listPosts(call, "default"))

@@ -81,7 +81,7 @@ class PostsRouterTest {
         assertEquals("Get post replies by id", get?.description)
         assertEquals(1, get?.parameters?.size)
         assertEquals("postId", get?.parameters?.firstOrNull()?.name)
-        assertEquals(1, get?.responses?.size)
+        assertEquals(3, get?.responses?.size)
         assertEquals(
             "#/components/schemas/${Post::class.qualifiedName}",
             get?.responses?.get("200")?.content?.get("application/json")?.schema?.items?.`$ref`

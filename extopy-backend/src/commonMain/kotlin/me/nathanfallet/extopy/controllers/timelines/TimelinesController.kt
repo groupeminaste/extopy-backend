@@ -26,8 +26,11 @@ class TimelinesController(
 
     override suspend fun listPosts(call: ApplicationCall, id: String): List<Post> {
         val user = requireUserForCallUseCase(call) as User
+        val timeline = getTimelineUseCase(id, UserContext(user.id)) ?: throw ControllerException(
+            HttpStatusCode.NotFound, "timelines_not_found"
+        )
         return getTimelinePostsUseCase(
-            id,
+            timeline.id,
             call.parameters["limit"]?.toLongOrNull() ?: 25,
             call.parameters["offset"]?.toLongOrNull() ?: 0,
             UserContext(user.id)

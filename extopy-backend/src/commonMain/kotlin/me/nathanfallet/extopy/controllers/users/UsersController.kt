@@ -41,8 +41,11 @@ class UsersController(
 
     override suspend fun listPosts(call: ApplicationCall, id: String): List<Post> {
         val user = requireUserForCallUseCase(call) as User
+        val target = getUserUseCase(id, UserContext(user.id)) ?: throw ControllerException(
+            HttpStatusCode.NotFound, "users_not_found"
+        )
         return getUserPostsUseCase(
-            id,
+            target.id,
             call.parameters["limit"]?.toLongOrNull() ?: 25,
             call.parameters["offset"]?.toLongOrNull() ?: 0,
             UserContext(user.id)
