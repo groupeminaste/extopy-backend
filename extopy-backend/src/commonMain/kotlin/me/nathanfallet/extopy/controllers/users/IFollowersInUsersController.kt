@@ -12,13 +12,13 @@ interface IFollowersInUsersController : IChildModelController<FollowerInUser, St
     @ListModelPath
     @DocumentedError(401, "auth_invalid_credentials")
     @DocumentedError(404, "users_not_found")
-    suspend fun list(call: ApplicationCall, @ParentModel("userId") parent: User): List<FollowerInUser>
+    suspend fun list(call: ApplicationCall, @ParentModel parent: User): List<FollowerInUser>
 
     @APIMapping
     @Path("GET", "/following")
     @DocumentedError(401, "auth_invalid_credentials")
     @DocumentedError(404, "users_not_found")
-    suspend fun listFollowing(call: ApplicationCall, @ParentModel("userId") parent: User): List<FollowerInUser>
+    suspend fun listFollowing(call: ApplicationCall, @ParentModel parent: User): List<FollowerInUser>
 
     @APIMapping
     @CreateModelPath
@@ -27,7 +27,7 @@ interface IFollowersInUsersController : IChildModelController<FollowerInUser, St
     @DocumentedError(500, "error_internal")
     suspend fun create(
         call: ApplicationCall,
-        @ParentModel("userId") parent: User,
+        @ParentModel parent: User,
         @Payload payload: Unit,
     ): FollowerInUser
 
@@ -38,6 +38,6 @@ interface IFollowersInUsersController : IChildModelController<FollowerInUser, St
     @DocumentedError(403, "followers_in_users_delete_not_allowed")
     @DocumentedError(404, "users_not_found")
     @DocumentedError(500, "error_internal")
-    suspend fun delete(call: ApplicationCall, @ParentModel("userId") parent: User, @Id id: String)
+    suspend fun delete(call: ApplicationCall, @ParentModel parent: User, @Id id: String)
 
 }

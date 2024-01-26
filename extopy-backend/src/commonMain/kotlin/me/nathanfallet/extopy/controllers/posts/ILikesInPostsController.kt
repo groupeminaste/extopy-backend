@@ -12,14 +12,14 @@ interface ILikesInPostsController : IChildModelController<LikeInPost, String, Un
     @ListModelPath
     @DocumentedError(401, "auth_invalid_credentials")
     @DocumentedError(404, "posts_not_found")
-    suspend fun list(call: ApplicationCall, @ParentModel("postId") parent: Post): List<LikeInPost>
+    suspend fun list(call: ApplicationCall, @ParentModel parent: Post): List<LikeInPost>
 
     @APIMapping
     @CreateModelPath
     @DocumentedError(401, "auth_invalid_credentials")
     @DocumentedError(404, "posts_not_found")
     @DocumentedError(500, "error_internal")
-    suspend fun create(call: ApplicationCall, @ParentModel("postId") parent: Post, @Payload payload: Unit): LikeInPost
+    suspend fun create(call: ApplicationCall, @ParentModel parent: Post, @Payload payload: Unit): LikeInPost
 
     @APIMapping
     @DeleteModelPath
@@ -28,6 +28,6 @@ interface ILikesInPostsController : IChildModelController<LikeInPost, String, Un
     @DocumentedError(403, "likes_in_posts_delete_not_allowed")
     @DocumentedError(404, "posts_not_found")
     @DocumentedError(500, "error_internal")
-    suspend fun delete(call: ApplicationCall, @ParentModel("postId") parent: Post, @Id id: String)
+    suspend fun delete(call: ApplicationCall, @ParentModel parent: Post, @Id id: String)
 
 }
