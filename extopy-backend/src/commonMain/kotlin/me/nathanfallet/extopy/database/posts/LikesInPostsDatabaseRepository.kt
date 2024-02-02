@@ -19,14 +19,13 @@ class LikesInPostsDatabaseRepository(
         }
     }
 
-    override suspend fun list(limit: Long, offset: Long, parentId: String, context: IContext?): List<LikeInPost> {
-        return database.suspendedTransaction {
+    override suspend fun list(limit: Long, offset: Long, parentId: String, context: IContext?): List<LikeInPost> =
+        database.suspendedTransaction {
             customJoin()
                 .where { LikesInPosts.postId eq parentId }
                 .limit(limit.toInt(), offset)
                 .map { LikesInPosts.toLikeInPost(it, null, Users.toUser(it)) }
         }
-    }
 
     override suspend fun create(payload: Unit, parentId: String, context: IContext?): LikeInPost? {
         if (context !is UserContext) return null
@@ -38,16 +37,15 @@ class LikesInPostsDatabaseRepository(
         }
     }
 
-    override suspend fun delete(id: String, parentId: String, context: IContext?): Boolean {
-        return database.suspendedTransaction {
+    override suspend fun delete(id: String, parentId: String, context: IContext?): Boolean =
+        database.suspendedTransaction {
             LikesInPosts.deleteWhere {
                 postId eq parentId and (userId eq id)
             }
         } == 1
-    }
 
-    private fun customJoin(additionalFields: List<Expression<*>> = listOf()): Query {
-        return LikesInPosts
+    private fun customJoin(additionalFields: List<Expression<*>> = listOf()): Query =
+        LikesInPosts
             .join(Users, JoinType.LEFT, LikesInPosts.userId, Users.id)
             .select(
                 additionalFields +
@@ -59,6 +57,5 @@ class LikesInPostsDatabaseRepository(
                         Users.avatar +
                         Users.verified
             )
-    }
 
 }

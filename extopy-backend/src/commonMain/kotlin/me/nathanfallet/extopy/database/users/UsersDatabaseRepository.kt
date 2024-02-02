@@ -32,8 +32,8 @@ class UsersDatabaseRepository(
         }
     }
 
-    override suspend fun getForUsernameOrEmail(username: String, includePassword: Boolean): User? {
-        return database.suspendedTransaction {
+    override suspend fun getForUsernameOrEmail(username: String, includePassword: Boolean): User? =
+        database.suspendedTransaction {
             Users
                 .selectAll()
                 .where { Users.username eq username or (Users.email eq username) }
@@ -42,10 +42,9 @@ class UsersDatabaseRepository(
                 }
                 .singleOrNull()
         }
-    }
 
-    override suspend fun create(payload: CreateUserPayload, context: IContext?): User? {
-        return database.suspendedTransaction {
+    override suspend fun create(payload: CreateUserPayload, context: IContext?): User? =
+        database.suspendedTransaction {
             Users.insert {
                 it[id] = generateId()
                 it[displayName] = payload.displayName
@@ -58,10 +57,9 @@ class UsersDatabaseRepository(
                 it[lastActive] = Clock.System.now().toString()
             }.resultedValues?.map(Users::toUser)?.singleOrNull()
         }
-    }
 
-    override suspend fun update(id: String, payload: UpdateUserPayload, context: IContext?): Boolean {
-        return database.suspendedTransaction {
+    override suspend fun update(id: String, payload: UpdateUserPayload, context: IContext?): Boolean =
+        database.suspendedTransaction {
             Users.update({ Users.id eq id }) {
                 payload.username?.let { username ->
                     it[Users.username] = username
@@ -83,14 +81,12 @@ class UsersDatabaseRepository(
                 }
             }
         } == 1
-    }
 
-    override suspend fun delete(id: String, context: IContext?): Boolean {
+    override suspend fun delete(id: String, context: IContext?): Boolean =
         TODO("Not yet implemented")
-    }
 
-    private fun customJoin(viewedBy: String, additionalFields: List<Expression<*>> = listOf()): Query {
-        return Users.join(Posts, JoinType.LEFT, Users.id, Posts.userId)
+    private fun customJoin(viewedBy: String, additionalFields: List<Expression<*>> = listOf()): Query =
+        Users.join(Posts, JoinType.LEFT, Users.id, Posts.userId)
             .join(FollowersInUsers, JoinType.LEFT, Users.id, FollowersInUsers.targetId)
             .join(
                 FollowersInUsers.following,
@@ -134,6 +130,5 @@ class UsersDatabaseRepository(
                         Users.followersIn +
                         Users.followingIn
             )
-    }
 
 }

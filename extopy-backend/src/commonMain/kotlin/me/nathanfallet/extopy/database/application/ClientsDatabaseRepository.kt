@@ -17,14 +17,13 @@ class ClientsDatabaseRepository(
         }
     }
 
-    override suspend fun get(id: String, context: IContext?): Client? {
-        return database.suspendedTransaction {
+    override suspend fun get(id: String, context: IContext?): Client? =
+        database.suspendedTransaction {
             Clients
                 .selectAll()
                 .where { Clients.id eq id }
                 .map(Clients::toClient)
                 .singleOrNull()
         }
-    }
 
 }

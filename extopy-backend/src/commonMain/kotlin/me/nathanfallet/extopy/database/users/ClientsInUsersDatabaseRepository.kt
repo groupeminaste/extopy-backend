@@ -20,8 +20,8 @@ class ClientsInUsersDatabaseRepository(
         }
     }
 
-    override suspend fun create(userId: String, clientId: String, expiration: Instant): ClientInUser? {
-        return database.suspendedTransaction {
+    override suspend fun create(userId: String, clientId: String, expiration: Instant): ClientInUser? =
+        database.suspendedTransaction {
             ClientsInUsers.insert {
                 it[code] = generateCode()
                 it[ClientsInUsers.userId] = userId
@@ -29,24 +29,21 @@ class ClientsInUsersDatabaseRepository(
                 it[ClientsInUsers.expiration] = expiration.toString()
             }.resultedValues?.map(ClientsInUsers::toClientInUser)?.singleOrNull()
         }
-    }
 
-    override suspend fun get(code: String): ClientInUser? {
-        return database.suspendedTransaction {
+    override suspend fun get(code: String): ClientInUser? =
+        database.suspendedTransaction {
             ClientsInUsers
                 .selectAll()
                 .where { ClientsInUsers.code eq code }
                 .map(ClientsInUsers::toClientInUser)
                 .singleOrNull()
         }
-    }
 
-    override suspend fun delete(code: String): Boolean {
-        return database.suspendedTransaction {
+    override suspend fun delete(code: String): Boolean =
+        database.suspendedTransaction {
             ClientsInUsers.deleteWhere {
                 ClientsInUsers.code eq code
             }
         } == 1
-    }
 
 }

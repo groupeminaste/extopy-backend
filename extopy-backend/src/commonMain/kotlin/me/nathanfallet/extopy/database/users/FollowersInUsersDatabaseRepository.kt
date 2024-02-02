@@ -18,28 +18,26 @@ class FollowersInUsersDatabaseRepository(
         }
     }
 
-    override suspend fun list(limit: Long, offset: Long, parentId: String, context: IContext?): List<FollowerInUser> {
-        return database.suspendedTransaction {
+    override suspend fun list(limit: Long, offset: Long, parentId: String, context: IContext?): List<FollowerInUser> =
+        database.suspendedTransaction {
             customFollowersJoin()
                 .where { FollowersInUsers.targetId eq parentId and (FollowersInUsers.accepted eq true) }
                 .limit(limit.toInt(), offset)
                 .map { FollowersInUsers.toFollowerInUser(it, Users.toUser(it), null) }
         }
-    }
 
     override suspend fun listFollowing(
         limit: Long,
         offset: Long,
         parentId: String,
         context: IContext?,
-    ): List<FollowerInUser> {
-        return database.suspendedTransaction {
+    ): List<FollowerInUser> =
+        database.suspendedTransaction {
             customFollowingJoin()
                 .where { FollowersInUsers.userId eq parentId and (FollowersInUsers.accepted eq true) }
                 .limit(limit.toInt(), offset)
                 .map { FollowersInUsers.toFollowerInUser(it, null, Users.toUser(it)) }
         }
-    }
 
     override suspend fun create(payload: Unit, parentId: String, context: IContext?): FollowerInUser? {
         if (context !is FollowerInUserContext) return null
@@ -52,28 +50,25 @@ class FollowersInUsersDatabaseRepository(
         }
     }
 
-    override suspend fun delete(id: String, parentId: String, context: IContext?): Boolean {
-        return database.suspendedTransaction {
+    override suspend fun delete(id: String, parentId: String, context: IContext?): Boolean =
+        database.suspendedTransaction {
             FollowersInUsers.deleteWhere {
                 userId eq id and (targetId eq parentId)
             }
         } == 1
-    }
 
-    private fun customFollowersJoin(): Query {
-        return FollowersInUsers
+    private fun customFollowersJoin(): Query =
+        FollowersInUsers
             .join(Users, JoinType.LEFT, FollowersInUsers.userId, Users.id)
             .customUsersFollowersSlice()
-    }
 
-    private fun customFollowingJoin(): Query {
-        return FollowersInUsers
+    private fun customFollowingJoin(): Query =
+        FollowersInUsers
             .join(Users, JoinType.LEFT, FollowersInUsers.targetId, Users.id)
             .customUsersFollowersSlice()
-    }
 
-    private fun ColumnSet.customUsersFollowersSlice(additionalFields: List<Expression<*>> = listOf()): Query {
-        return select(
+    private fun ColumnSet.customUsersFollowersSlice(additionalFields: List<Expression<*>> = listOf()): Query =
+        select(
             additionalFields +
                     FollowersInUsers.userId +
                     FollowersInUsers.targetId +
@@ -83,6 +78,5 @@ class FollowersInUsersDatabaseRepository(
                     Users.avatar +
                     Users.verified
         )
-    }
 
 }
