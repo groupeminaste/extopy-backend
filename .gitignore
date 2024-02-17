@@ -37,6 +37,9 @@ bin/
 /nbdist/
 /.nb-gradle/
 
+### Helm ###
+helm/*/charts
+
 ### VS Code ###
 .vscode/
 

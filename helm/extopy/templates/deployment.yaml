@@ -1,0 +1,105 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ include "extopy.fullname" . }}
+  labels:
+    {{- include "extopy.labels" . | nindent 4 }}
+spec:
+  {{- if not .Values.autoscaling.enabled }}
+  replicas: {{ .Values.replicaCount }}
+  {{- end }}
+  selector:
+    matchLabels:
+      {{- include "extopy.selectorLabels" . | nindent 6 }}
+  template:
+    metadata:
+      {{- with .Values.podAnnotations }}
+      annotations:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      labels:
+        {{- include "extopy.labels" . | nindent 8 }}
+        {{- with .Values.podLabels }}
+        {{- toYaml . | nindent 8 }}
+        {{- end }}
+    spec:
+      {{- with .Values.imagePullSecrets }}
+      imagePullSecrets:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      serviceAccountName: {{ include "extopy.serviceAccountName" . }}
+      securityContext:
+        {{- toYaml .Values.podSecurityContext | nindent 8 }}
+      initContainers:
+        {{- with .Values.initContainers }}
+        {{- toYaml . | nindent 8 }}
+        {{- end }}
+        - name: waiting-for-mysql
+          image: busybox:1.35
+          command: [ 'sh', '-c', 'while ! nc -z {{ .Values.mysql.mysqlHost | default (include "extopy.mysql.fullname" .) }} 3306; do sleep 1; printf "-"; done;' ]
+      containers:
+        - name: {{ .Chart.Name }}
+          securityContext:
+            {{- toYaml .Values.securityContext | nindent 12 }}
+          image: "{{ .Values.image.repository }}:{{ .Values.image.tag | default .Chart.AppVersion }}"
+          ports:
+            - name: http
+              containerPort: {{ .Values.service.port }}
+              protocol: TCP
+          env:
+            - name: TZ
+              value: "Europe/Paris"
+            - name: DB_HOST
+              value: "{{ .Values.mysql.mysqlHost | default (include "extopy.mysql.fullname" .) }}"
+            - name: DB_NAME
+              value: {{ .Values.mysql.auth.database | default (include "extopy.fullname" .) }}
+            - name: DB_USER
+              valueFrom:
+                secretKeyRef:
+                  {{ if not .Values.existingSecret -}}
+                  name: {{ include "extopy.fullname" . }}
+                  {{- else }}
+                  name: {{ .Values.existingSecret }}
+                  {{- end }}
+                  key: mysql-username
+            - name: DB_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  {{ if and (not .Values.existingSecret) (not .Values.mysql.auth.existingSecret) -}}
+                  name: {{ include "extopy.fullname" . }}
+                  key: mysql-password
+                  {{ else if and (not .Values.existingSecret) (.Values.mysql.auth.existingSecret) -}}
+                  name: {{ .Values.mysql.auth.existingSecret }}
+                  key: {{ .Values.mysql.auth.secretKeys.userPasswordKey }}
+                  {{- else }}
+                  name: {{ .Values.existingSecret }}
+                  key: mysql-password
+                  {{- end }}
+            - name: KTOR_ENV
+              value: {{ .Values.env }}
+          livenessProbe:
+            {{- toYaml .Values.livenessProbe | nindent 12 }}
+          readinessProbe:
+            {{- toYaml .Values.readinessProbe | nindent 12 }}
+          resources:
+            {{- toYaml .Values.resources | nindent 12 }}
+          {{- with .Values.volumeMounts }}
+          volumeMounts:
+            {{- toYaml . | nindent 12 }}
+          {{- end }}
+      {{- with .Values.volumes }}
+      volumes:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      {{- with .Values.nodeSelector }}
+      nodeSelector:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      {{- with .Values.affinity }}
+      affinity:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      {{- with .Values.tolerations }}
+      tolerations:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
