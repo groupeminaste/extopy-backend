@@ -59,7 +59,7 @@ kotlin {
 
     applyDefaultHierarchyTemplate()
 
-    val ktorxVersion = "2.0.4"
+    val ktorxVersion = "2.1.0"
     val usecasesVersion = "1.5.6"
 
     sourceSets {
