@@ -77,6 +77,24 @@ spec:
                   {{- end }}
             - name: KTOR_ENV
               value: {{ .Values.env }}
+            - name: JWT_SECRET
+              valueFrom:
+                secretKeyRef:
+                  {{ if not .Values.existingSecret -}}
+                  name: {{ include "extopy.fullname" . }}
+                  {{- else }}
+                  name: {{ .Values.existingSecret }}
+                  {{- end }}
+                  key: jwt-secret
+            - name: EMAIL_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  {{ if not .Values.existingSecret -}}
+                  name: {{ include "extopy.fullname" . }}
+                  {{- else }}
+                  name: {{ .Values.existingSecret }}
+                  {{- end }}
+                  key: email-password
           livenessProbe:
             {{- toYaml .Values.livenessProbe | nindent 12 }}
           readinessProbe:

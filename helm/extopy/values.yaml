@@ -141,6 +141,12 @@ existingSecret: ''
 #env: dev
 env: production
 
+jwt:
+  secret: 'secret'
+
+email:
+  password: ''
+
 # MySQL configuration
 
 mysql:
