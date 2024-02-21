@@ -9,6 +9,9 @@ import me.nathanfallet.extopy.controllers.timelines.ITimelinesController
 import me.nathanfallet.extopy.controllers.timelines.TimelinesController
 import me.nathanfallet.extopy.controllers.timelines.TimelinesRouter
 import me.nathanfallet.extopy.controllers.users.*
+import me.nathanfallet.extopy.controllers.web.IWebController
+import me.nathanfallet.extopy.controllers.web.WebController
+import me.nathanfallet.extopy.controllers.web.WebRouter
 import me.nathanfallet.extopy.database.Database
 import me.nathanfallet.extopy.database.application.ClientsDatabaseRepository
 import me.nathanfallet.extopy.database.application.CodesInEmailsDatabaseRepository
@@ -217,6 +220,9 @@ fun Application.configureKoin() {
             single<IGetTimelinePostsUseCase> { GetTimelinePostsUseCase(get()) }
         }
         val controllerModule = module {
+            // Static web pages
+            single<IWebController> { WebController() }
+
             // Auth
             single<IAuthWithCodeController<LoginPayload, RegisterPayload, RegisterCodePayload>> {
                 AuthController(
@@ -285,6 +291,7 @@ fun Application.configureKoin() {
             }
         }
         val routerModule = module {
+            single { WebRouter(get()) }
             single { AuthRouter(get(), get()) }
             single { UsersRouter(get()) }
             single { FollowersInUsersRouter(get(), get()) }
