@@ -95,14 +95,14 @@ livenessProbe:
   periodSeconds: 30
   failureThreshold: 10
   httpGet:
-    path: /
+    path: /healthz
     port: http
 readinessProbe:
   initialDelaySeconds: 5
   periodSeconds: 30
   failureThreshold: 2
   httpGet:
-    path: /
+    path: /readyz
     port: http
 
 autoscaling:
