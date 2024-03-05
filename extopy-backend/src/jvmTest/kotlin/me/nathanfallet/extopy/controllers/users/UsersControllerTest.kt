@@ -33,6 +33,7 @@ class UsersControllerTest {
         coEvery { getUserUseCase(targetUser.id, UserContext(user.id)) } returns targetUser
         val controller = UsersController(
             requireUserForCallUseCase,
+            mockk(),
             getUserUseCase,
             mockk(),
             mockk()
@@ -49,6 +50,7 @@ class UsersControllerTest {
         coEvery { getUserUseCase(targetUser.id, UserContext(user.id)) } returns null
         val controller = UsersController(
             requireUserForCallUseCase,
+            mockk(),
             getUserUseCase,
             mockk(),
             mockk()
@@ -77,6 +79,7 @@ class UsersControllerTest {
         val controller = UsersController(
             requireUserForCallUseCase,
             mockk(),
+            mockk(),
             updateUserUseCase,
             mockk()
         )
@@ -90,6 +93,7 @@ class UsersControllerTest {
         coEvery { requireUserForCallUseCase(call) } returns user
         val controller = UsersController(
             requireUserForCallUseCase,
+            mockk(),
             mockk(),
             mockk(),
             mockk()
@@ -114,6 +118,7 @@ class UsersControllerTest {
         val controller = UsersController(
             requireUserForCallUseCase,
             mockk(),
+            mockk(),
             updateUserUseCase,
             mockk()
         )
@@ -135,6 +140,7 @@ class UsersControllerTest {
         coEvery { getUserPostsUseCase(targetUser.id, Pagination(10, 5), UserContext(user.id)) } returns listOf(post)
         val controller = UsersController(
             requireUserForCallUseCase,
+            mockk(),
             getUserUseCase,
             mockk(),
             getUserPostsUseCase
@@ -150,6 +156,7 @@ class UsersControllerTest {
         coEvery { getUserUseCase(targetUser.id, UserContext(user.id)) } returns null
         val controller = UsersController(
             requireUserForCallUseCase,
+            mockk(),
             getUserUseCase,
             mockk(),
             mockk()
@@ -172,6 +179,7 @@ class UsersControllerTest {
         coEvery { getUserPostsUseCase(targetUser.id, Pagination(25, 0), UserContext(user.id)) } returns listOf(post)
         val controller = UsersController(
             requireUserForCallUseCase,
+            mockk(),
             getUserUseCase,
             mockk(),
             getUserPostsUseCase

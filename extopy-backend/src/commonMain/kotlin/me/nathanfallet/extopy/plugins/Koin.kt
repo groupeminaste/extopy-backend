@@ -74,6 +74,8 @@ import me.nathanfallet.usecases.models.get.context.GetModelWithContextFromReposi
 import me.nathanfallet.usecases.models.get.context.IGetModelWithContextSuspendUseCase
 import me.nathanfallet.usecases.models.list.slice.IListSliceChildModelSuspendUseCase
 import me.nathanfallet.usecases.models.list.slice.ListSliceChildModelFromRepositorySuspendUseCase
+import me.nathanfallet.usecases.models.list.slice.context.IListSliceModelWithContextSuspendUseCase
+import me.nathanfallet.usecases.models.list.slice.context.ListSliceModelWithContextFromRepositorySuspendUseCase
 import me.nathanfallet.usecases.models.repositories.IChildModelSuspendRepository
 import me.nathanfallet.usecases.models.repositories.IModelSuspendRepository
 import me.nathanfallet.usecases.models.update.IUpdateModelSuspendUseCase
@@ -168,6 +170,9 @@ fun Application.configureKoin() {
             // Users
             single<IRequireUserForCallUseCase> { RequireUserForCallUseCase(get()) }
             single<IGetUserForCallUseCase> { GetUserForCallUseCase(get(), get(), get(named<User>())) }
+            single<IListSliceModelWithContextSuspendUseCase<User>>(named<User>()) {
+                ListSliceModelWithContextFromRepositorySuspendUseCase(get<IUsersRepository>())
+            }
             single<IGetModelWithContextSuspendUseCase<User, String>>(named<User>()) {
                 GetModelWithContextFromRepositorySuspendUseCase(get<IUsersRepository>())
             }
@@ -190,6 +195,9 @@ fun Application.configureKoin() {
             single<IListFollowingInUserUseCase> { ListFollowingInUserUseCase(get()) }
 
             // Posts
+            single<IListSliceModelWithContextSuspendUseCase<Post>>(named<Post>()) {
+                ListSliceModelWithContextFromRepositorySuspendUseCase(get<IPostsRepository>())
+            }
             single<IGetModelWithContextSuspendUseCase<Post, String>>(named<Post>()) {
                 GetModelWithContextFromRepositorySuspendUseCase(get<IPostsRepository>())
             }
@@ -248,6 +256,7 @@ fun Application.configureKoin() {
                     get(),
                     get(named<User>()),
                     get(named<User>()),
+                    get(named<User>()),
                     get()
                 )
             }
@@ -265,6 +274,7 @@ fun Application.configureKoin() {
             single<IPostsController> {
                 PostsController(
                     get(),
+                    get(named<Post>()),
                     get(named<Post>()),
                     get(named<Post>()),
                     get(named<Post>()),

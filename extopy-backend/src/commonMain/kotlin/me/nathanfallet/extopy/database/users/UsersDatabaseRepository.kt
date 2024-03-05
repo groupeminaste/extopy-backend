@@ -2,6 +2,7 @@ package me.nathanfallet.extopy.database.users
 
 import kotlinx.datetime.Clock
 import me.nathanfallet.extopy.database.posts.Posts
+import me.nathanfallet.extopy.models.application.SearchOptions
 import me.nathanfallet.extopy.models.users.CreateUserPayload
 import me.nathanfallet.extopy.models.users.UpdateUserPayload
 import me.nathanfallet.extopy.models.users.User
@@ -9,6 +10,8 @@ import me.nathanfallet.extopy.models.users.UserContext
 import me.nathanfallet.extopy.repositories.users.IUsersRepository
 import me.nathanfallet.surexposed.database.IDatabase
 import me.nathanfallet.usecases.context.IContext
+import me.nathanfallet.usecases.pagination.IPaginationOptions
+import me.nathanfallet.usecases.pagination.Pagination
 import org.jetbrains.exposed.sql.*
 
 class UsersDatabaseRepository(
@@ -18,6 +21,18 @@ class UsersDatabaseRepository(
     init {
         database.transaction {
             SchemaUtils.create(Users)
+        }
+    }
+
+    override suspend fun list(pagination: Pagination, context: IContext?): List<User> {
+        if (context !is UserContext) return emptyList()
+        return database.suspendedTransaction {
+            customJoin(context.userId)
+                .groupBy(Users.id)
+                .andWhere(pagination.options)
+                .orderBy(Users.joinDate to SortOrder.DESC)
+                .limit(pagination.limit.toInt(), pagination.offset)
+                .map(Users::toUser)
         }
     }
 
@@ -130,5 +145,23 @@ class UsersDatabaseRepository(
                         Users.followersIn +
                         Users.followingIn
             )
+
+    private fun Query.andWhere(options: IPaginationOptions?): Query = when (options) {
+        is SearchOptions -> {
+            val likeString = options.search
+                .replace("%", "\\%")
+                .replace("_", "\\_")
+            andWhere {
+                likeString.split(" ").map {
+                    Users.username like "%$it%" or
+                            (Users.displayName like "%$it%") or
+                            (Users.biography like "%$it%")
+                }.fold(Op.FALSE as Op<Boolean>) { a, b -> a or b }
+            }
+
+        }
+
+        else -> this
+    }
 
 }

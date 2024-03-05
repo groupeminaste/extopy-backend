@@ -3,12 +3,14 @@ package me.nathanfallet.extopy.database.posts
 import kotlinx.datetime.Clock
 import me.nathanfallet.extopy.database.users.FollowersInUsers
 import me.nathanfallet.extopy.database.users.Users
+import me.nathanfallet.extopy.models.application.SearchOptions
 import me.nathanfallet.extopy.models.posts.Post
 import me.nathanfallet.extopy.models.posts.PostPayload
 import me.nathanfallet.extopy.models.users.UserContext
 import me.nathanfallet.extopy.repositories.posts.IPostsRepository
 import me.nathanfallet.surexposed.database.IDatabase
 import me.nathanfallet.usecases.context.IContext
+import me.nathanfallet.usecases.pagination.IPaginationOptions
 import me.nathanfallet.usecases.pagination.Pagination
 import org.jetbrains.exposed.sql.*
 import org.jetbrains.exposed.sql.SqlExpressionBuilder.eq
@@ -20,6 +22,18 @@ class PostsDatabaseRepository(
     init {
         database.transaction {
             SchemaUtils.create(Posts)
+        }
+    }
+
+    override suspend fun list(pagination: Pagination, context: IContext?): List<Post> {
+        if (context !is UserContext) return emptyList()
+        return database.suspendedTransaction {
+            customJoin(context.userId)
+                .groupBy(Posts.id)
+                .andWhere(pagination.options)
+                .orderBy(Posts.published to SortOrder.DESC)
+                .limit(pagination.limit.toInt(), pagination.offset)
+                .map { Posts.toPost(it, Users.toUser(it)) }
         }
     }
 
@@ -148,5 +162,21 @@ class PostsDatabaseRepository(
                     Posts.likesIn +
                     additionalFields
         )
+
+    private fun Query.andWhere(options: IPaginationOptions?): Query = when (options) {
+        is SearchOptions -> {
+            val likeString = options.search
+                .replace("%", "\\%")
+                .replace("_", "\\_")
+            andWhere {
+                likeString.split(" ")
+                    .map { Posts.body like "%$it%" }
+                    .fold(Op.FALSE as Op<Boolean>) { a, b -> a or b }
+            }
+
+        }
+
+        else -> this
+    }
 
 }

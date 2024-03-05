@@ -9,6 +9,16 @@ import me.nathanfallet.ktorx.models.annotations.*
 interface IPostsController : IModelController<Post, String, PostPayload, PostPayload> {
 
     @APIMapping
+    @ListModelPath
+    @DocumentedError(401, "auth_invalid_credentials")
+    suspend fun list(
+        call: ApplicationCall,
+        @QueryParameter limit: Long?,
+        @QueryParameter offset: Long?,
+        @QueryParameter search: String?,
+    ): List<Post>
+
+    @APIMapping
     @GetModelPath
     @DocumentedError(401, "auth_invalid_credentials")
     @DocumentedError(404, "posts_not_found")
