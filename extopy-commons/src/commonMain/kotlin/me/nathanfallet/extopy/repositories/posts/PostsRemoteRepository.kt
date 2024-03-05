@@ -5,11 +5,13 @@ import io.ktor.client.request.*
 import io.ktor.http.*
 import io.ktor.util.reflect.*
 import me.nathanfallet.extopy.client.IExtopyClient
+import me.nathanfallet.extopy.models.application.SearchOptions
 import me.nathanfallet.extopy.models.posts.Post
 import me.nathanfallet.extopy.models.posts.PostPayload
 import me.nathanfallet.ktorx.repositories.api.APIModelRemoteRepository
 import me.nathanfallet.usecases.models.UnitModel
 import me.nathanfallet.usecases.models.id.RecursiveId
+import me.nathanfallet.usecases.pagination.IPaginationOptions
 import me.nathanfallet.usecases.pagination.Pagination
 
 class PostsRemoteRepository(
@@ -22,6 +24,13 @@ class PostsRemoteRepository(
     client,
     prefix = "/api/v1"
 ), IPostsRemoteRepository {
+
+    override fun encodePaginationOptions(options: IPaginationOptions, builder: HttpRequestBuilder) = when (options) {
+        is SearchOptions -> builder.parameter("search", options.search)
+        else -> super.encodePaginationOptions(options, builder)
+    }
+
+    override suspend fun list(pagination: Pagination): List<Post> = list(pagination, null)
 
     override suspend fun get(id: String): Post? = get(id, null)
 
