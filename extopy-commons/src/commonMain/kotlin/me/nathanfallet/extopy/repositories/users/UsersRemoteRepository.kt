@@ -12,6 +12,7 @@ import me.nathanfallet.extopy.models.users.User
 import me.nathanfallet.ktorx.repositories.api.APIModelRemoteRepository
 import me.nathanfallet.usecases.models.UnitModel
 import me.nathanfallet.usecases.models.id.RecursiveId
+import me.nathanfallet.usecases.pagination.Pagination
 
 class UsersRemoteRepository(
     client: IExtopyClient,
@@ -24,21 +25,16 @@ class UsersRemoteRepository(
     prefix = "/api/v1"
 ), IUsersRemoteRepository {
 
-    override suspend fun get(id: String): User? {
-        return get(id, null)
-    }
+    override suspend fun get(id: String): User? = get(id, null)
 
-    override suspend fun update(id: String, payload: UpdateUserPayload): User? {
-        return update(id, payload, null)
-    }
+    override suspend fun update(id: String, payload: UpdateUserPayload): User? = update(id, payload, null)
 
-    override suspend fun getPosts(id: String, limit: Long, offset: Long): List<Post> {
-        return client
+    override suspend fun getPosts(id: String, pagination: Pagination): List<Post> =
+        client
             .request(HttpMethod.Get, "${constructFullRoute(RecursiveId<UnitModel, Unit, Unit>(Unit))}/$id/posts") {
-                parameter("limit", limit)
-                parameter("offset", offset)
+                parameter("limit", pagination.limit)
+                parameter("offset", pagination.offset)
             }
             .body()
-    }
 
 }

@@ -4,7 +4,7 @@ plugins {
     id("convention.publication")
     id("org.jetbrains.kotlinx.kover")
     id("com.google.devtools.ksp")
-    id("io.ktor.plugin") version "2.3.8"
+    id("io.ktor.plugin") version "2.3.9"
 }
 
 application {
@@ -48,11 +48,11 @@ kotlin {
 
     applyDefaultHierarchyTemplate()
 
-    val coroutinesVersion = "1.7.3"
-    val ktorVersion = "2.3.8"
+    val coroutinesVersion = "1.8.0"
+    val ktorVersion = "2.3.9"
     val koinVersion = "3.5.0"
     val logbackVersion = "0.9.30"
-    val ktorxVersion = "2.2.2"
+    val ktorxVersion = "2.2.4"
 
     sourceSets {
         val commonMain by getting {
@@ -80,7 +80,7 @@ kotlin {
                 implementation("ch.qos.logback:logback-core:$logbackVersion")
                 implementation("ch.qos.logback:logback-classic:$logbackVersion")
 
-                implementation("me.nathanfallet.i18n:i18n:1.0.9")
+                implementation("me.nathanfallet.i18n:i18n:1.0.11")
                 implementation("me.nathanfallet.ktorx:ktor-database-sessions:$ktorxVersion")
                 implementation("me.nathanfallet.ktorx:ktor-health:$ktorxVersion")
                 implementation("me.nathanfallet.ktorx:ktor-i18n:$ktorxVersion")
@@ -90,12 +90,12 @@ kotlin {
                 implementation("me.nathanfallet.ktorx:ktor-routers-auth:$ktorxVersion")
                 implementation("me.nathanfallet.ktorx:ktor-routers-auth-locale:$ktorxVersion")
                 implementation("me.nathanfallet.ktorx:ktor-sentry:$ktorxVersion")
-                implementation("me.nathanfallet.cloudflare:cloudflare-api-client:4.2.1")
+                implementation("me.nathanfallet.cloudflare:cloudflare-api-client:4.2.3")
 
                 implementation("com.mysql:mysql-connector-j:8.0.33")
                 implementation("at.favre.lib:bcrypt:0.9.0")
                 implementation("org.apache.commons:commons-email:1.5")
-                implementation("io.sentry:sentry:6.34.0")
+                implementation("io.sentry:sentry:7.5.0")
 
                 api(project(":extopy-commons"))
             }

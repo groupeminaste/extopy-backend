@@ -12,13 +12,23 @@ interface IFollowersInUsersController : IChildModelController<FollowerInUser, St
     @ListModelPath
     @DocumentedError(401, "auth_invalid_credentials")
     @DocumentedError(404, "users_not_found")
-    suspend fun list(call: ApplicationCall, @ParentModel parent: User): List<FollowerInUser>
+    suspend fun list(
+        call: ApplicationCall,
+        @ParentModel parent: User,
+        @QueryParameter limit: Long?,
+        @QueryParameter offset: Long?,
+    ): List<FollowerInUser>
 
     @APIMapping
     @Path("GET", "/following")
     @DocumentedError(401, "auth_invalid_credentials")
     @DocumentedError(404, "users_not_found")
-    suspend fun listFollowing(call: ApplicationCall, @ParentModel parent: User): List<FollowerInUser>
+    suspend fun listFollowing(
+        call: ApplicationCall,
+        @ParentModel parent: User,
+        @QueryParameter limit: Long?,
+        @QueryParameter offset: Long?,
+    ): List<FollowerInUser>
 
     @APIMapping
     @CreateModelPath

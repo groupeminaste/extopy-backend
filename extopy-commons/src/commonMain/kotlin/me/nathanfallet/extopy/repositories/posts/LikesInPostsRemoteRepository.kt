@@ -8,6 +8,7 @@ import me.nathanfallet.extopy.models.users.User
 import me.nathanfallet.ktorx.repositories.api.APIChildModelRemoteRepository
 import me.nathanfallet.ktorx.repositories.api.IAPIModelRemoteRepository
 import me.nathanfallet.usecases.models.id.RecursiveId
+import me.nathanfallet.usecases.pagination.Pagination
 
 class LikesInPostsRemoteRepository(
     client: IExtopyClient,
@@ -23,16 +24,13 @@ class LikesInPostsRemoteRepository(
     prefix = "/api/v1"
 ), ILikesInPostsRemoteRepository {
 
-    override suspend fun list(postId: String): List<LikeInPost> {
-        return list(RecursiveId<User, String, Unit>(postId), null)
-    }
+    override suspend fun list(pagination: Pagination, postId: String): List<LikeInPost> =
+        list(pagination, RecursiveId<User, String, Unit>(postId), null)
 
-    override suspend fun create(postId: String): LikeInPost? {
-        return create(Unit, RecursiveId<User, String, Unit>(postId), null)
-    }
+    override suspend fun create(postId: String): LikeInPost? =
+        create(Unit, RecursiveId<User, String, Unit>(postId), null)
 
-    override suspend fun delete(postId: String, userId: String): Boolean {
-        return delete(userId, RecursiveId<User, String, Unit>(postId), null)
-    }
+    override suspend fun delete(postId: String, userId: String): Boolean =
+        delete(userId, RecursiveId<User, String, Unit>(postId), null)
 
 }

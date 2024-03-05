@@ -10,6 +10,7 @@ import me.nathanfallet.extopy.models.timelines.Timeline
 import me.nathanfallet.ktorx.repositories.api.APIModelRemoteRepository
 import me.nathanfallet.usecases.models.UnitModel
 import me.nathanfallet.usecases.models.id.RecursiveId
+import me.nathanfallet.usecases.pagination.Pagination
 
 class TimelinesRemoteRepository(
     client: IExtopyClient,
@@ -26,11 +27,11 @@ class TimelinesRemoteRepository(
         return get(id, null)
     }
 
-    override suspend fun getPosts(id: String, limit: Long, offset: Long): List<Post> {
+    override suspend fun getPosts(id: String, pagination: Pagination): List<Post> {
         return client
             .request(HttpMethod.Get, "${constructFullRoute(RecursiveId<UnitModel, Unit, Unit>(Unit))}/$id/posts") {
-                parameter("limit", limit)
-                parameter("offset", offset)
+                parameter("limit", pagination.limit)
+                parameter("offset", pagination.offset)
             }
             .body()
     }

@@ -41,6 +41,11 @@ interface IPostsController : IModelController<Post, String, PostPayload, PostPay
     @Path("GET", "/{postId}/replies")
     @DocumentedError(401, "auth_invalid_credentials")
     @DocumentedError(404, "posts_not_found")
-    suspend fun listReplies(call: ApplicationCall, @Id id: String): List<Post>
+    suspend fun listReplies(
+        call: ApplicationCall,
+        @Id id: String,
+        @QueryParameter limit: Long?,
+        @QueryParameter offset: Long?,
+    ): List<Post>
 
 }

@@ -4,7 +4,6 @@ import io.ktor.http.*
 import io.ktor.server.application.*
 import io.mockk.coEvery
 import io.mockk.coVerify
-import io.mockk.every
 import io.mockk.mockk
 import kotlinx.coroutines.runBlocking
 import me.nathanfallet.extopy.models.posts.Post
@@ -18,6 +17,7 @@ import me.nathanfallet.usecases.models.create.context.ICreateModelWithContextSus
 import me.nathanfallet.usecases.models.delete.IDeleteModelSuspendUseCase
 import me.nathanfallet.usecases.models.get.context.IGetModelWithContextSuspendUseCase
 import me.nathanfallet.usecases.models.update.IUpdateModelSuspendUseCase
+import me.nathanfallet.usecases.pagination.Pagination
 import kotlin.test.Test
 import kotlin.test.assertEquals
 import kotlin.test.assertFailsWith
@@ -227,30 +227,26 @@ class PostsControllerTest {
         val requireUserForCallUseCase = mockk<IRequireUserForCallUseCase>()
         val getPostUseCase = mockk<IGetModelWithContextSuspendUseCase<Post, String>>()
         val getPostRepliesUseCase = mockk<IGetPostRepliesUseCase>()
-        val call = mockk<ApplicationCall>()
-        coEvery { requireUserForCallUseCase(call) } returns user
+        coEvery { requireUserForCallUseCase(any()) } returns user
         coEvery { getPostUseCase(post.id, UserContext(user.id)) } returns post
-        coEvery { getPostRepliesUseCase(post.id, 10, 5, UserContext(user.id)) } returns listOf(post)
-        every { call.parameters["limit"] } returns "10"
-        every { call.parameters["offset"] } returns "5"
+        coEvery { getPostRepliesUseCase(post.id, Pagination(10, 5), UserContext(user.id)) } returns listOf(post)
         val controller = PostsController(
             requireUserForCallUseCase, mockk(), getPostUseCase, mockk(), mockk(), getPostRepliesUseCase
         )
-        assertEquals(listOf(post), controller.listReplies(call, post.id))
+        assertEquals(listOf(post), controller.listReplies(mockk(), post.id, 10, 5))
     }
 
     @Test
     fun testGetRepliesNotFound() = runBlocking {
         val requireUserForCallUseCase = mockk<IRequireUserForCallUseCase>()
         val getPostUseCase = mockk<IGetModelWithContextSuspendUseCase<Post, String>>()
-        val call = mockk<ApplicationCall>()
-        coEvery { requireUserForCallUseCase(call) } returns user
+        coEvery { requireUserForCallUseCase(any()) } returns user
         coEvery { getPostUseCase(post.id, UserContext(user.id)) } returns null
         val controller = PostsController(
             requireUserForCallUseCase, mockk(), getPostUseCase, mockk(), mockk(), mockk()
         )
         val exception = assertFailsWith(ControllerException::class) {
-            controller.listReplies(call, post.id)
+            controller.listReplies(mockk(), post.id, null, null)
         }
         assertEquals(HttpStatusCode.NotFound, exception.code)
         assertEquals("posts_not_found", exception.key)
@@ -261,33 +257,13 @@ class PostsControllerTest {
         val requireUserForCallUseCase = mockk<IRequireUserForCallUseCase>()
         val getPostUseCase = mockk<IGetModelWithContextSuspendUseCase<Post, String>>()
         val getPostRepliesUseCase = mockk<IGetPostRepliesUseCase>()
-        val call = mockk<ApplicationCall>()
-        coEvery { requireUserForCallUseCase(call) } returns user
+        coEvery { requireUserForCallUseCase(any()) } returns user
         coEvery { getPostUseCase(post.id, UserContext(user.id)) } returns post
-        coEvery { getPostRepliesUseCase(post.id, 25, 0, UserContext(user.id)) } returns listOf(post)
-        every { call.parameters["limit"] } returns null
-        every { call.parameters["offset"] } returns null
+        coEvery { getPostRepliesUseCase(post.id, Pagination(25, 0), UserContext(user.id)) } returns listOf(post)
         val controller = PostsController(
             requireUserForCallUseCase, mockk(), getPostUseCase, mockk(), mockk(), getPostRepliesUseCase
         )
-        assertEquals(listOf(post), controller.listReplies(call, post.id))
-    }
-
-    @Test
-    fun testGetRepliesInvalidLimitOffset() = runBlocking {
-        val requireUserForCallUseCase = mockk<IRequireUserForCallUseCase>()
-        val getPostUseCase = mockk<IGetModelWithContextSuspendUseCase<Post, String>>()
-        val getPostRepliesUseCase = mockk<IGetPostRepliesUseCase>()
-        val call = mockk<ApplicationCall>()
-        coEvery { requireUserForCallUseCase(call) } returns user
-        coEvery { getPostUseCase(post.id, UserContext(user.id)) } returns post
-        coEvery { getPostRepliesUseCase(post.id, 25, 0, UserContext(user.id)) } returns listOf(post)
-        every { call.parameters["limit"] } returns "a"
-        every { call.parameters["offset"] } returns "b"
-        val controller = PostsController(
-            requireUserForCallUseCase, mockk(), getPostUseCase, mockk(), mockk(), getPostRepliesUseCase
-        )
-        assertEquals(listOf(post), controller.listReplies(call, post.id))
+        assertEquals(listOf(post), controller.listReplies(mockk(), post.id, null, null))
     }
 
 }

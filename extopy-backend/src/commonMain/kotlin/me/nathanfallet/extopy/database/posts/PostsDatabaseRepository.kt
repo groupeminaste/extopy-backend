@@ -9,6 +9,7 @@ import me.nathanfallet.extopy.models.users.UserContext
 import me.nathanfallet.extopy.repositories.posts.IPostsRepository
 import me.nathanfallet.surexposed.database.IDatabase
 import me.nathanfallet.usecases.context.IContext
+import me.nathanfallet.usecases.pagination.Pagination
 import org.jetbrains.exposed.sql.*
 import org.jetbrains.exposed.sql.SqlExpressionBuilder.eq
 
@@ -22,7 +23,7 @@ class PostsDatabaseRepository(
         }
     }
 
-    override suspend fun listDefault(limit: Long, offset: Long, context: UserContext): List<Post> =
+    override suspend fun listDefault(pagination: Pagination, context: UserContext): List<Post> =
         database.suspendedTransaction {
             customJoinColumnSet(context.userId)
                 .join(
@@ -39,36 +40,36 @@ class PostsDatabaseRepository(
                 }
                 .groupBy(Posts.id)
                 .orderBy(Posts.published to SortOrder.DESC)
-                .limit(limit.toInt(), offset)
+                .limit(pagination.limit.toInt(), pagination.offset)
                 .map { Posts.toPost(it, Users.toUser(it)) }
         }
 
-    override suspend fun listTrends(limit: Long, offset: Long, context: UserContext): List<Post> =
+    override suspend fun listTrends(pagination: Pagination, context: UserContext): List<Post> =
         database.suspendedTransaction {
             customJoin(context.userId)
                 .groupBy(Posts.id)
                 .orderBy(Posts.trendsCount to SortOrder.DESC)
-                .limit(limit.toInt(), offset)
+                .limit(pagination.limit.toInt(), pagination.offset)
                 .map { Posts.toPost(it, Users.toUser(it)) }
         }
 
-    override suspend fun listUserPosts(userId: String, limit: Long, offset: Long, context: UserContext): List<Post> =
+    override suspend fun listUserPosts(userId: String, pagination: Pagination, context: UserContext): List<Post> =
         database.suspendedTransaction {
             customJoin(context.userId)
                 .where { Posts.userId eq userId }
                 .groupBy(Posts.id)
                 .orderBy(Posts.published to SortOrder.DESC)
-                .limit(limit.toInt(), offset)
+                .limit(pagination.limit.toInt(), pagination.offset)
                 .map { Posts.toPost(it, Users.toUser(it)) }
         }
 
-    override suspend fun listReplies(postId: String, limit: Long, offset: Long, context: UserContext): List<Post> =
+    override suspend fun listReplies(postId: String, pagination: Pagination, context: UserContext): List<Post> =
         database.suspendedTransaction {
             customJoin(context.userId)
                 .where { Posts.repliedToId eq postId }
                 .groupBy(Posts.id)
                 .orderBy(Posts.published to SortOrder.DESC)
-                .limit(limit.toInt(), offset)
+                .limit(pagination.limit.toInt(), pagination.offset)
                 .map { Posts.toPost(it, Users.toUser(it)) }
         }
 

@@ -13,6 +13,7 @@ import me.nathanfallet.usecases.models.create.context.ICreateModelWithContextSus
 import me.nathanfallet.usecases.models.delete.IDeleteModelSuspendUseCase
 import me.nathanfallet.usecases.models.get.context.IGetModelWithContextSuspendUseCase
 import me.nathanfallet.usecases.models.update.IUpdateModelSuspendUseCase
+import me.nathanfallet.usecases.pagination.Pagination
 
 class PostsController(
     private val requireUserForCallUseCase: IRequireUserForCallUseCase,
@@ -65,15 +66,17 @@ class PostsController(
         )
     }
 
-    override suspend fun listReplies(call: ApplicationCall, id: String): List<Post> {
+    override suspend fun listReplies(call: ApplicationCall, id: String, limit: Long?, offset: Long?): List<Post> {
         val user = requireUserForCallUseCase(call) as User
         val post = getPostUseCase(id, UserContext(user.id)) ?: throw ControllerException(
             HttpStatusCode.NotFound, "posts_not_found"
         )
         return getPostRepliesUseCase(
             post.id,
-            call.parameters["limit"]?.toLongOrNull() ?: 25,
-            call.parameters["offset"]?.toLongOrNull() ?: 0,
+            Pagination(
+                limit ?: 25,
+                offset ?: 0
+            ),
             UserContext(user.id)
         )
     }

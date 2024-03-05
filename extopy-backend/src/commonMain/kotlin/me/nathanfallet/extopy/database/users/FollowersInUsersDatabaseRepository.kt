@@ -5,6 +5,7 @@ import me.nathanfallet.extopy.models.users.FollowerInUserContext
 import me.nathanfallet.extopy.repositories.users.IFollowersInUsersRepository
 import me.nathanfallet.surexposed.database.IDatabase
 import me.nathanfallet.usecases.context.IContext
+import me.nathanfallet.usecases.pagination.Pagination
 import org.jetbrains.exposed.sql.*
 import org.jetbrains.exposed.sql.SqlExpressionBuilder.eq
 
@@ -18,24 +19,23 @@ class FollowersInUsersDatabaseRepository(
         }
     }
 
-    override suspend fun list(limit: Long, offset: Long, parentId: String, context: IContext?): List<FollowerInUser> =
+    override suspend fun list(pagination: Pagination, parentId: String, context: IContext?): List<FollowerInUser> =
         database.suspendedTransaction {
             customFollowersJoin()
                 .where { FollowersInUsers.targetId eq parentId and (FollowersInUsers.accepted eq true) }
-                .limit(limit.toInt(), offset)
+                .limit(pagination.limit.toInt(), pagination.offset)
                 .map { FollowersInUsers.toFollowerInUser(it, Users.toUser(it), null) }
         }
 
     override suspend fun listFollowing(
-        limit: Long,
-        offset: Long,
+        pagination: Pagination,
         parentId: String,
         context: IContext?,
     ): List<FollowerInUser> =
         database.suspendedTransaction {
             customFollowingJoin()
                 .where { FollowersInUsers.userId eq parentId and (FollowersInUsers.accepted eq true) }
-                .limit(limit.toInt(), offset)
+                .limit(pagination.limit.toInt(), pagination.offset)
                 .map { FollowersInUsers.toFollowerInUser(it, null, Users.toUser(it)) }
         }
 

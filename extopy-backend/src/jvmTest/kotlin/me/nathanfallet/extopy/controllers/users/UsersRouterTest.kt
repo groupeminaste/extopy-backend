@@ -55,7 +55,7 @@ class UsersRouterTest {
         val controller = mockk<IUsersController>()
         val router = UsersRouter(controller)
         coEvery { controller.get(any(), "id") } returns user
-        coEvery { controller.listPosts(any(), "id") } returns listOf(post)
+        coEvery { controller.listPosts(any(), "id", null, null) } returns listOf(post)
         routing {
             router.createRoutes(this)
         }
@@ -71,7 +71,7 @@ class UsersRouterTest {
         val router = UsersRouter(controller)
         val openAPI = OpenAPI()
         coEvery { controller.get(any(), "id") } returns user
-        coEvery { controller.listPosts(any(), "id") } returns listOf(post)
+        coEvery { controller.listPosts(any(), "id", null, null) } returns listOf(post)
         routing {
             router.createRoutes(this, openAPI)
         }

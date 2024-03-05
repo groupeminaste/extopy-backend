@@ -11,6 +11,7 @@ import me.nathanfallet.ktorx.models.exceptions.ControllerException
 import me.nathanfallet.ktorx.usecases.users.IRequireUserForCallUseCase
 import me.nathanfallet.usecases.models.get.context.IGetModelWithContextSuspendUseCase
 import me.nathanfallet.usecases.models.update.IUpdateModelSuspendUseCase
+import me.nathanfallet.usecases.pagination.Pagination
 
 class UsersController(
     private val requireUserForCallUseCase: IRequireUserForCallUseCase,
@@ -39,15 +40,17 @@ class UsersController(
         )
     }
 
-    override suspend fun listPosts(call: ApplicationCall, id: String): List<Post> {
+    override suspend fun listPosts(call: ApplicationCall, id: String, limit: Long?, offset: Long?): List<Post> {
         val user = requireUserForCallUseCase(call) as User
         val target = getUserUseCase(id, UserContext(user.id)) ?: throw ControllerException(
             HttpStatusCode.NotFound, "users_not_found"
         )
         return getUserPostsUseCase(
             target.id,
-            call.parameters["limit"]?.toLongOrNull() ?: 25,
-            call.parameters["offset"]?.toLongOrNull() ?: 0,
+            Pagination(
+                limit ?: 25,
+                offset ?: 0
+            ),
             UserContext(user.id)
         )
     }

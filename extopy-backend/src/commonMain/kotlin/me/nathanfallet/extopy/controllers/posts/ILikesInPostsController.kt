@@ -12,7 +12,12 @@ interface ILikesInPostsController : IChildModelController<LikeInPost, String, Un
     @ListModelPath
     @DocumentedError(401, "auth_invalid_credentials")
     @DocumentedError(404, "posts_not_found")
-    suspend fun list(call: ApplicationCall, @ParentModel parent: Post): List<LikeInPost>
+    suspend fun list(
+        call: ApplicationCall,
+        @ParentModel parent: Post,
+        @QueryParameter limit: Long?,
+        @QueryParameter offset: Long?,
+    ): List<LikeInPost>
 
     @APIMapping
     @CreateModelPath

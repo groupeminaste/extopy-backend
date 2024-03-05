@@ -27,6 +27,11 @@ interface IUsersController : IModelController<User, String, CreateUserPayload, U
     @Path("GET", "/{userId}/posts")
     @DocumentedError(401, "auth_invalid_credentials")
     @DocumentedError(404, "users_not_found")
-    suspend fun listPosts(call: ApplicationCall, @Id id: String): List<Post>
+    suspend fun listPosts(
+        call: ApplicationCall,
+        @Id id: String,
+        @QueryParameter limit: Long?,
+        @QueryParameter offset: Long?,
+    ): List<Post>
 
 }

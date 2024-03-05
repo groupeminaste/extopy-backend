@@ -11,6 +11,7 @@ import me.nathanfallet.ktorx.usecases.users.IRequireUserForCallUseCase
 import me.nathanfallet.usecases.models.create.context.ICreateChildModelWithContextSuspendUseCase
 import me.nathanfallet.usecases.models.delete.IDeleteChildModelSuspendUseCase
 import me.nathanfallet.usecases.models.list.slice.IListSliceChildModelSuspendUseCase
+import me.nathanfallet.usecases.pagination.Pagination
 
 class LikesInPostsController(
     private val requireUserForCallUseCase: IRequireUserForCallUseCase,
@@ -19,10 +20,12 @@ class LikesInPostsController(
     private val deleteLikeInPostUseCase: IDeleteChildModelSuspendUseCase<LikeInPost, String, String>,
 ) : ILikesInPostsController {
 
-    override suspend fun list(call: ApplicationCall, parent: Post): List<LikeInPost> {
+    override suspend fun list(call: ApplicationCall, parent: Post, limit: Long?, offset: Long?): List<LikeInPost> {
         return listLikeInPostUseCase(
-            call.parameters["limit"]?.toLongOrNull() ?: 25,
-            call.parameters["offset"]?.toLongOrNull() ?: 0,
+            Pagination(
+                limit ?: 25,
+                offset ?: 0
+            ),
             parent.id
         )
     }

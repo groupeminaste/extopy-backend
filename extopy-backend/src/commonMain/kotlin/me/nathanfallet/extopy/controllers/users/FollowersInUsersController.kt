@@ -11,6 +11,7 @@ import me.nathanfallet.ktorx.usecases.users.IRequireUserForCallUseCase
 import me.nathanfallet.usecases.models.create.context.ICreateChildModelWithContextSuspendUseCase
 import me.nathanfallet.usecases.models.delete.IDeleteChildModelSuspendUseCase
 import me.nathanfallet.usecases.models.list.slice.IListSliceChildModelSuspendUseCase
+import me.nathanfallet.usecases.pagination.Pagination
 
 class FollowersInUsersController(
     private val requireUserForCallUseCase: IRequireUserForCallUseCase,
@@ -20,18 +21,27 @@ class FollowersInUsersController(
     private val deleteFollowerInUserUseCase: IDeleteChildModelSuspendUseCase<FollowerInUser, String, String>,
 ) : IFollowersInUsersController {
 
-    override suspend fun list(call: ApplicationCall, parent: User): List<FollowerInUser> {
+    override suspend fun list(call: ApplicationCall, parent: User, limit: Long?, offset: Long?): List<FollowerInUser> {
         return listFollowerInUserUseCase(
-            call.parameters["limit"]?.toLongOrNull() ?: 25,
-            call.parameters["offset"]?.toLongOrNull() ?: 0,
+            Pagination(
+                limit ?: 25,
+                offset ?: 0
+            ),
             parent.id
         )
     }
 
-    override suspend fun listFollowing(call: ApplicationCall, parent: User): List<FollowerInUser> {
+    override suspend fun listFollowing(
+        call: ApplicationCall,
+        parent: User,
+        limit: Long?,
+        offset: Long?,
+    ): List<FollowerInUser> {
         return listFollowingInUserUseCase(
-            call.parameters["limit"]?.toLongOrNull() ?: 25,
-            call.parameters["offset"]?.toLongOrNull() ?: 0,
+            Pagination(
+                limit ?: 25,
+                offset ?: 0
+            ),
             parent.id
         )
     }

@@ -10,6 +10,7 @@ import me.nathanfallet.extopy.usecases.timelines.IGetTimelineByIdUseCase
 import me.nathanfallet.extopy.usecases.timelines.IGetTimelinePostsUseCase
 import me.nathanfallet.ktorx.models.exceptions.ControllerException
 import me.nathanfallet.ktorx.usecases.users.IRequireUserForCallUseCase
+import me.nathanfallet.usecases.pagination.Pagination
 
 class TimelinesController(
     private val requireUserForCallUseCase: IRequireUserForCallUseCase,
@@ -24,15 +25,17 @@ class TimelinesController(
         )
     }
 
-    override suspend fun listPosts(call: ApplicationCall, id: String): List<Post> {
+    override suspend fun listPosts(call: ApplicationCall, id: String, limit: Long?, offset: Long?): List<Post> {
         val user = requireUserForCallUseCase(call) as User
         val timeline = getTimelineUseCase(id, UserContext(user.id)) ?: throw ControllerException(
             HttpStatusCode.NotFound, "timelines_not_found"
         )
         return getTimelinePostsUseCase(
             timeline.id,
-            call.parameters["limit"]?.toLongOrNull() ?: 25,
-            call.parameters["offset"]?.toLongOrNull() ?: 0,
+            Pagination(
+                limit ?: 25,
+                offset ?: 0
+            ),
             UserContext(user.id)
         )
     }
