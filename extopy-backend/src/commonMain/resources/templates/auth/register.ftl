@@ -8,7 +8,7 @@
         <div id="alert-error" class="alert alert-danger" role="alert"><@t key=error /></div>
     </#if>
 
-    <#if codePayload??>
+    <#if item?? && item.email??>
         <div class="form-floating">
             <input type="text" class="form-control" id="username" name="username" required>
             <label for="username"><@t key="auth_field_username" /></label>
@@ -18,7 +18,7 @@
             <label for="displayName"><@t key="auth_field_displayName" /></label>
         </div>
         <div class="form-floating">
-            <input type="email" class="form-control" id="email" name="email" value="${codePayload.email}" disabled>
+            <input type="email" class="form-control" id="email" name="email" value="${item.email}" disabled>
             <label for="email"><@t key="auth_field_email" /></label>
         </div>
         <div class="form-floating">

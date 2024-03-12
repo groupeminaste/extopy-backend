@@ -5,10 +5,10 @@ import io.mockk.mockk
 import kotlinx.coroutines.runBlocking
 import kotlinx.datetime.Clock
 import me.nathanfallet.extopy.models.application.Client
+import me.nathanfallet.extopy.models.auth.ClientForUser
 import me.nathanfallet.extopy.models.users.ClientInUser
 import me.nathanfallet.extopy.models.users.User
 import me.nathanfallet.extopy.repositories.users.IClientsInUsersRepository
-import me.nathanfallet.ktorx.models.auth.ClientForUser
 import kotlin.test.Test
 import kotlin.test.assertEquals
 

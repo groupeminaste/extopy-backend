@@ -5,12 +5,12 @@ import io.mockk.mockk
 import kotlinx.coroutines.runBlocking
 import kotlinx.datetime.*
 import me.nathanfallet.extopy.models.application.Client
+import me.nathanfallet.extopy.models.auth.ClientForUser
 import me.nathanfallet.extopy.models.users.ClientInUser
 import me.nathanfallet.extopy.models.users.User
 import me.nathanfallet.extopy.models.users.UserContext
 import me.nathanfallet.extopy.repositories.users.IClientsInUsersRepository
-import me.nathanfallet.ktorx.models.auth.ClientForUser
-import me.nathanfallet.ktorx.usecases.auth.IGetClientUseCase
+import me.nathanfallet.usecases.models.get.IGetModelSuspendUseCase
 import me.nathanfallet.usecases.models.get.context.IGetModelWithContextSuspendUseCase
 import kotlin.test.Test
 import kotlin.test.assertEquals
@@ -24,7 +24,7 @@ class GetAuthCodeUseCaseTest {
     @Test
     fun testInvoke() = runBlocking {
         val repository = mockk<IClientsInUsersRepository>()
-        val getClientUseCase = mockk<IGetClientUseCase>()
+        val getClientUseCase = mockk<IGetModelSuspendUseCase<Client, String>>()
         val getUserUseCase = mockk<IGetModelWithContextSuspendUseCase<User, String>>()
         val useCase = GetAuthCodeUseCase(repository, getClientUseCase, getUserUseCase)
         val clientForUser = ClientForUser(
@@ -56,7 +56,7 @@ class GetAuthCodeUseCaseTest {
     @Test
     fun testInvokeBadClient() = runBlocking {
         val repository = mockk<IClientsInUsersRepository>()
-        val getClientUseCase = mockk<IGetClientUseCase>()
+        val getClientUseCase = mockk<IGetModelSuspendUseCase<Client, String>>()
         val useCase = GetAuthCodeUseCase(repository, getClientUseCase, mockk())
         coEvery { repository.get("code") } returns ClientInUser("code", "uid", "cid", tomorrow)
         coEvery { getClientUseCase("cid") } returns null
@@ -66,7 +66,7 @@ class GetAuthCodeUseCaseTest {
     @Test
     fun testInvokeBadUser() = runBlocking {
         val repository = mockk<IClientsInUsersRepository>()
-        val getClientUseCase = mockk<IGetClientUseCase>()
+        val getClientUseCase = mockk<IGetModelSuspendUseCase<Client, String>>()
         val getUserUseCase = mockk<IGetModelWithContextSuspendUseCase<User, String>>()
         val useCase = GetAuthCodeUseCase(repository, getClientUseCase, getUserUseCase)
         val clientForUser = ClientForUser(

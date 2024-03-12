@@ -3,6 +3,7 @@ package me.nathanfallet.extopy.plugins
 import io.ktor.server.application.*
 import me.nathanfallet.extopy.controllers.auth.AuthController
 import me.nathanfallet.extopy.controllers.auth.AuthRouter
+import me.nathanfallet.extopy.controllers.auth.IAuthController
 import me.nathanfallet.extopy.controllers.notifications.NotificationsRouter
 import me.nathanfallet.extopy.controllers.posts.*
 import me.nathanfallet.extopy.controllers.timelines.ITimelinesController
@@ -21,9 +22,6 @@ import me.nathanfallet.extopy.database.users.ClientsInUsersDatabaseRepository
 import me.nathanfallet.extopy.database.users.FollowersInUsersDatabaseRepository
 import me.nathanfallet.extopy.database.users.UsersDatabaseRepository
 import me.nathanfallet.extopy.models.application.Client
-import me.nathanfallet.extopy.models.auth.LoginPayload
-import me.nathanfallet.extopy.models.auth.RegisterCodePayload
-import me.nathanfallet.extopy.models.auth.RegisterPayload
 import me.nathanfallet.extopy.models.posts.LikeInPost
 import me.nathanfallet.extopy.models.posts.Post
 import me.nathanfallet.extopy.models.posts.PostPayload
@@ -40,7 +38,7 @@ import me.nathanfallet.extopy.services.emails.EmailsService
 import me.nathanfallet.extopy.services.emails.IEmailsService
 import me.nathanfallet.extopy.services.jwt.IJWTService
 import me.nathanfallet.extopy.services.jwt.JWTService
-import me.nathanfallet.extopy.usecases.application.SendEmailUseCase
+import me.nathanfallet.extopy.usecases.application.*
 import me.nathanfallet.extopy.usecases.auth.*
 import me.nathanfallet.extopy.usecases.posts.*
 import me.nathanfallet.extopy.usecases.timelines.GetTimelineByIdUseCase
@@ -49,10 +47,8 @@ import me.nathanfallet.extopy.usecases.timelines.IGetTimelineByIdUseCase
 import me.nathanfallet.extopy.usecases.timelines.IGetTimelinePostsUseCase
 import me.nathanfallet.extopy.usecases.users.*
 import me.nathanfallet.i18n.usecases.localization.TranslateUseCase
-import me.nathanfallet.ktorx.controllers.auth.IAuthWithCodeController
 import me.nathanfallet.ktorx.database.sessions.SessionsDatabaseRepository
 import me.nathanfallet.ktorx.repositories.sessions.ISessionsRepository
-import me.nathanfallet.ktorx.usecases.auth.*
 import me.nathanfallet.ktorx.usecases.localization.GetLocaleForCallUseCase
 import me.nathanfallet.ktorx.usecases.localization.IGetLocaleForCallUseCase
 import me.nathanfallet.ktorx.usecases.users.IGetUserForCallUseCase
@@ -133,8 +129,12 @@ fun Application.configureKoin() {
         val useCaseModule = module {
             // Application
             single<ISendEmailUseCase> { SendEmailUseCase(get()) }
+            single<IExpireUseCase> { ExpireUseCase() }
             single<ITranslateUseCase> { TranslateUseCase() }
             single<IGetLocaleForCallUseCase> { GetLocaleForCallUseCase() }
+            single<IGetCodeInEmailUseCase> { GetCodeInEmailUseCase(get()) }
+            single<ICreateCodeInEmailUseCase> { CreateCodeInEmailUseCase(get(), get()) }
+            single<IDeleteCodeInEmailUseCase> { DeleteCodeInEmailUseCase(get()) }
             single<IGetModelSuspendUseCase<Client, String>>(named<Client>()) {
                 GetModelFromRepositorySuspendUseCase(get(named<Client>()))
             }
@@ -143,29 +143,15 @@ fun Application.configureKoin() {
             single<IHashPasswordUseCase> { HashPasswordUseCase() }
             single<IVerifyPasswordUseCase> { VerifyPasswordUseCase() }
             single<IGetJWTPrincipalForCallUseCase> { GetJWTPrincipalForCallUseCase() }
-            single<ICreateSessionForUserUseCase> { CreateSessionForUserUseCase() }
             single<IGetSessionForCallUseCase> { GetSessionForCallUseCase() }
             single<ISetSessionForCallUseCase> { SetSessionForCallUseCase() }
-            single<ILoginUseCase<LoginPayload>> { LoginUseCase(get(), get()) }
-            single<IRegisterUseCase<RegisterCodePayload>> { RegisterUseCase(get(), get(named<User>())) }
-            single<IGetCodeRegisterUseCase<RegisterPayload>> { GetCodeRegisterUseCase(get()) }
-            single<ICreateCodeRegisterUseCase<RegisterPayload>> {
-                CreateCodeRegisterUseCase(
-                    get(),
-                    get(),
-                    get(),
-                    get(),
-                    get()
-                )
-            }
-            single<IDeleteCodeRegisterUseCase> { DeleteCodeRegisterUseCase(get()) }
-            single<IGetClientUseCase> { GetClientFromModelUseCase<Client>(get(named<Client>())) }
+            single<IClearSessionForCallUseCase> { ClearSessionForCallUseCase() }
+            single<ILoginUseCase> { LoginUseCase(get(), get()) }
+            single<IRegisterUseCase> { RegisterUseCase(get(), get(named<User>())) }
             single<ICreateAuthCodeUseCase> { CreateAuthCodeUseCase(get()) }
-            single<IGetAuthCodeUseCase> { GetAuthCodeUseCase(get(), get(), get(named<User>())) }
+            single<IGetAuthCodeUseCase> { GetAuthCodeUseCase(get(), get(named<Client>()), get(named<User>())) }
             single<IDeleteAuthCodeUseCase> { DeleteAuthCodeUseCase(get()) }
-            single<IGenerateAuthTokenUseCase> {
-                GenerateAuthTokenUseCase(get())
-            }
+            single<IGenerateAuthTokenUseCase> { GenerateAuthTokenUseCase(get()) }
 
             // Users
             single<IRequireUserForCallUseCase> { RequireUserForCallUseCase(get()) }
@@ -232,11 +218,14 @@ fun Application.configureKoin() {
             single<IWebController> { WebController() }
 
             // Auth
-            single<IAuthWithCodeController<LoginPayload, RegisterPayload, RegisterCodePayload>> {
+            single<IAuthController> {
                 AuthController(
                     get(),
                     get(),
                     get(),
+                    get(),
+                    get(),
+                    get(named<Client>()),
                     get(),
                     get(),
                     get(),

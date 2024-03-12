@@ -46,8 +46,10 @@ class AuthRouterTest {
     @Test
     fun testGetLoginRoute() = testApplication {
         val client = installApp(this)
+        val controller = mockk<IAuthController>()
         val getLocaleForCallUseCase = mockk<IGetLocaleForCallUseCase>()
-        val router = AuthRouter(mockk(), getLocaleForCallUseCase)
+        val router = AuthRouter(controller, getLocaleForCallUseCase)
+        every { controller.login() } returns Unit
         every { getLocaleForCallUseCase(any()) } returns Locale.ENGLISH
         routing {
             router.createRoutes(this)
@@ -70,8 +72,10 @@ class AuthRouterTest {
     @Test
     fun testGetRegisterRoute() = testApplication {
         val client = installApp(this)
+        val controller = mockk<IAuthController>()
         val getLocaleForCallUseCase = mockk<IGetLocaleForCallUseCase>()
-        val router = AuthRouter(mockk(), getLocaleForCallUseCase)
+        val router = AuthRouter(controller, getLocaleForCallUseCase)
+        every { controller.register() } returns Unit
         every { getLocaleForCallUseCase(any()) } returns Locale.ENGLISH
         routing {
             router.createRoutes(this)
@@ -93,7 +97,7 @@ class AuthRouterTest {
         val controller = mockk<AuthController>()
         val getLocaleForCallUseCase = mockk<IGetLocaleForCallUseCase>()
         val router = AuthRouter(controller, getLocaleForCallUseCase)
-        coEvery { controller.register(any(), "code") } returns RegisterPayload("email@email.com")
+        coEvery { controller.registerCode(any(), "code") } returns RegisterPayload("email@email.com")
         every { getLocaleForCallUseCase(any()) } returns Locale.ENGLISH
         routing {
             router.createRoutes(this)

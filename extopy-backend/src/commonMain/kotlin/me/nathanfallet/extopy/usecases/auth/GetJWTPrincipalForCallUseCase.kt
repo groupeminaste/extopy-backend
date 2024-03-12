@@ -6,8 +6,6 @@ import io.ktor.server.auth.jwt.*
 
 class GetJWTPrincipalForCallUseCase : IGetJWTPrincipalForCallUseCase {
 
-    override fun invoke(input: ApplicationCall): JWTPrincipal? {
-        return input.principal()
-    }
+    override fun invoke(input: ApplicationCall): JWTPrincipal? = input.principal()
 
 }

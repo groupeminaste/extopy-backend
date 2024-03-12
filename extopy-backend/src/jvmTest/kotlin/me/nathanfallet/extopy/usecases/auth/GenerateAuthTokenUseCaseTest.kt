@@ -4,9 +4,9 @@ import io.mockk.every
 import io.mockk.mockk
 import kotlinx.coroutines.runBlocking
 import me.nathanfallet.extopy.models.application.Client
+import me.nathanfallet.extopy.models.auth.ClientForUser
 import me.nathanfallet.extopy.models.users.User
 import me.nathanfallet.extopy.services.jwt.IJWTService
-import me.nathanfallet.ktorx.models.auth.ClientForUser
 import me.nathanfallet.usecases.auth.AuthToken
 import kotlin.test.Test
 import kotlin.test.assertEquals

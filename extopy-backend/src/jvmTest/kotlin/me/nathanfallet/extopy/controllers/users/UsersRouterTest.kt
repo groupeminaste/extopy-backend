@@ -80,7 +80,7 @@ class UsersRouterTest {
         assertEquals("listUserPost", get?.operationId)
         assertEquals(listOf("User"), get?.tags)
         assertEquals("Get user posts by id", get?.description)
-        assertEquals(1, get?.parameters?.size)
+        assertEquals(3, get?.parameters?.size)
         assertEquals("userId", get?.parameters?.firstOrNull()?.name)
         assertEquals(3, get?.responses?.size)
         assertEquals(

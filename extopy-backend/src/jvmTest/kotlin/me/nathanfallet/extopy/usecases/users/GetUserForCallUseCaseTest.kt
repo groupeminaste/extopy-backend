@@ -11,7 +11,7 @@ import me.nathanfallet.extopy.models.auth.SessionPayload
 import me.nathanfallet.extopy.models.users.User
 import me.nathanfallet.extopy.models.users.UserContext
 import me.nathanfallet.extopy.usecases.auth.IGetJWTPrincipalForCallUseCase
-import me.nathanfallet.ktorx.usecases.auth.IGetSessionForCallUseCase
+import me.nathanfallet.extopy.usecases.auth.IGetSessionForCallUseCase
 import me.nathanfallet.usecases.models.get.context.IGetModelWithContextSuspendUseCase
 import kotlin.test.Test
 import kotlin.test.assertEquals

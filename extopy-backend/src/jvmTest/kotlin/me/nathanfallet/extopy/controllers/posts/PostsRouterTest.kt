@@ -79,7 +79,7 @@ class PostsRouterTest {
         assertEquals("listPostReply", get?.operationId)
         assertEquals(listOf("Post"), get?.tags)
         assertEquals("Get post replies by id", get?.description)
-        assertEquals(1, get?.parameters?.size)
+        assertEquals(3, get?.parameters?.size)
         assertEquals("postId", get?.parameters?.firstOrNull()?.name)
         assertEquals(3, get?.responses?.size)
         assertEquals(

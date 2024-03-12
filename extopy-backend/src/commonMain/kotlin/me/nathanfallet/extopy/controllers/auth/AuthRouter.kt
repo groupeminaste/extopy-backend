@@ -1,36 +1,28 @@
 package me.nathanfallet.extopy.controllers.auth
 
 import io.ktor.server.freemarker.*
-import io.ktor.util.reflect.*
-import me.nathanfallet.extopy.models.auth.LoginPayload
-import me.nathanfallet.extopy.models.auth.RegisterCodePayload
-import me.nathanfallet.extopy.models.auth.RegisterPayload
-import me.nathanfallet.ktorx.controllers.auth.IAuthWithCodeController
 import me.nathanfallet.ktorx.routers.api.APIUnitRouter
-import me.nathanfallet.ktorx.routers.auth.LocalizedAuthWithCodeTemplateRouter
 import me.nathanfallet.ktorx.routers.concat.ConcatUnitRouter
+import me.nathanfallet.ktorx.routers.templates.LocalizedTemplateUnitRouter
 import me.nathanfallet.ktorx.usecases.localization.IGetLocaleForCallUseCase
 
 class AuthRouter(
-    controller: IAuthWithCodeController<LoginPayload, RegisterPayload, RegisterCodePayload>,
+    controller: IAuthController,
     getLocaleForCallUseCase: IGetLocaleForCallUseCase,
 ) : ConcatUnitRouter(
-    LocalizedAuthWithCodeTemplateRouter(
-        typeInfo<LoginPayload>(),
-        typeInfo<RegisterPayload>(),
-        typeInfo<RegisterCodePayload>(),
+    LocalizedTemplateUnitRouter(
         controller,
-        AuthController::class,
+        IAuthController::class,
         { template, model -> respondTemplate(template, model) },
         getLocaleForCallUseCase,
-        null,
-        "/auth/login?redirect={path}",
-        "auth/redirect.ftl",
+        errorTemplate = null,
+        redirectUnauthorizedToUrl = "/auth/login?redirect={path}",
+        route = "auth",
     ),
     APIUnitRouter(
         controller,
-        AuthController::class,
-        route = "/auth",
+        IAuthController::class,
+        route = "auth",
         prefix = "/api/v1"
     )
 )

@@ -4,8 +4,8 @@ import io.ktor.server.application.*
 import io.ktor.server.sessions.*
 import me.nathanfallet.extopy.models.auth.SessionPayload
 
-class SetSessionForCallUseCase : ISetSessionForCallUseCase {
+class ClearSessionForCallUseCase : IClearSessionForCallUseCase {
 
-    override fun invoke(input1: ApplicationCall, input2: SessionPayload) = input1.sessions.set(input2)
+    override fun invoke(input: ApplicationCall) = input.sessions.clear<SessionPayload>()
 
 }
