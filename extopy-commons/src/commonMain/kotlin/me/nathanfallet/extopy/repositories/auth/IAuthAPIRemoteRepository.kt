@@ -6,5 +6,6 @@ import me.nathanfallet.usecases.auth.AuthToken
 interface IAuthAPIRemoteRepository {
 
     suspend fun token(payload: AuthRequest): AuthToken?
+    suspend fun refresh(): AuthToken?
 
 }

@@ -8,6 +8,7 @@ import me.nathanfallet.extopy.models.auth.*
 import me.nathanfallet.extopy.models.users.User
 import me.nathanfallet.extopy.usecases.application.ICreateCodeInEmailUseCase
 import me.nathanfallet.extopy.usecases.application.IDeleteCodeInEmailUseCase
+import me.nathanfallet.extopy.usecases.application.IGetClientForCallUseCase
 import me.nathanfallet.extopy.usecases.application.IGetCodeInEmailUseCase
 import me.nathanfallet.extopy.usecases.auth.*
 import me.nathanfallet.ktorx.models.exceptions.ControllerException
@@ -27,6 +28,7 @@ class AuthController(
     private val clearSessionForCallUseCase: IClearSessionForCallUseCase,
     private val requireUserForCallUseCase: IRequireUserForCallUseCase,
     private val getClientUseCase: IGetModelSuspendUseCase<Client, String>,
+    private val getClientForCallUseCase: IGetClientForCallUseCase,
     private val getAuthCodeUseCase: IGetAuthCodeUseCase,
     private val createAuthCodeUseCase: ICreateAuthCodeUseCase,
     private val deleteAuthCodeUseCase: IDeleteAuthCodeUseCase,
@@ -120,6 +122,15 @@ class AuthController(
             HttpStatusCode.InternalServerError, "error_internal"
         )
         return generateAuthTokenUseCase(client)
+    }
+
+    override suspend fun refreshToken(call: ApplicationCall): AuthToken {
+        val user = requireUserForCallUseCase(call) as? User
+        val client = getClientForCallUseCase(call) as? Client
+        if (user == null || client == null) throw ControllerException(
+            HttpStatusCode.BadRequest, "auth_invalid_code"
+        )
+        return generateAuthTokenUseCase(ClientForUser(client, user))
     }
 
 }

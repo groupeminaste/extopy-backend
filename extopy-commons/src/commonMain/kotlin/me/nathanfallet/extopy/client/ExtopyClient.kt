@@ -10,13 +10,19 @@ import me.nathanfallet.extopy.repositories.users.FollowersInUsersRemoteRepositor
 import me.nathanfallet.extopy.repositories.users.UsersRemoteRepository
 import me.nathanfallet.ktorx.models.api.AbstractAPIClient
 import me.nathanfallet.ktorx.usecases.api.IGetTokenUseCase
+import me.nathanfallet.ktorx.usecases.api.ILogoutUseCase
+import me.nathanfallet.ktorx.usecases.api.IRenewTokenUseCase
 
 class ExtopyClient(
     getTokenUseCase: IGetTokenUseCase,
+    renewTokenUseCase: IRenewTokenUseCase,
+    logoutUseCase: ILogoutUseCase,
     environment: ExtopyEnvironment = ExtopyEnvironment.PRODUCTION,
 ) : AbstractAPIClient(
     environment.baseUrl,
     getTokenUseCase,
+    renewTokenUseCase,
+    logoutUseCase,
     ExtopyJson.json
 ), IExtopyClient {
 

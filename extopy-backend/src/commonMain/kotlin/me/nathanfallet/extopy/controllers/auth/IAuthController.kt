@@ -58,11 +58,18 @@ interface IAuthController : IUnitController {
     @Path("POST", "/authorize")
     suspend fun authorizeRedirect(call: ApplicationCall, @QueryParameter clientId: String?): Map<String, Any>
 
-    @APIMapping
+    @APIMapping("createToken")
     @Path("POST", "/token")
     @DocumentedTag("Auth")
     @DocumentedError(400, "auth_invalid_code")
     @DocumentedError(500, "error_internal")
     suspend fun token(@Payload payload: AuthRequest): AuthToken
+
+    @APIMapping("refreshToken")
+    @Path("POST", "/refresh")
+    @DocumentedTag("Auth")
+    @DocumentedError(400, "auth_invalid_credentials")
+    @DocumentedError(500, "error_internal")
+    suspend fun refreshToken(call: ApplicationCall): AuthToken
 
 }

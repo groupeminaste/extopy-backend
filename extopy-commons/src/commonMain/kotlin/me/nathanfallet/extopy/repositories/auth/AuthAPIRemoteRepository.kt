@@ -28,4 +28,9 @@ open class AuthAPIRemoteRepository(
         setBody(payload)
     }.body()
 
+    override suspend fun refresh(): AuthToken? = client.request(
+        HttpMethod.Post,
+        "${constructFullRoute(RecursiveId<UnitModel, Unit, Unit>(Unit))}/refresh"
+    ).body()
+
 }

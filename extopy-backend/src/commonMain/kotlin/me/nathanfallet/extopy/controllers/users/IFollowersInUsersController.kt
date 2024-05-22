@@ -19,7 +19,7 @@ interface IFollowersInUsersController : IChildModelController<FollowerInUser, St
         @QueryParameter offset: Long?,
     ): List<FollowerInUser>
 
-    @APIMapping
+    @APIMapping("listFollowingInUser")
     @Path("GET", "/following")
     @DocumentedError(401, "auth_invalid_credentials")
     @DocumentedError(404, "users_not_found")
