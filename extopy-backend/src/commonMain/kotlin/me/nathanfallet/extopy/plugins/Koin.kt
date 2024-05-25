@@ -138,7 +138,9 @@ fun Application.configureKoin() {
             single<IGetModelSuspendUseCase<Client, String>>(named<Client>()) {
                 GetModelFromRepositorySuspendUseCase(get(named<Client>()))
             }
-            single<IGetClientForCallUseCase> { GetClientForCallUseCase(get(), get(named<Client>())) }
+            single<IGetClientForUserForRefreshTokenUseCase> {
+                GetClientForUserForRefreshTokenUseCase(get(), get(named<User>()), get(named<Client>()))
+            }
 
             // Auth
             single<IHashPasswordUseCase> { HashPasswordUseCase() }

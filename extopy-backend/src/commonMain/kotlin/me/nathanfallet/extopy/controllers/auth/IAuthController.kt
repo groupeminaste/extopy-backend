@@ -1,10 +1,7 @@
 package me.nathanfallet.extopy.controllers.auth
 
 import io.ktor.server.application.*
-import me.nathanfallet.extopy.models.auth.ClientForUser
-import me.nathanfallet.extopy.models.auth.LoginPayload
-import me.nathanfallet.extopy.models.auth.RegisterCodePayload
-import me.nathanfallet.extopy.models.auth.RegisterPayload
+import me.nathanfallet.extopy.models.auth.*
 import me.nathanfallet.ktorx.controllers.IUnitController
 import me.nathanfallet.ktorx.models.annotations.*
 import me.nathanfallet.ktorx.models.responses.RedirectResponse
@@ -69,7 +66,6 @@ interface IAuthController : IUnitController {
     @Path("POST", "/refresh")
     @DocumentedTag("Auth")
     @DocumentedError(400, "auth_invalid_credentials")
-    @DocumentedError(500, "error_internal")
-    suspend fun refreshToken(call: ApplicationCall): AuthToken
+    suspend fun refreshToken(@Payload payload: RefreshTokenPayload): AuthToken
 
 }

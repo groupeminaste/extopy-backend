@@ -13,10 +13,7 @@ import io.mockk.every
 import io.mockk.mockk
 import me.nathanfallet.extopy.models.application.ExtopyJson
 import me.nathanfallet.extopy.models.auth.RegisterPayload
-import me.nathanfallet.extopy.plugins.configureI18n
-import me.nathanfallet.extopy.plugins.configureSecurity
-import me.nathanfallet.extopy.plugins.configureSerialization
-import me.nathanfallet.extopy.plugins.configureTemplating
+import me.nathanfallet.extopy.plugins.*
 import me.nathanfallet.ktorx.usecases.localization.IGetLocaleForCallUseCase
 import org.jsoup.Jsoup
 import java.util.*
@@ -31,6 +28,7 @@ class AuthRouterTest {
         }
         application.application {
             configureI18n()
+            configureKoin()
             configureSerialization()
             configureSecurity()
             configureTemplating()

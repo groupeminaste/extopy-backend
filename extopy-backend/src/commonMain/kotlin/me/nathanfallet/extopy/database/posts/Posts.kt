@@ -27,8 +27,8 @@ object Posts : Table() {
     val likesIn = LikesInPosts.likesIn[LikesInPosts.userId].countDistinct()
     val trendsCount = PlusOp(
         likesCount,
-        PlusOp(repliesCount, repostsCount, IntegerColumnType()),
-        IntegerColumnType()
+        PlusOp(repliesCount, repostsCount, LongColumnType()),
+        LongColumnType()
     )
 
     override val primaryKey = PrimaryKey(id)

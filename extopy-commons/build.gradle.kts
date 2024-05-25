@@ -41,8 +41,8 @@ kotlin {
     //watchosDeviceArm64() // Not supported by ktor
 
     // jvm & js
+    jvmToolchain(21)
     jvm {
-        jvmToolchain(19)
         withJava()
         testRuns.named("test") {
             executionTask.configure {
@@ -59,8 +59,8 @@ kotlin {
 
     applyDefaultHierarchyTemplate()
 
-    val ktorxVersion = "2.3.1"
-    val usecasesVersion = "1.6.0"
+    val ktorxVersion = "2.3.3"
+    val usecasesVersion = "1.6.1"
 
     sourceSets {
         val commonMain by getting {
@@ -74,7 +74,7 @@ kotlin {
         val jvmTest by getting {
             dependencies {
                 implementation(kotlin("test"))
-                implementation("io.mockk:mockk:1.13.8")
+                implementation("io.mockk:mockk:1.13.11")
             }
         }
     }
