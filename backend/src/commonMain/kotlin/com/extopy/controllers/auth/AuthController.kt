@@ -64,7 +64,11 @@ class AuthController(
         sendEmailUseCase(
             Email(
                 translateUseCase(locale, "auth_register_email_title"),
-                translateUseCase(locale, "auth_register_email_body", listOf(code.code))
+                translateUseCase(
+                    locale,
+                    "auth_register_email_body",
+                    listOf("https://extopy.com/auth/register/${code.code}")
+                )
             ),
             listOf(payload.email)
         )
