@@ -1,8 +1,9 @@
 package com.extopy.usecases.timelines
 
-import kotlinx.coroutines.runBlocking
 import com.extopy.models.timelines.Timeline
 import com.extopy.models.users.UserContext
+import dev.kaccelero.models.UUID
+import kotlinx.coroutines.runBlocking
 import kotlin.test.Test
 import kotlin.test.assertEquals
 
@@ -12,17 +13,8 @@ class GetTimelineByIdUseCaseTest {
     fun testGetDefaultTimeline() = runBlocking {
         val useCase = GetTimelineByIdUseCase()
         assertEquals(
-            Timeline("default"),
-            useCase("default", UserContext("userId"))
-        )
-    }
-
-    @Test
-    fun testGetTrendsTimeline() = runBlocking {
-        val useCase = GetTimelineByIdUseCase()
-        assertEquals(
-            Timeline("trends"),
-            useCase("trends", UserContext("userId"))
+            Timeline(Timeline.defaultId),
+            useCase(Timeline.defaultId, UserContext(UUID()))
         )
     }
 

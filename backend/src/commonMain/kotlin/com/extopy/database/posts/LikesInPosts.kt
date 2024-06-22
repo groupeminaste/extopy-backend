@@ -3,14 +3,15 @@ package com.extopy.database.posts
 import com.extopy.models.posts.LikeInPost
 import com.extopy.models.posts.Post
 import com.extopy.models.users.User
+import dev.kaccelero.models.UUID
 import org.jetbrains.exposed.sql.ResultRow
 import org.jetbrains.exposed.sql.Table
 import org.jetbrains.exposed.sql.alias
 
 object LikesInPosts : Table() {
 
-    val postId = varchar("post_id", 32).index()
-    val userId = varchar("user_id", 32).index()
+    val postId = uuid("post_id").index()
+    val userId = uuid("user_id").index()
 
     val likesIn = LikesInPosts.alias("PostsLikesIn")
 
@@ -21,8 +22,8 @@ object LikesInPosts : Table() {
         post: Post?,
         user: User?,
     ) = LikeInPost(
-        row[postId],
-        row[userId],
+        UUID(row[postId]),
+        UUID(row[userId]),
         post,
         user
     )

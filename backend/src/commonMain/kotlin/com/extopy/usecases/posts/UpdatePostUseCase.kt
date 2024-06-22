@@ -5,13 +5,14 @@ import com.extopy.models.posts.PostPayload
 import com.extopy.repositories.posts.IPostsRepository
 import dev.kaccelero.commons.exceptions.ControllerException
 import dev.kaccelero.commons.repositories.IUpdateModelSuspendUseCase
+import dev.kaccelero.models.UUID
 import io.ktor.http.*
 
 class UpdatePostUseCase(
     private val repository: IPostsRepository,
-) : IUpdateModelSuspendUseCase<Post, String, PostPayload> {
+) : IUpdateModelSuspendUseCase<Post, UUID, PostPayload> {
 
-    override suspend fun invoke(input1: String, input2: PostPayload): Post? {
+    override suspend fun invoke(input1: UUID, input2: PostPayload): Post? {
         if (input2.body.isBlank()) throw ControllerException(
             HttpStatusCode.BadRequest,
             "posts_body_empty"

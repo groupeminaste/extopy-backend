@@ -4,10 +4,12 @@ import com.extopy.models.users.FollowerInUser
 import com.extopy.models.users.FollowerInUserContext
 import com.extopy.repositories.users.IFollowersInUsersRepository
 import dev.kaccelero.database.IDatabase
+import dev.kaccelero.database.eq
+import dev.kaccelero.database.set
 import dev.kaccelero.models.IContext
+import dev.kaccelero.models.UUID
 import dev.kaccelero.repositories.Pagination
 import org.jetbrains.exposed.sql.*
-import org.jetbrains.exposed.sql.SqlExpressionBuilder.eq
 
 class FollowersInUsersDatabaseRepository(
     private val database: IDatabase,
@@ -19,7 +21,7 @@ class FollowersInUsersDatabaseRepository(
         }
     }
 
-    override suspend fun list(pagination: Pagination, parentId: String, context: IContext?): List<FollowerInUser> =
+    override suspend fun list(pagination: Pagination, parentId: UUID, context: IContext?): List<FollowerInUser> =
         database.suspendedTransaction {
             customFollowersJoin()
                 .where { FollowersInUsers.targetId eq parentId and (FollowersInUsers.accepted eq true) }
@@ -29,7 +31,7 @@ class FollowersInUsersDatabaseRepository(
 
     override suspend fun listFollowing(
         pagination: Pagination,
-        parentId: String,
+        parentId: UUID,
         context: IContext?,
     ): List<FollowerInUser> =
         database.suspendedTransaction {
@@ -39,7 +41,7 @@ class FollowersInUsersDatabaseRepository(
                 .map { FollowersInUsers.toFollowerInUser(it, null, Users.toUser(it)) }
         }
 
-    override suspend fun create(payload: Unit, parentId: String, context: IContext?): FollowerInUser? {
+    override suspend fun create(payload: Unit, parentId: UUID, context: IContext?): FollowerInUser? {
         if (context !is FollowerInUserContext) return null
         return database.suspendedTransaction {
             FollowersInUsers.insert {
@@ -50,7 +52,7 @@ class FollowersInUsersDatabaseRepository(
         }
     }
 
-    override suspend fun delete(id: String, parentId: String, context: IContext?): Boolean =
+    override suspend fun delete(id: UUID, parentId: UUID, context: IContext?): Boolean =
         database.suspendedTransaction {
             FollowersInUsers.deleteWhere {
                 userId eq id and (targetId eq parentId)

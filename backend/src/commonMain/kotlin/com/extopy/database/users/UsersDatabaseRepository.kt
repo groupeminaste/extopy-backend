@@ -1,6 +1,5 @@
 package com.extopy.database.users
 
-import kotlinx.datetime.Clock
 import com.extopy.database.posts.Posts
 import com.extopy.models.application.SearchOptions
 import com.extopy.models.users.CreateUserPayload
@@ -9,9 +8,12 @@ import com.extopy.models.users.User
 import com.extopy.models.users.UserContext
 import com.extopy.repositories.users.IUsersRepository
 import dev.kaccelero.database.IDatabase
+import dev.kaccelero.database.eq
 import dev.kaccelero.models.IContext
+import dev.kaccelero.models.UUID
 import dev.kaccelero.repositories.IPaginationOptions
 import dev.kaccelero.repositories.Pagination
+import kotlinx.datetime.Clock
 import org.jetbrains.exposed.sql.*
 
 class UsersDatabaseRepository(
@@ -36,7 +38,7 @@ class UsersDatabaseRepository(
         }
     }
 
-    override suspend fun get(id: String, context: IContext?): User? {
+    override suspend fun get(id: UUID, context: IContext?): User? {
         if (context !is UserContext) return null
         return database.suspendedTransaction {
             customJoin(context.userId)
@@ -61,19 +63,18 @@ class UsersDatabaseRepository(
     override suspend fun create(payload: CreateUserPayload, context: IContext?): User? =
         database.suspendedTransaction {
             Users.insert {
-                it[id] = generateId()
                 it[displayName] = payload.displayName
                 it[username] = payload.username
                 it[email] = payload.email
                 it[password] = payload.password
                 it[biography] = "Hello, I'm new on Extopy!"
-                it[birthdate] = payload.birthdate.toString()
-                it[joinDate] = Clock.System.now().toString()
-                it[lastActive] = Clock.System.now().toString()
+                it[birthdate] = payload.birthdate
+                it[joinDate] = Clock.System.now()
+                it[lastActive] = Clock.System.now()
             }.resultedValues?.map(Users::toUser)?.singleOrNull()
         }
 
-    override suspend fun update(id: String, payload: UpdateUserPayload, context: IContext?): Boolean =
+    override suspend fun update(id: UUID, payload: UpdateUserPayload, context: IContext?): Boolean =
         database.suspendedTransaction {
             Users.update({ Users.id eq id }) {
                 payload.username?.let { username ->
@@ -97,10 +98,10 @@ class UsersDatabaseRepository(
             }
         } == 1
 
-    override suspend fun delete(id: String, context: IContext?): Boolean =
+    override suspend fun delete(id: UUID, context: IContext?): Boolean =
         TODO("Not yet implemented")
 
-    private fun customJoin(viewedBy: String, additionalFields: List<Expression<*>> = listOf()): Query =
+    private fun customJoin(viewedBy: UUID, additionalFields: List<Expression<*>> = listOf()): Query =
         Users.join(Posts, JoinType.LEFT, Users.id, Posts.userId)
             .join(FollowersInUsers, JoinType.LEFT, Users.id, FollowersInUsers.targetId)
             .join(

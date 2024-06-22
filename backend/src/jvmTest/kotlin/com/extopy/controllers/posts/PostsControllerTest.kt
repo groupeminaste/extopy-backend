@@ -11,6 +11,7 @@ import dev.kaccelero.commons.repositories.IDeleteModelSuspendUseCase
 import dev.kaccelero.commons.repositories.IGetModelWithContextSuspendUseCase
 import dev.kaccelero.commons.repositories.IUpdateModelSuspendUseCase
 import dev.kaccelero.commons.users.IRequireUserForCallUseCase
+import dev.kaccelero.models.UUID
 import dev.kaccelero.repositories.Pagination
 import io.ktor.http.*
 import io.ktor.server.application.*
@@ -18,15 +19,16 @@ import io.mockk.coEvery
 import io.mockk.coVerify
 import io.mockk.mockk
 import kotlinx.coroutines.runBlocking
+import kotlinx.datetime.Clock
 import kotlin.test.Test
 import kotlin.test.assertEquals
 import kotlin.test.assertFailsWith
 
 class PostsControllerTest {
 
-    private val user = User("userId", "displayName", "username")
-    private val post = Post("postId", "userId", user, body = "body")
-    private val otherPost = Post("otherPostId", "otherUserId", user, body = "body")
+    private val user = User(UUID(), "displayName", "username")
+    private val post = Post(UUID(), user.id, user, body = "body", publishedAt = Clock.System.now())
+    private val otherPost = Post(UUID(), UUID(), user, body = "body", publishedAt = Clock.System.now())
 
     @Test
     fun testCreate() = runBlocking {
@@ -63,7 +65,7 @@ class PostsControllerTest {
     @Test
     fun testGet() = runBlocking {
         val requireUserForCallUseCase = mockk<IRequireUserForCallUseCase>()
-        val getPostUseCase = mockk<IGetModelWithContextSuspendUseCase<Post, String>>()
+        val getPostUseCase = mockk<IGetModelWithContextSuspendUseCase<Post, UUID>>()
         val call = mockk<ApplicationCall>()
         coEvery { requireUserForCallUseCase(call) } returns user
         coEvery { getPostUseCase(post.id, UserContext(user.id)) } returns post
@@ -76,7 +78,7 @@ class PostsControllerTest {
     @Test
     fun testGetNotFound() = runBlocking {
         val requireUserForCallUseCase = mockk<IRequireUserForCallUseCase>()
-        val getPostUseCase = mockk<IGetModelWithContextSuspendUseCase<Post, String>>()
+        val getPostUseCase = mockk<IGetModelWithContextSuspendUseCase<Post, UUID>>()
         val call = mockk<ApplicationCall>()
         coEvery { requireUserForCallUseCase(call) } returns user
         coEvery { getPostUseCase(post.id, UserContext(user.id)) } returns null
@@ -93,8 +95,8 @@ class PostsControllerTest {
     @Test
     fun testUpdate() = runBlocking {
         val requireUserForCallUseCase = mockk<IRequireUserForCallUseCase>()
-        val getPostUseCase = mockk<IGetModelWithContextSuspendUseCase<Post, String>>()
-        val updatePostUseCase = mockk<IUpdateModelSuspendUseCase<Post, String, PostPayload>>()
+        val getPostUseCase = mockk<IGetModelWithContextSuspendUseCase<Post, UUID>>()
+        val updatePostUseCase = mockk<IUpdateModelSuspendUseCase<Post, UUID, PostPayload>>()
         val call = mockk<ApplicationCall>()
         val updatedPost = post.copy(
             body = "newBody"
@@ -112,7 +114,7 @@ class PostsControllerTest {
     @Test
     fun testUpdateNotFound() = runBlocking {
         val requireUserForCallUseCase = mockk<IRequireUserForCallUseCase>()
-        val getPostUseCase = mockk<IGetModelWithContextSuspendUseCase<Post, String>>()
+        val getPostUseCase = mockk<IGetModelWithContextSuspendUseCase<Post, UUID>>()
         val call = mockk<ApplicationCall>()
         val payload = PostPayload("newBody")
         coEvery { requireUserForCallUseCase(call) } returns user
@@ -130,7 +132,7 @@ class PostsControllerTest {
     @Test
     fun testUpdateForbidden() = runBlocking {
         val requireUserForCallUseCase = mockk<IRequireUserForCallUseCase>()
-        val getPostUseCase = mockk<IGetModelWithContextSuspendUseCase<Post, String>>()
+        val getPostUseCase = mockk<IGetModelWithContextSuspendUseCase<Post, UUID>>()
         val call = mockk<ApplicationCall>()
         val payload = PostPayload("newBody")
         coEvery { requireUserForCallUseCase(call) } returns user
@@ -148,8 +150,8 @@ class PostsControllerTest {
     @Test
     fun testUpdateInternalError() = runBlocking {
         val requireUserForCallUseCase = mockk<IRequireUserForCallUseCase>()
-        val getPostUseCase = mockk<IGetModelWithContextSuspendUseCase<Post, String>>()
-        val updatePostUseCase = mockk<IUpdateModelSuspendUseCase<Post, String, PostPayload>>()
+        val getPostUseCase = mockk<IGetModelWithContextSuspendUseCase<Post, UUID>>()
+        val updatePostUseCase = mockk<IUpdateModelSuspendUseCase<Post, UUID, PostPayload>>()
         val call = mockk<ApplicationCall>()
         val payload = PostPayload("newBody")
         coEvery { requireUserForCallUseCase(call) } returns user
@@ -168,8 +170,8 @@ class PostsControllerTest {
     @Test
     fun testDelete() = runBlocking {
         val requireUserForCallUseCase = mockk<IRequireUserForCallUseCase>()
-        val getPostUseCase = mockk<IGetModelWithContextSuspendUseCase<Post, String>>()
-        val deletePostUseCase = mockk<IDeleteModelSuspendUseCase<Post, String>>()
+        val getPostUseCase = mockk<IGetModelWithContextSuspendUseCase<Post, UUID>>()
+        val deletePostUseCase = mockk<IDeleteModelSuspendUseCase<Post, UUID>>()
         val call = mockk<ApplicationCall>()
         coEvery { requireUserForCallUseCase(call) } returns user
         coEvery { getPostUseCase(post.id, UserContext(user.id)) } returns post
@@ -184,7 +186,7 @@ class PostsControllerTest {
     @Test
     fun testDeleteNotFound() = runBlocking {
         val requireUserForCallUseCase = mockk<IRequireUserForCallUseCase>()
-        val getPostUseCase = mockk<IGetModelWithContextSuspendUseCase<Post, String>>()
+        val getPostUseCase = mockk<IGetModelWithContextSuspendUseCase<Post, UUID>>()
         val call = mockk<ApplicationCall>()
         coEvery { requireUserForCallUseCase(call) } returns user
         coEvery { getPostUseCase(post.id, UserContext(user.id)) } returns null
@@ -201,7 +203,7 @@ class PostsControllerTest {
     @Test
     fun testDeleteForbidden() = runBlocking {
         val requireUserForCallUseCase = mockk<IRequireUserForCallUseCase>()
-        val getPostUseCase = mockk<IGetModelWithContextSuspendUseCase<Post, String>>()
+        val getPostUseCase = mockk<IGetModelWithContextSuspendUseCase<Post, UUID>>()
         val call = mockk<ApplicationCall>()
         coEvery { requireUserForCallUseCase(call) } returns user
         coEvery { getPostUseCase(otherPost.id, UserContext(user.id)) } returns otherPost
@@ -218,8 +220,8 @@ class PostsControllerTest {
     @Test
     fun testDeleteInternalError() = runBlocking {
         val requireUserForCallUseCase = mockk<IRequireUserForCallUseCase>()
-        val getPostUseCase = mockk<IGetModelWithContextSuspendUseCase<Post, String>>()
-        val deletePostUseCase = mockk<IDeleteModelSuspendUseCase<Post, String>>()
+        val getPostUseCase = mockk<IGetModelWithContextSuspendUseCase<Post, UUID>>()
+        val deletePostUseCase = mockk<IDeleteModelSuspendUseCase<Post, UUID>>()
         val call = mockk<ApplicationCall>()
         coEvery { requireUserForCallUseCase(call) } returns user
         coEvery { getPostUseCase(post.id, UserContext(user.id)) } returns post
@@ -237,7 +239,7 @@ class PostsControllerTest {
     @Test
     fun testGetReplies() = runBlocking {
         val requireUserForCallUseCase = mockk<IRequireUserForCallUseCase>()
-        val getPostUseCase = mockk<IGetModelWithContextSuspendUseCase<Post, String>>()
+        val getPostUseCase = mockk<IGetModelWithContextSuspendUseCase<Post, UUID>>()
         val getPostRepliesUseCase = mockk<IGetPostRepliesUseCase>()
         coEvery { requireUserForCallUseCase(any()) } returns user
         coEvery { getPostUseCase(post.id, UserContext(user.id)) } returns post
@@ -251,7 +253,7 @@ class PostsControllerTest {
     @Test
     fun testGetRepliesNotFound() = runBlocking {
         val requireUserForCallUseCase = mockk<IRequireUserForCallUseCase>()
-        val getPostUseCase = mockk<IGetModelWithContextSuspendUseCase<Post, String>>()
+        val getPostUseCase = mockk<IGetModelWithContextSuspendUseCase<Post, UUID>>()
         coEvery { requireUserForCallUseCase(any()) } returns user
         coEvery { getPostUseCase(post.id, UserContext(user.id)) } returns null
         val controller = PostsController(
@@ -267,7 +269,7 @@ class PostsControllerTest {
     @Test
     fun testGetRepliesDefaultLimitOffset() = runBlocking {
         val requireUserForCallUseCase = mockk<IRequireUserForCallUseCase>()
-        val getPostUseCase = mockk<IGetModelWithContextSuspendUseCase<Post, String>>()
+        val getPostUseCase = mockk<IGetModelWithContextSuspendUseCase<Post, UUID>>()
         val getPostRepliesUseCase = mockk<IGetPostRepliesUseCase>()
         coEvery { requireUserForCallUseCase(any()) } returns user
         coEvery { getPostUseCase(post.id, UserContext(user.id)) } returns post

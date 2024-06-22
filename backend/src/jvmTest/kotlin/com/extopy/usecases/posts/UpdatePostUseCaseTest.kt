@@ -4,6 +4,7 @@ import com.extopy.models.posts.Post
 import com.extopy.models.posts.PostPayload
 import com.extopy.repositories.posts.IPostsRepository
 import dev.kaccelero.commons.exceptions.ControllerException
+import dev.kaccelero.models.UUID
 import io.ktor.http.*
 import io.mockk.coEvery
 import io.mockk.mockk
@@ -19,10 +20,11 @@ class UpdatePostUseCaseTest {
         val repository = mockk<IPostsRepository>()
         val useCase = UpdatePostUseCase(repository)
         val payload = PostPayload("body")
+        val postId = UUID()
         val post = mockk<Post>()
-        coEvery { repository.update("id", payload) } returns true
-        coEvery { repository.get("id") } returns post
-        assertEquals(post, useCase("id", payload))
+        coEvery { repository.update(postId, payload) } returns true
+        coEvery { repository.get(postId) } returns post
+        assertEquals(post, useCase(postId, payload))
     }
 
     @Test
@@ -30,8 +32,9 @@ class UpdatePostUseCaseTest {
         val repository = mockk<IPostsRepository>()
         val useCase = UpdatePostUseCase(repository)
         val payload = PostPayload("body")
-        coEvery { repository.update("id", payload) } returns false
-        assertEquals(null, useCase("id", payload))
+        val postId = UUID()
+        coEvery { repository.update(postId, payload) } returns false
+        assertEquals(null, useCase(postId, payload))
     }
 
     @Test
@@ -39,7 +42,7 @@ class UpdatePostUseCaseTest {
         val useCase = UpdatePostUseCase(mockk())
         val payload = PostPayload("")
         val exception = assertFailsWith<ControllerException> {
-            useCase("id", payload)
+            useCase(UUID(), payload)
         }
         assertEquals(HttpStatusCode.BadRequest, exception.code)
         assertEquals("posts_body_empty", exception.key)

@@ -4,9 +4,10 @@ import com.extopy.models.posts.LikeInPost
 import com.extopy.models.posts.Post
 import dev.kaccelero.annotations.*
 import dev.kaccelero.controllers.IChildModelController
+import dev.kaccelero.models.UUID
 import io.ktor.server.application.*
 
-interface ILikesInPostsController : IChildModelController<LikeInPost, String, Unit, Unit, Post, String> {
+interface ILikesInPostsController : IChildModelController<LikeInPost, UUID, Unit, Unit, Post, UUID> {
 
     @APIMapping
     @ListModelPath
@@ -33,6 +34,6 @@ interface ILikesInPostsController : IChildModelController<LikeInPost, String, Un
     @DocumentedError(403, "likes_in_posts_delete_not_allowed")
     @DocumentedError(404, "posts_not_found")
     @DocumentedError(500, "error_internal")
-    suspend fun delete(call: ApplicationCall, @ParentModel parent: Post, @Id id: String)
+    suspend fun delete(call: ApplicationCall, @ParentModel parent: Post, @Id id: UUID)
 
 }

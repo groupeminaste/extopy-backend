@@ -2,6 +2,7 @@ package com.extopy.controllers.posts
 
 import com.extopy.models.posts.Post
 import com.extopy.plugins.configureSerialization
+import dev.kaccelero.models.UUID
 import dev.kaccelero.routers.createRoutes
 import dev.kaccelero.serializers.Serialization
 import io.ktor.client.*
@@ -15,13 +16,14 @@ import io.ktor.server.testing.*
 import io.mockk.coEvery
 import io.mockk.mockk
 import io.swagger.v3.oas.models.OpenAPI
+import kotlinx.datetime.Clock
 import kotlin.test.Test
 import kotlin.test.assertEquals
 
 class PostsRouterTest {
 
-    private val post = Post("id", "userId", body = "body")
-    private val reply = Post("replyId", "userId", body = "body")
+    private val post = Post(UUID(), UUID(), body = "body", publishedAt = Clock.System.now())
+    private val reply = Post(UUID(), post.userId, body = "body", publishedAt = Clock.System.now())
 
     private fun installApp(application: ApplicationTestBuilder): HttpClient {
         application.environment {
@@ -42,11 +44,11 @@ class PostsRouterTest {
         val client = installApp(this)
         val controller = mockk<IPostsController>()
         val router = PostsRouter(controller)
-        coEvery { controller.get(any(), "id") } returns post
+        coEvery { controller.get(any(), post.id) } returns post
         routing {
             router.createRoutes(this)
         }
-        assertEquals(post, client.get("/api/v1/posts/id").body())
+        assertEquals(post, client.get("/api/v1/posts/${post.id}").body())
     }
 
     @Test
@@ -54,12 +56,12 @@ class PostsRouterTest {
         val client = installApp(this)
         val controller = mockk<IPostsController>()
         val router = PostsRouter(controller)
-        coEvery { controller.get(any(), "id") } returns post
-        coEvery { controller.listReplies(any(), "id", null, null) } returns listOf(reply)
+        coEvery { controller.get(any(), post.id) } returns post
+        coEvery { controller.listReplies(any(), post.id, null, null) } returns listOf(reply)
         routing {
             router.createRoutes(this)
         }
-        val response = client.get("/api/v1/posts/id/replies")
+        val response = client.get("/api/v1/posts/${post.id}/replies")
         assertEquals(HttpStatusCode.OK, response.status)
         assertEquals(listOf(reply), response.body())
     }
@@ -70,12 +72,12 @@ class PostsRouterTest {
         val controller = mockk<IPostsController>()
         val router = PostsRouter(controller)
         val openAPI = OpenAPI()
-        coEvery { controller.get(any(), "id") } returns post
-        coEvery { controller.listReplies(any(), "id", null, null) } returns listOf(reply)
+        coEvery { controller.get(any(), post.id) } returns post
+        coEvery { controller.listReplies(any(), post.id, null, null) } returns listOf(reply)
         routing {
             router.createRoutes(this, openAPI)
         }
-        client.get("/api/v1/posts/id/replies")
+        client.get("/api/v1/posts/${post.id}/replies")
         val get = openAPI.paths["/api/v1/posts/{postId}/replies"]?.get
         assertEquals("listPostReply", get?.operationId)
         assertEquals(listOf("Post"), get?.tags)

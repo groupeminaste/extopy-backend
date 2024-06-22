@@ -58,6 +58,7 @@ import dev.kaccelero.commons.users.IGetUserForCallUseCase
 import dev.kaccelero.commons.users.IRequireUserForCallUseCase
 import dev.kaccelero.commons.users.RequireUserForCallUseCase
 import dev.kaccelero.database.IDatabase
+import dev.kaccelero.models.UUID
 import dev.kaccelero.repositories.IChildModelSuspendRepository
 import dev.kaccelero.repositories.IModelSuspendRepository
 import io.ktor.server.application.*
@@ -96,7 +97,7 @@ fun Application.configureKoin() {
         val repositoryModule = module {
             // Application
             single<ICodesInEmailsRepository> { CodesInEmailsDatabaseRepository(get()) }
-            single<IModelSuspendRepository<Client, String, Unit, Unit>>(named<Client>()) {
+            single<IModelSuspendRepository<Client, UUID, Unit, Unit>>(named<Client>()) {
                 ClientsDatabaseRepository(get())
             }
             single<ISessionsRepository> { SessionsDatabaseRepository(get()) }
@@ -108,7 +109,7 @@ fun Application.configureKoin() {
 
             // Posts
             single<IPostsRepository> { PostsDatabaseRepository(get()) }
-            single<IChildModelSuspendRepository<LikeInPost, String, Unit, Unit, String>>(named<LikeInPost>()) {
+            single<IChildModelSuspendRepository<LikeInPost, UUID, Unit, Unit, UUID>>(named<LikeInPost>()) {
                 LikesInPostsDatabaseRepository(get())
             }
         }
@@ -121,7 +122,7 @@ fun Application.configureKoin() {
             single<IGetCodeInEmailUseCase> { GetCodeInEmailUseCase(get()) }
             single<ICreateCodeInEmailUseCase> { CreateCodeInEmailUseCase(get(), get()) }
             single<IDeleteCodeInEmailUseCase> { DeleteCodeInEmailUseCase(get()) }
-            single<IGetModelSuspendUseCase<Client, String>>(named<Client>()) {
+            single<IGetModelSuspendUseCase<Client, UUID>>(named<Client>()) {
                 GetModelFromRepositorySuspendUseCase(get(named<Client>()))
             }
             single<IGetClientForUserForRefreshTokenUseCase> {
@@ -148,23 +149,23 @@ fun Application.configureKoin() {
             single<IListSliceModelWithContextSuspendUseCase<User>>(named<User>()) {
                 ListSliceModelWithContextFromRepositorySuspendUseCase(get<IUsersRepository>())
             }
-            single<IGetModelWithContextSuspendUseCase<User, String>>(named<User>()) {
+            single<IGetModelWithContextSuspendUseCase<User, UUID>>(named<User>()) {
                 GetModelWithContextFromRepositorySuspendUseCase(get<IUsersRepository>())
             }
             single<ICreateModelSuspendUseCase<User, CreateUserPayload>>(named<User>()) {
                 CreateUserUseCase(get(), get())
             }
-            single<IUpdateModelSuspendUseCase<User, String, UpdateUserPayload>>(named<User>()) {
+            single<IUpdateModelSuspendUseCase<User, UUID, UpdateUserPayload>>(named<User>()) {
                 UpdateUserUseCase(get(), get())
             }
             single<IGetUserPostsUseCase> { GetUserPostsUseCase(get()) }
-            single<ICreateChildModelWithContextSuspendUseCase<FollowerInUser, Unit, String>>(named<FollowerInUser>()) {
+            single<ICreateChildModelWithContextSuspendUseCase<FollowerInUser, Unit, UUID>>(named<FollowerInUser>()) {
                 CreateFollowerInUserUseCase(get(), get())
             }
-            single<IDeleteChildModelSuspendUseCase<FollowerInUser, String, String>>(named<FollowerInUser>()) {
+            single<IDeleteChildModelSuspendUseCase<FollowerInUser, UUID, UUID>>(named<FollowerInUser>()) {
                 DeleteChildModelFromRepositorySuspendUseCase(get<IFollowersInUsersRepository>())
             }
-            single<IListSliceChildModelSuspendUseCase<FollowerInUser, String>>(named<FollowerInUser>()) {
+            single<IListSliceChildModelSuspendUseCase<FollowerInUser, UUID>>(named<FollowerInUser>()) {
                 ListSliceChildModelFromRepositorySuspendUseCase(get<IFollowersInUsersRepository>())
             }
             single<IListFollowingInUserUseCase> { ListFollowingInUserUseCase(get()) }
@@ -173,28 +174,28 @@ fun Application.configureKoin() {
             single<IListSliceModelWithContextSuspendUseCase<Post>>(named<Post>()) {
                 ListSliceModelWithContextFromRepositorySuspendUseCase(get<IPostsRepository>())
             }
-            single<IGetModelWithContextSuspendUseCase<Post, String>>(named<Post>()) {
+            single<IGetModelWithContextSuspendUseCase<Post, UUID>>(named<Post>()) {
                 GetModelWithContextFromRepositorySuspendUseCase(get<IPostsRepository>())
             }
             single<ICreateModelWithContextSuspendUseCase<Post, PostPayload>>(named<Post>()) {
                 CreatePostUseCase(get())
             }
-            single<IUpdateModelSuspendUseCase<Post, String, PostPayload>>(named<Post>()) {
+            single<IUpdateModelSuspendUseCase<Post, UUID, PostPayload>>(named<Post>()) {
                 UpdatePostUseCase(get())
             }
-            single<IDeleteModelSuspendUseCase<Post, String>>(named<Post>()) {
+            single<IDeleteModelSuspendUseCase<Post, UUID>>(named<Post>()) {
                 DeletePostUseCase(get())
             }
             single<IGetPostRepliesUseCase> { GetPostRepliesUseCase(get()) }
-            single<IListSliceChildModelSuspendUseCase<LikeInPost, String>>(named<LikeInPost>()) {
+            single<IListSliceChildModelSuspendUseCase<LikeInPost, UUID>>(named<LikeInPost>()) {
                 ListSliceChildModelFromRepositorySuspendUseCase(
-                    get<IChildModelSuspendRepository<LikeInPost, String, Unit, Unit, String>>(named<LikeInPost>())
+                    get<IChildModelSuspendRepository<LikeInPost, UUID, Unit, Unit, UUID>>(named<LikeInPost>())
                 )
             }
-            single<ICreateChildModelWithContextSuspendUseCase<LikeInPost, Unit, String>>(named<LikeInPost>()) {
+            single<ICreateChildModelWithContextSuspendUseCase<LikeInPost, Unit, UUID>>(named<LikeInPost>()) {
                 CreateChildModelWithContextFromRepositorySuspendUseCase(get(named<LikeInPost>()))
             }
-            single<IDeleteChildModelSuspendUseCase<LikeInPost, String, String>>(named<LikeInPost>()) {
+            single<IDeleteChildModelSuspendUseCase<LikeInPost, UUID, UUID>>(named<LikeInPost>()) {
                 DeleteChildModelFromRepositorySuspendUseCase(get(named<LikeInPost>()))
             }
 

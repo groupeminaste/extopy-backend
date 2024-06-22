@@ -2,14 +2,15 @@ package com.extopy.database.users
 
 import com.extopy.models.users.FollowerInUser
 import com.extopy.models.users.User
+import dev.kaccelero.models.UUID
 import org.jetbrains.exposed.sql.ResultRow
 import org.jetbrains.exposed.sql.Table
 import org.jetbrains.exposed.sql.alias
 
 object FollowersInUsers : Table() {
 
-    val userId = varchar("user_id", 32).index()
-    val targetId = varchar("target_id", 32).index()
+    val userId = uuid("user_id").index()
+    val targetId = uuid("target_id").index()
     val accepted = bool("accepted")
 
     val following = FollowersInUsers.alias("UsersFollowing")
@@ -23,8 +24,8 @@ object FollowersInUsers : Table() {
         user: User?,
         target: User?,
     ) = FollowerInUser(
-        row[userId],
-        row[targetId],
+        UUID(row[userId]),
+        UUID(row[targetId]),
         row.getOrNull(accepted),
         user,
         target

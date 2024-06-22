@@ -1,40 +1,31 @@
 package com.extopy.database.notifications
 
-import kotlinx.datetime.toInstant
-import com.extopy.extensions.generateId
 import com.extopy.models.notifications.Notification
+import dev.kaccelero.models.UUID
+import org.jetbrains.exposed.dao.id.UUIDTable
 import org.jetbrains.exposed.sql.ResultRow
-import org.jetbrains.exposed.sql.Table
-import org.jetbrains.exposed.sql.selectAll
+import org.jetbrains.exposed.sql.kotlin.datetime.timestamp
 
-object Notifications : Table() {
+object Notifications : UUIDTable() {
 
-    val id = varchar("id", 32)
-    val userId = varchar("user_id", 32).index()
+    val userId = uuid("user_id").index()
     val type = varchar("type", 255)
     val body = varchar("body", 255)
-    val contentId = varchar("contentId", 32).nullable()
-    val published = varchar("published", 255)
-    val expiration = varchar("expiration", 255)
+    val contentId = uuid("content_id").nullable()
+    val publishedAt = timestamp("published_at")
+    val expiresAt = timestamp("expires_at")
     val read = bool("read").default(false)
-
-    override val primaryKey = PrimaryKey(id)
-
-    fun generateId(): String {
-        val candidate = String.generateId()
-        return if (selectAll().where { id eq candidate }.count() > 0) generateId() else candidate
-    }
 
     fun toNotification(
         row: ResultRow,
     ) = Notification(
-        row[id],
-        row.getOrNull(userId),
+        UUID(row[id].value),
+        row.getOrNull(userId)?.let(::UUID),
         row.getOrNull(type),
         row.getOrNull(body),
-        row.getOrNull(contentId),
-        row.getOrNull(published)?.toInstant(),
-        row.getOrNull(expiration)?.toInstant(),
+        row.getOrNull(contentId)?.let(::UUID),
+        row.getOrNull(publishedAt),
+        row.getOrNull(expiresAt),
         row.getOrNull(read)
     )
 

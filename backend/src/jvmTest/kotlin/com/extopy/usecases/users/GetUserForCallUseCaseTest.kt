@@ -6,6 +6,7 @@ import com.extopy.models.users.UserContext
 import com.extopy.usecases.auth.IGetSessionForCallUseCase
 import dev.kaccelero.commons.auth.IGetJWTPrincipalForCallUseCase
 import dev.kaccelero.commons.repositories.IGetModelWithContextSuspendUseCase
+import dev.kaccelero.models.UUID
 import io.ktor.server.application.*
 import io.ktor.server.auth.jwt.*
 import io.ktor.util.*
@@ -49,16 +50,16 @@ class GetUserForCallUseCaseTest {
     @Test
     fun invokeWithJWT() = runBlocking {
         val getJWTPrincipalForCall = mockk<IGetJWTPrincipalForCallUseCase>()
-        val getUserUseCase = mockk<IGetModelWithContextSuspendUseCase<User, String>>()
+        val getUserUseCase = mockk<IGetModelWithContextSuspendUseCase<User, UUID>>()
         val useCase = GetUserForCallUseCase(getJWTPrincipalForCall, mockk(), getUserUseCase)
         val attributes = Attributes()
         val call = mockk<ApplicationCall>()
         val principal = mockk<JWTPrincipal>()
-        val user = User("id", "displayName", "username")
+        val user = User(UUID(), "displayName", "username")
         every { call.attributes } returns attributes
         every { getJWTPrincipalForCall(call) } returns principal
-        every { principal.subject } returns "id"
-        coEvery { getUserUseCase("id", UserContext("id")) } returns user
+        every { principal.subject } returns user.id.toString()
+        coEvery { getUserUseCase(user.id, UserContext(user.id)) } returns user
         // Fetch from repository
         assertEquals(user, useCase(call))
         // Fetch from cache
@@ -69,15 +70,15 @@ class GetUserForCallUseCaseTest {
     fun invokeWithSession() = runBlocking {
         val getJWTPrincipalForCall = mockk<IGetJWTPrincipalForCallUseCase>()
         val getSessionForCallUseCase = mockk<IGetSessionForCallUseCase>()
-        val getUserUseCase = mockk<IGetModelWithContextSuspendUseCase<User, String>>()
+        val getUserUseCase = mockk<IGetModelWithContextSuspendUseCase<User, UUID>>()
         val useCase = GetUserForCallUseCase(getJWTPrincipalForCall, getSessionForCallUseCase, getUserUseCase)
         val attributes = Attributes()
         val call = mockk<ApplicationCall>()
-        val user = User("id", "displayName", "username")
+        val user = User(UUID(), "displayName", "username")
         every { call.attributes } returns attributes
         every { getJWTPrincipalForCall(call) } returns null
-        every { getSessionForCallUseCase(call) } returns SessionPayload("id")
-        coEvery { getUserUseCase("id", UserContext("id")) } returns user
+        every { getSessionForCallUseCase(call) } returns SessionPayload(user.id)
+        coEvery { getUserUseCase(user.id, UserContext(user.id)) } returns user
         // Fetch from repository
         assertEquals(user, useCase(call))
         // Fetch from cache
@@ -87,15 +88,16 @@ class GetUserForCallUseCaseTest {
     @Test
     fun invokeWithNoUserJWT() = runBlocking {
         val getJWTPrincipalForCall = mockk<IGetJWTPrincipalForCallUseCase>()
-        val getUserUseCase = mockk<IGetModelWithContextSuspendUseCase<User, String>>()
+        val getUserUseCase = mockk<IGetModelWithContextSuspendUseCase<User, UUID>>()
         val useCase = GetUserForCallUseCase(getJWTPrincipalForCall, mockk(), getUserUseCase)
         val attributes = Attributes()
         val call = mockk<ApplicationCall>()
         val principal = mockk<JWTPrincipal>()
+        val userId = UUID()
         every { call.attributes } returns attributes
         every { getJWTPrincipalForCall(call) } returns principal
-        every { principal.subject } returns "id"
-        coEvery { getUserUseCase("id", UserContext("id")) } returns null
+        every { principal.subject } returns userId.toString()
+        coEvery { getUserUseCase(userId, UserContext(userId)) } returns null
         assertEquals(null, useCase(call))
     }
 
@@ -103,14 +105,15 @@ class GetUserForCallUseCaseTest {
     fun invokeWithNoUserSession() = runBlocking {
         val getJWTPrincipalForCall = mockk<IGetJWTPrincipalForCallUseCase>()
         val getSessionForCallUseCase = mockk<IGetSessionForCallUseCase>()
-        val getUserUseCase = mockk<IGetModelWithContextSuspendUseCase<User, String>>()
+        val getUserUseCase = mockk<IGetModelWithContextSuspendUseCase<User, UUID>>()
         val useCase = GetUserForCallUseCase(getJWTPrincipalForCall, getSessionForCallUseCase, getUserUseCase)
         val attributes = Attributes()
         val call = mockk<ApplicationCall>()
+        val userId = UUID()
         every { call.attributes } returns attributes
         every { getJWTPrincipalForCall(call) } returns null
-        every { getSessionForCallUseCase(call) } returns SessionPayload("id")
-        coEvery { getUserUseCase("id", UserContext("id")) } returns null
+        every { getSessionForCallUseCase(call) } returns SessionPayload(userId)
+        coEvery { getUserUseCase(userId, UserContext(userId)) } returns null
         assertEquals(null, useCase(call))
     }
 

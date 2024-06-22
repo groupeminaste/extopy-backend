@@ -9,15 +9,16 @@ import dev.kaccelero.commons.repositories.ICreateChildModelWithContextSuspendUse
 import dev.kaccelero.commons.repositories.IDeleteChildModelSuspendUseCase
 import dev.kaccelero.commons.repositories.IListSliceChildModelSuspendUseCase
 import dev.kaccelero.commons.users.IRequireUserForCallUseCase
+import dev.kaccelero.models.UUID
 import dev.kaccelero.repositories.Pagination
 import io.ktor.http.*
 import io.ktor.server.application.*
 
 class LikesInPostsController(
     private val requireUserForCallUseCase: IRequireUserForCallUseCase,
-    private val listLikeInPostUseCase: IListSliceChildModelSuspendUseCase<LikeInPost, String>,
-    private val createLikeInPostUseCase: ICreateChildModelWithContextSuspendUseCase<LikeInPost, Unit, String>,
-    private val deleteLikeInPostUseCase: IDeleteChildModelSuspendUseCase<LikeInPost, String, String>,
+    private val listLikeInPostUseCase: IListSliceChildModelSuspendUseCase<LikeInPost, UUID>,
+    private val createLikeInPostUseCase: ICreateChildModelWithContextSuspendUseCase<LikeInPost, Unit, UUID>,
+    private val deleteLikeInPostUseCase: IDeleteChildModelSuspendUseCase<LikeInPost, UUID, UUID>,
 ) : ILikesInPostsController {
 
     override suspend fun list(call: ApplicationCall, parent: Post, limit: Long?, offset: Long?): List<LikeInPost> {
@@ -39,7 +40,7 @@ class LikesInPostsController(
         ) ?: throw ControllerException(HttpStatusCode.InternalServerError, "error_internal")
     }
 
-    override suspend fun delete(call: ApplicationCall, parent: Post, id: String) {
+    override suspend fun delete(call: ApplicationCall, parent: Post, id: UUID) {
         val user = requireUserForCallUseCase(call) as User
         if (user.id != id) throw ControllerException(
             HttpStatusCode.Forbidden, "likes_in_posts_delete_not_allowed"

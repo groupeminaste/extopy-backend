@@ -8,14 +8,15 @@ import com.extopy.repositories.users.IUsersRepository
 import dev.kaccelero.commons.exceptions.ControllerException
 import dev.kaccelero.commons.repositories.ICreateChildModelWithContextSuspendUseCase
 import dev.kaccelero.models.IContext
+import dev.kaccelero.models.UUID
 import io.ktor.http.*
 
 class CreateFollowerInUserUseCase(
     private val repository: IFollowersInUsersRepository,
     private val usersRepository: IUsersRepository,
-) : ICreateChildModelWithContextSuspendUseCase<FollowerInUser, Unit, String> {
+) : ICreateChildModelWithContextSuspendUseCase<FollowerInUser, Unit, UUID> {
 
-    override suspend fun invoke(input1: Unit, input2: String, input3: IContext): FollowerInUser? {
+    override suspend fun invoke(input1: Unit, input2: UUID, input3: IContext): FollowerInUser? {
         if (input3 !is UserContext) return null
         if (input3.userId == input2) throw ControllerException(
             HttpStatusCode.Forbidden, "followers_in_users_self_not_allowed"

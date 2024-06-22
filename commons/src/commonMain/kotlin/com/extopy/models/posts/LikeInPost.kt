@@ -1,18 +1,22 @@
 package com.extopy.models.posts
 
-import kotlinx.serialization.Serializable
 import com.extopy.models.users.User
 import dev.kaccelero.models.IChildModel
+import dev.kaccelero.models.UUID
+import kotlinx.serialization.Serializable
 
 @Serializable
 data class LikeInPost(
-    val postId: String,
-    val userId: String,
+    val postId: UUID,
+    val userId: UUID,
     val post: Post?,
     val user: User?,
-) : IChildModel<String, Unit, Unit, String> {
+) : IChildModel<UUID, Unit, Unit, UUID> {
 
-    override val id = userId
-    override val parentId = postId
+    override val id: UUID
+        get() = userId
+
+    override val parentId: UUID
+        get() = postId
 
 }

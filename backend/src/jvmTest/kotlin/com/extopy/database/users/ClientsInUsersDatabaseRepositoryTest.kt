@@ -1,8 +1,9 @@
 package com.extopy.database.users
 
+import com.extopy.database.Database
+import dev.kaccelero.models.UUID
 import kotlinx.coroutines.runBlocking
 import kotlinx.datetime.Clock
-import com.extopy.database.Database
 import org.jetbrains.exposed.sql.selectAll
 import kotlin.test.Test
 import kotlin.test.assertEquals
@@ -16,7 +17,9 @@ class ClientsInUsersDatabaseRepositoryTest {
     fun createClientInUser() = runBlocking {
         val database = Database(protocol = "h2", name = "createClientInUser")
         val repository = ClientsInUsersDatabaseRepository(database)
-        val clientInUser = repository.create("userId", "clientId", now)
+        val userId = UUID()
+        val clientId = UUID()
+        val clientInUser = repository.create(userId, clientId, now)
         val clientInUserFromDatabase = database.suspendedTransaction {
             ClientsInUsers
                 .selectAll()
@@ -27,8 +30,8 @@ class ClientsInUsersDatabaseRepositoryTest {
         assertEquals(clientInUserFromDatabase?.userId, clientInUser?.userId)
         assertEquals(clientInUserFromDatabase?.clientId, clientInUser?.clientId)
         assertEquals(clientInUserFromDatabase?.expiration, clientInUser?.expiration)
-        assertEquals(clientInUserFromDatabase?.userId, "userId")
-        assertEquals(clientInUserFromDatabase?.clientId, "clientId")
+        assertEquals(clientInUserFromDatabase?.userId, userId)
+        assertEquals(clientInUserFromDatabase?.clientId, clientId)
         assertEquals(clientInUserFromDatabase?.expiration, now)
     }
 
@@ -36,9 +39,7 @@ class ClientsInUsersDatabaseRepositoryTest {
     fun getClientInUser() = runBlocking {
         val database = Database(protocol = "h2", name = "getClientInUser")
         val repository = ClientsInUsersDatabaseRepository(database)
-        val clientInUser = repository.create(
-            "userId", "clientId", now
-        ) ?: fail("Unable to create clientInUser")
+        val clientInUser = repository.create(UUID(), UUID(), now) ?: fail("Unable to create clientInUser")
         val result = repository.get(clientInUser.code)
         assertEquals(clientInUser.code, result?.code)
         assertEquals(clientInUser.userId, result?.userId)
@@ -58,9 +59,7 @@ class ClientsInUsersDatabaseRepositoryTest {
     fun deleteClientInUser() = runBlocking {
         val database = Database(protocol = "h2", name = "deleteClientInUser")
         val repository = ClientsInUsersDatabaseRepository(database)
-        val clientInUser = repository.create(
-            "userId", "clientId", now
-        ) ?: fail("Unable to create clientInUser")
+        val clientInUser = repository.create(UUID(), UUID(), now) ?: fail("Unable to create clientInUser")
         assertEquals(true, repository.delete(clientInUser.code))
         val count = database.suspendedTransaction {
             ClientsInUsers.selectAll().count()
@@ -79,9 +78,7 @@ class ClientsInUsersDatabaseRepositoryTest {
     fun deleteClientInUserWrong() = runBlocking {
         val database = Database(protocol = "h2", name = "deleteClientInUserWrong")
         val repository = ClientsInUsersDatabaseRepository(database)
-        repository.create(
-            "userId", "clientId", now
-        ) ?: fail("Unable to create clientInUser")
+        repository.create(UUID(), UUID(), now) ?: fail("Unable to create clientInUser")
         assertEquals(false, repository.delete("code"))
         val count = database.suspendedTransaction {
             ClientsInUsers.selectAll().count()

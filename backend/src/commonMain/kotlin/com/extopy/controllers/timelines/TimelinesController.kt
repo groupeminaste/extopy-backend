@@ -8,6 +8,7 @@ import com.extopy.usecases.timelines.IGetTimelineByIdUseCase
 import com.extopy.usecases.timelines.IGetTimelinePostsUseCase
 import dev.kaccelero.commons.exceptions.ControllerException
 import dev.kaccelero.commons.users.IRequireUserForCallUseCase
+import dev.kaccelero.models.UUID
 import dev.kaccelero.repositories.Pagination
 import io.ktor.http.*
 import io.ktor.server.application.*
@@ -18,14 +19,14 @@ class TimelinesController(
     private val getTimelinePostsUseCase: IGetTimelinePostsUseCase,
 ) : ITimelinesController {
 
-    override suspend fun get(call: ApplicationCall, id: String): Timeline {
+    override suspend fun get(call: ApplicationCall, id: UUID): Timeline {
         val user = requireUserForCallUseCase(call) as User
         return getTimelineUseCase(id, UserContext(user.id)) ?: throw ControllerException(
             HttpStatusCode.NotFound, "timelines_not_found"
         )
     }
 
-    override suspend fun listPosts(call: ApplicationCall, id: String, limit: Long?, offset: Long?): List<Post> {
+    override suspend fun listPosts(call: ApplicationCall, id: UUID, limit: Long?, offset: Long?): List<Post> {
         val user = requireUserForCallUseCase(call) as User
         val timeline = getTimelineUseCase(id, UserContext(user.id)) ?: throw ControllerException(
             HttpStatusCode.NotFound, "timelines_not_found"

@@ -18,19 +18,19 @@ class GenerateAuthTokenUseCaseTest {
     fun testInvoke() = runBlocking {
         val service = mockk<IJWTService>()
         val userCase = GenerateAuthTokenUseCase(service)
-        val clientId = UUID().toString()
-        val userId = UUID().toString()
+        val clientId = UUID()
+        val userId = UUID()
         every { service.generateJWT(userId, clientId, "access") } returns "accessToken"
         every { service.generateJWT(userId, clientId, "refresh") } returns "refreshToken"
         assertEquals(
             AuthToken(
                 "accessToken",
                 "refreshToken",
-                userId.let(::UUID)
+                userId
             ),
             userCase(
                 ClientForUser(
-                    Client(clientId, "oid", "name", "description", "secret", "redirect"),
+                    Client(clientId, UUID(), "name", "description", "secret", "redirect"),
                     User(userId, "displayName", "username")
                 )
             )

@@ -6,6 +6,7 @@ import com.extopy.models.users.CreateUserPayload
 import com.extopy.models.users.User
 import com.extopy.usecases.application.IGetCodeInEmailUseCase
 import dev.kaccelero.commons.repositories.ICreateModelSuspendUseCase
+import dev.kaccelero.models.UUID
 import io.mockk.coEvery
 import io.mockk.mockk
 import kotlinx.coroutines.runBlocking
@@ -25,7 +26,7 @@ class RegisterUseCaseTest {
             "username", "displayName", "email", "password",
             LocalDate(2002, 12, 24)
         )
-        val user = User("id", "displayName", "username")
+        val user = User(UUID(), "displayName", "username")
         coEvery { getCodeInEmailUseCase("code") } returns CodeInEmail("email", "code", Clock.System.now())
         coEvery { createUserUseCase(payload) } returns user
         assertEquals(

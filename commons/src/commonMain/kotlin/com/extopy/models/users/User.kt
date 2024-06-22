@@ -3,6 +3,7 @@ package com.extopy.models.users
 import dev.kaccelero.annotations.Schema
 import dev.kaccelero.models.IModel
 import dev.kaccelero.models.IUser
+import dev.kaccelero.models.UUID
 import kotlinx.datetime.Instant
 import kotlinx.datetime.LocalDate
 import kotlinx.serialization.Serializable
@@ -10,7 +11,7 @@ import kotlinx.serialization.Serializable
 @Serializable
 data class User(
     @Schema("Id of the User", "123abc")
-    override val id: String,
+    override val id: UUID,
     @Schema("Display name of the User", "Nathan Fallet")
     val displayName: String,
     @Schema("Username of the User", "nathanfallet")
@@ -44,7 +45,7 @@ data class User(
     val followersIn: Boolean? = null,
     @Schema("Is the current user followed by this user?", "true")
     val followingIn: Boolean? = null,
-) : IModel<String, CreateUserPayload, UpdateUserPayload>, IUser {
+) : IModel<UUID, CreateUserPayload, UpdateUserPayload>, IUser {
 
     companion object {
 

@@ -15,6 +15,7 @@ import dev.kaccelero.commons.localization.ITranslateUseCase
 import dev.kaccelero.commons.repositories.IGetModelSuspendUseCase
 import dev.kaccelero.commons.responses.RedirectResponse
 import dev.kaccelero.commons.users.IRequireUserForCallUseCase
+import dev.kaccelero.models.UUID
 import io.ktor.http.*
 import io.ktor.server.application.*
 
@@ -24,7 +25,7 @@ class AuthController(
     private val setSessionForCallUseCase: ISetSessionForCallUseCase,
     private val clearSessionForCallUseCase: IClearSessionForCallUseCase,
     private val requireUserForCallUseCase: IRequireUserForCallUseCase,
-    private val getClientUseCase: IGetModelSuspendUseCase<Client, String>,
+    private val getClientUseCase: IGetModelSuspendUseCase<Client, UUID>,
     private val getClientForUserForRefreshTokenUseCase: IGetClientForUserForRefreshTokenUseCase,
     private val getAuthCodeUseCase: IGetAuthCodeUseCase,
     private val createAuthCodeUseCase: ICreateAuthCodeUseCase,
@@ -91,7 +92,7 @@ class AuthController(
         return RedirectResponse(redirect ?: "/")
     }
 
-    override suspend fun authorize(call: ApplicationCall, clientId: String?): ClientForUser {
+    override suspend fun authorize(call: ApplicationCall, clientId: UUID?): ClientForUser {
         val user = requireUserForCallUseCase(call)
         val client = clientId?.let { getClientUseCase(it) } ?: throw ControllerException(
             HttpStatusCode.BadRequest, "auth_invalid_client"
@@ -99,7 +100,7 @@ class AuthController(
         return ClientForUser(client, user as User)
     }
 
-    override suspend fun authorizeRedirect(call: ApplicationCall, clientId: String?): Map<String, Any> {
+    override suspend fun authorizeRedirect(call: ApplicationCall, clientId: UUID?): Map<String, Any> {
         val client = authorize(call, clientId)
         val code = createAuthCodeUseCase(client) ?: throw ControllerException(
             HttpStatusCode.InternalServerError, "error_internal"

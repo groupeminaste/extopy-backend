@@ -1,32 +1,23 @@
 package com.extopy.database.application
 
-import com.extopy.extensions.generateId
 import com.extopy.models.application.Client
+import dev.kaccelero.models.UUID
+import org.jetbrains.exposed.dao.id.UUIDTable
 import org.jetbrains.exposed.sql.ResultRow
-import org.jetbrains.exposed.sql.Table
-import org.jetbrains.exposed.sql.selectAll
 
-object Clients : Table() {
+object Clients : UUIDTable() {
 
-    val id = varchar("id", 32)
-    val ownerId = varchar("owner_id", 32).index()
+    val ownerId = uuid("owner_id").index()
     val name = varchar("name", 255)
     val description = text("description")
     val secret = varchar("secret", 255)
     val redirectUri = text("redirect_uri")
 
-    override val primaryKey = PrimaryKey(id)
-
-    fun generateId(): String {
-        val candidate = String.generateId()
-        return if (selectAll().where { id eq candidate }.count() > 0) generateId() else candidate
-    }
-
     fun toClient(
         row: ResultRow,
     ) = Client(
-        row[id],
-        row[ownerId],
+        UUID(row[id].value),
+        UUID(row[ownerId]),
         row[name],
         row[description],
         row[secret],

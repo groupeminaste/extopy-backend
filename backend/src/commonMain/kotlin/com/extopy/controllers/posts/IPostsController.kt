@@ -4,9 +4,10 @@ import com.extopy.models.posts.Post
 import com.extopy.models.posts.PostPayload
 import dev.kaccelero.annotations.*
 import dev.kaccelero.controllers.IModelController
+import dev.kaccelero.models.UUID
 import io.ktor.server.application.*
 
-interface IPostsController : IModelController<Post, String, PostPayload, PostPayload> {
+interface IPostsController : IModelController<Post, UUID, PostPayload, PostPayload> {
 
     @APIMapping
     @ListModelPath
@@ -22,7 +23,7 @@ interface IPostsController : IModelController<Post, String, PostPayload, PostPay
     @GetModelPath
     @DocumentedError(401, "auth_invalid_credentials")
     @DocumentedError(404, "posts_not_found")
-    suspend fun get(call: ApplicationCall, @Id id: String): Post
+    suspend fun get(call: ApplicationCall, @Id id: UUID): Post
 
     @APIMapping
     @CreateModelPath
@@ -36,7 +37,7 @@ interface IPostsController : IModelController<Post, String, PostPayload, PostPay
     @DocumentedError(403, "posts_update_not_allowed")
     @DocumentedError(404, "posts_not_found")
     @DocumentedError(500, "error_internal")
-    suspend fun update(call: ApplicationCall, @Id id: String, @Payload payload: PostPayload): Post
+    suspend fun update(call: ApplicationCall, @Id id: UUID, @Payload payload: PostPayload): Post
 
     @APIMapping
     @DeleteModelPath
@@ -45,7 +46,7 @@ interface IPostsController : IModelController<Post, String, PostPayload, PostPay
     @DocumentedError(403, "posts_delete_not_allowed")
     @DocumentedError(404, "posts_not_found")
     @DocumentedError(500, "error_internal")
-    suspend fun delete(call: ApplicationCall, @Id id: String)
+    suspend fun delete(call: ApplicationCall, @Id id: UUID)
 
     @APIMapping("listPostReply", "Get post replies by id")
     @Path("GET", "/{postId}/replies")
@@ -53,7 +54,7 @@ interface IPostsController : IModelController<Post, String, PostPayload, PostPay
     @DocumentedError(404, "posts_not_found")
     suspend fun listReplies(
         call: ApplicationCall,
-        @Id id: String,
+        @Id id: UUID,
         @QueryParameter limit: Long?,
         @QueryParameter offset: Long?,
     ): List<Post>

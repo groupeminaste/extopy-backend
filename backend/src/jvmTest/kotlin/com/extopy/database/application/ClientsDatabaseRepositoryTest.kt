@@ -1,7 +1,9 @@
 package com.extopy.database.application
 
-import kotlinx.coroutines.runBlocking
 import com.extopy.database.Database
+import dev.kaccelero.database.set
+import dev.kaccelero.models.UUID
+import kotlinx.coroutines.runBlocking
 import org.jetbrains.exposed.sql.insert
 import kotlin.test.Test
 import kotlin.test.assertEquals
@@ -15,8 +17,7 @@ class ClientsDatabaseRepositoryTest {
         val repository = ClientsDatabaseRepository(database)
         val client = database.suspendedTransaction {
             Clients.insert {
-                it[id] = "id"
-                it[ownerId] = "ownerId"
+                it[ownerId] = UUID()
                 it[name] = "name"
                 it[description] = "description"
                 it[secret] = "secret"

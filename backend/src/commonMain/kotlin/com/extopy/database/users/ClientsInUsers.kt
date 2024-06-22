@@ -1,18 +1,19 @@
 package com.extopy.database.users
 
-import kotlinx.datetime.toInstant
 import com.extopy.extensions.generateId
 import com.extopy.models.users.ClientInUser
+import dev.kaccelero.models.UUID
 import org.jetbrains.exposed.sql.ResultRow
 import org.jetbrains.exposed.sql.Table
+import org.jetbrains.exposed.sql.kotlin.datetime.timestamp
 import org.jetbrains.exposed.sql.selectAll
 
 object ClientsInUsers : Table() {
 
     val code = varchar("code", 32)
-    val userId = varchar("user_id", 32)
-    val clientId = varchar("client_id", 32)
-    val expiration = varchar("expiration", 255)
+    val userId = uuid("user_id")
+    val clientId = uuid("client_id")
+    val expiration = timestamp("expiration")
 
     override val primaryKey = PrimaryKey(code)
 
@@ -25,9 +26,9 @@ object ClientsInUsers : Table() {
         row: ResultRow,
     ) = ClientInUser(
         row[code],
-        row[userId],
-        row[clientId],
-        row[expiration].toInstant()
+        UUID(row[userId]),
+        UUID(row[clientId]),
+        row[expiration]
     )
 
 }

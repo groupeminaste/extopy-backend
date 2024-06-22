@@ -1,9 +1,11 @@
 package com.extopy.database.users
 
-import kotlinx.datetime.Instant
 import com.extopy.models.users.ClientInUser
 import com.extopy.repositories.users.IClientsInUsersRepository
 import dev.kaccelero.database.IDatabase
+import dev.kaccelero.database.set
+import dev.kaccelero.models.UUID
+import kotlinx.datetime.Instant
 import org.jetbrains.exposed.sql.SchemaUtils
 import org.jetbrains.exposed.sql.SqlExpressionBuilder.eq
 import org.jetbrains.exposed.sql.deleteWhere
@@ -20,13 +22,13 @@ class ClientsInUsersDatabaseRepository(
         }
     }
 
-    override suspend fun create(userId: String, clientId: String, expiration: Instant): ClientInUser? =
+    override suspend fun create(userId: UUID, clientId: UUID, expiration: Instant): ClientInUser? =
         database.suspendedTransaction {
             ClientsInUsers.insert {
                 it[code] = generateCode()
                 it[ClientsInUsers.userId] = userId
                 it[ClientsInUsers.clientId] = clientId
-                it[ClientsInUsers.expiration] = expiration.toString()
+                it[ClientsInUsers.expiration] = expiration
             }.resultedValues?.map(ClientsInUsers::toClientInUser)?.singleOrNull()
         }
 

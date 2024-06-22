@@ -9,6 +9,7 @@ import com.extopy.usecases.posts.IGetPostRepliesUseCase
 import dev.kaccelero.commons.exceptions.ControllerException
 import dev.kaccelero.commons.repositories.*
 import dev.kaccelero.commons.users.IRequireUserForCallUseCase
+import dev.kaccelero.models.UUID
 import dev.kaccelero.repositories.Pagination
 import io.ktor.http.*
 import io.ktor.server.application.*
@@ -17,9 +18,9 @@ class PostsController(
     private val requireUserForCallUseCase: IRequireUserForCallUseCase,
     private val createPostUseCase: ICreateModelWithContextSuspendUseCase<Post, PostPayload>,
     private val listPostsUseCase: IListSliceModelWithContextSuspendUseCase<Post>,
-    private val getPostUseCase: IGetModelWithContextSuspendUseCase<Post, String>,
-    private val updatePostUseCase: IUpdateModelSuspendUseCase<Post, String, PostPayload>,
-    private val deletePostUseCase: IDeleteModelSuspendUseCase<Post, String>,
+    private val getPostUseCase: IGetModelWithContextSuspendUseCase<Post, UUID>,
+    private val updatePostUseCase: IUpdateModelSuspendUseCase<Post, UUID, PostPayload>,
+    private val deletePostUseCase: IDeleteModelSuspendUseCase<Post, UUID>,
     private val getPostRepliesUseCase: IGetPostRepliesUseCase,
 ) : IPostsController {
 
@@ -42,14 +43,14 @@ class PostsController(
         )
     }
 
-    override suspend fun get(call: ApplicationCall, id: String): Post {
+    override suspend fun get(call: ApplicationCall, id: UUID): Post {
         val user = requireUserForCallUseCase(call) as User
         return getPostUseCase(id, UserContext(user.id)) ?: throw ControllerException(
             HttpStatusCode.NotFound, "posts_not_found"
         )
     }
 
-    override suspend fun update(call: ApplicationCall, id: String, payload: PostPayload): Post {
+    override suspend fun update(call: ApplicationCall, id: UUID, payload: PostPayload): Post {
         val user = requireUserForCallUseCase(call) as User
         val post = getPostUseCase(id, UserContext(user.id)) ?: throw ControllerException(
             HttpStatusCode.NotFound, "posts_not_found"
@@ -64,7 +65,7 @@ class PostsController(
         )
     }
 
-    override suspend fun delete(call: ApplicationCall, id: String) {
+    override suspend fun delete(call: ApplicationCall, id: UUID) {
         val user = requireUserForCallUseCase(call) as User
         val post = getPostUseCase(id, UserContext(user.id)) ?: throw ControllerException(
             HttpStatusCode.NotFound, "posts_not_found"
@@ -77,7 +78,7 @@ class PostsController(
         )
     }
 
-    override suspend fun listReplies(call: ApplicationCall, id: String, limit: Long?, offset: Long?): List<Post> {
+    override suspend fun listReplies(call: ApplicationCall, id: UUID, limit: Long?, offset: Long?): List<Post> {
         val user = requireUserForCallUseCase(call) as User
         val post = getPostUseCase(id, UserContext(user.id)) ?: throw ControllerException(
             HttpStatusCode.NotFound, "posts_not_found"

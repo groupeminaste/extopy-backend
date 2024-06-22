@@ -3,13 +3,14 @@ package com.extopy.usecases.posts
 import com.extopy.models.posts.Post
 import com.extopy.repositories.posts.IPostsRepository
 import dev.kaccelero.commons.repositories.IDeleteModelSuspendUseCase
+import dev.kaccelero.models.UUID
 
 class DeletePostUseCase(
     private val repository: IPostsRepository,
-) : IDeleteModelSuspendUseCase<Post, String> {
+) : IDeleteModelSuspendUseCase<Post, UUID> {
 
-    override suspend fun invoke(input: String): Boolean {
-        return repository.delete(input)
+    override suspend fun invoke(input: UUID): Boolean = repository.delete(input).also { success ->
+        if (!success) return@also
         /*
         // TODO: Delete related data
         LikesInPosts.deleteWhere {

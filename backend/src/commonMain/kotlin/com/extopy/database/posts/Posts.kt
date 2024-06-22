@@ -1,21 +1,21 @@
 package com.extopy.database.posts
 
-import kotlinx.datetime.toInstant
-import com.extopy.extensions.generateId
 import com.extopy.models.posts.Post
 import com.extopy.models.users.User
+import dev.kaccelero.models.UUID
+import org.jetbrains.exposed.dao.id.UUIDTable
 import org.jetbrains.exposed.sql.*
+import org.jetbrains.exposed.sql.kotlin.datetime.timestamp
 
-object Posts : Table() {
+object Posts : UUIDTable() {
 
-    val id = varchar("id", 32)
-    val userId = varchar("user_id", 32).index()
-    val repliedToId = varchar("replied_to_id", 32).nullable()
-    val repostOfId = varchar("repost_of_id", 32).nullable()
+    val userId = uuid("user_id").index()
+    val repliedToId = uuid("replied_to_id").nullable()
+    val repostOfId = uuid("repost_of_id").nullable()
     val body = text("body")
-    val published = varchar("published", 255)
-    val edited = varchar("edited", 255).nullable()
-    val expiration = varchar("expiration", 255)
+    val publishedAt = timestamp("published_at")
+    val editedAt = timestamp("edited_at").nullable().default(null)
+    val expiresAt = timestamp("expires_at")
     val visibility = text("visibility")
 
     val replies = Posts.alias("PostsReplies")
@@ -31,26 +31,19 @@ object Posts : Table() {
         LongColumnType()
     )
 
-    override val primaryKey = PrimaryKey(id)
-
-    fun generateId(): String {
-        val candidate = String.generateId()
-        return if (selectAll().where { id eq candidate }.count() > 0) generateId() else candidate
-    }
-
     fun toPost(
         row: ResultRow,
         user: User? = null,
     ) = Post(
-        row[id],
-        row.getOrNull(userId),
+        UUID(row[id].value),
+        UUID(row[userId]),
         user,
-        row.getOrNull(repliedToId),
-        row.getOrNull(repostOfId),
+        row.getOrNull(repliedToId)?.let(::UUID),
+        row.getOrNull(repostOfId)?.let(::UUID),
         row.getOrNull(body),
-        row.getOrNull(published)?.toInstant(),
-        row.getOrNull(edited)?.toInstant(),
-        row.getOrNull(expiration)?.toInstant(),
+        row[publishedAt],
+        row.getOrNull(editedAt),
+        row.getOrNull(expiresAt),
         row.getOrNull(visibility),
         row.getOrNull(likesCount),
         row.getOrNull(repliesCount),

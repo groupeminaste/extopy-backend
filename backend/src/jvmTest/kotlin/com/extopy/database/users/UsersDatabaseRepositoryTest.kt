@@ -1,7 +1,5 @@
 package com.extopy.database.users
 
-import kotlinx.coroutines.runBlocking
-import kotlinx.datetime.LocalDate
 import com.extopy.database.Database
 import com.extopy.database.posts.PostsDatabaseRepository
 import com.extopy.models.users.CreateUserPayload
@@ -9,6 +7,9 @@ import com.extopy.models.users.UpdateUserPayload
 import com.extopy.models.users.UserContext
 import com.extopy.repositories.users.IUsersRepository
 import dev.kaccelero.database.IDatabase
+import dev.kaccelero.models.UUID
+import kotlinx.coroutines.runBlocking
+import kotlinx.datetime.LocalDate
 import org.jetbrains.exposed.sql.selectAll
 import kotlin.test.Test
 import kotlin.test.assertEquals
@@ -82,7 +83,7 @@ class UsersDatabaseRepositoryTest {
                 LocalDate(2002, 12, 24)
             )
         ) ?: fail("Unable to create user")
-        assertEquals(null, repository.get("userId", UserContext(user.id)))
+        assertEquals(null, repository.get(UUID(), UserContext(user.id)))
     }
 
     @Test
@@ -173,7 +174,7 @@ class UsersDatabaseRepositoryTest {
         val database = Database(protocol = "h2", name = "updateUserNotExists")
         val repository = createRepository(database)
         val payload = UpdateUserPayload("username2", "displayName2", null, "biography2")
-        assertEquals(false, repository.update("userId", payload))
+        assertEquals(false, repository.update(UUID(), payload))
     }
 
 }

@@ -5,6 +5,7 @@ import com.extopy.models.application.SearchOptions
 import com.extopy.models.posts.Post
 import com.extopy.models.posts.PostPayload
 import dev.kaccelero.models.RecursiveId
+import dev.kaccelero.models.UUID
 import dev.kaccelero.models.UnitModel
 import dev.kaccelero.repositories.APIModelRemoteRepository
 import dev.kaccelero.repositories.IPaginationOptions
@@ -16,7 +17,7 @@ import io.ktor.util.reflect.*
 
 class PostsRemoteRepository(
     client: IExtopyClient,
-) : APIModelRemoteRepository<Post, String, PostPayload, PostPayload>(
+) : APIModelRemoteRepository<Post, UUID, PostPayload, PostPayload>(
     typeInfo<Post>(),
     typeInfo<PostPayload>(),
     typeInfo<PostPayload>(),
@@ -32,15 +33,15 @@ class PostsRemoteRepository(
 
     override suspend fun list(pagination: Pagination): List<Post> = list(pagination, null)
 
-    override suspend fun get(id: String): Post? = get(id, null)
+    override suspend fun get(id: UUID): Post? = get(id, null)
 
     override suspend fun create(payload: PostPayload): Post? = create(payload, null)
 
-    override suspend fun update(id: String, payload: PostPayload): Post? = update(id, payload, null)
+    override suspend fun update(id: UUID, payload: PostPayload): Post? = update(id, payload, null)
 
-    override suspend fun delete(id: String): Boolean = delete(id, null)
+    override suspend fun delete(id: UUID): Boolean = delete(id, null)
 
-    override suspend fun getReplies(id: String, pagination: Pagination): List<Post> =
+    override suspend fun getReplies(id: UUID, pagination: Pagination): List<Post> =
         client
             .request(HttpMethod.Get, "${constructFullRoute(RecursiveId<UnitModel, Unit, Unit>(Unit))}/$id/replies") {
                 parameter("limit", pagination.limit)

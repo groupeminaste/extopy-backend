@@ -8,6 +8,7 @@ import com.extopy.models.users.UserContext
 import com.extopy.repositories.users.IClientsInUsersRepository
 import dev.kaccelero.commons.repositories.IGetModelSuspendUseCase
 import dev.kaccelero.commons.repositories.IGetModelWithContextSuspendUseCase
+import dev.kaccelero.models.UUID
 import io.mockk.coEvery
 import io.mockk.mockk
 import kotlinx.coroutines.runBlocking
@@ -24,16 +25,18 @@ class GetAuthCodeUseCaseTest {
     @Test
     fun testInvoke() = runBlocking {
         val repository = mockk<IClientsInUsersRepository>()
-        val getClientUseCase = mockk<IGetModelSuspendUseCase<Client, String>>()
-        val getUserUseCase = mockk<IGetModelWithContextSuspendUseCase<User, String>>()
+        val getClientUseCase = mockk<IGetModelSuspendUseCase<Client, UUID>>()
+        val getUserUseCase = mockk<IGetModelWithContextSuspendUseCase<User, UUID>>()
         val useCase = GetAuthCodeUseCase(repository, getClientUseCase, getUserUseCase)
         val clientForUser = ClientForUser(
-            Client("cid", "oid", "name", "description", "secret", "redirect"),
-            User("uid", "displayName", "username")
+            Client(UUID(), UUID(), "name", "description", "secret", "redirect"),
+            User(UUID(), "displayName", "username")
         )
-        coEvery { repository.get("code") } returns ClientInUser("code", "uid", "cid", tomorrow)
-        coEvery { getClientUseCase("cid") } returns clientForUser.client
-        coEvery { getUserUseCase("uid", UserContext("uid")) } returns clientForUser.user as User
+        coEvery { repository.get("code") } returns ClientInUser(
+            "code", clientForUser.user.id, clientForUser.client.id, tomorrow
+        )
+        coEvery { getClientUseCase(clientForUser.client.id) } returns clientForUser.client
+        coEvery { getUserUseCase(clientForUser.user.id, UserContext(clientForUser.user.id)) } returns clientForUser.user
         assertEquals(clientForUser, useCase("code"))
     }
 
@@ -49,33 +52,36 @@ class GetAuthCodeUseCaseTest {
     fun testInvokeExpired() = runBlocking {
         val repository = mockk<IClientsInUsersRepository>()
         val useCase = GetAuthCodeUseCase(repository, mockk(), mockk())
-        coEvery { repository.get("code") } returns ClientInUser("code", "uid", "cid", yesterday)
+        coEvery { repository.get("code") } returns ClientInUser("code", UUID(), UUID(), yesterday)
         assertEquals(null, useCase("code"))
     }
 
     @Test
     fun testInvokeBadClient() = runBlocking {
         val repository = mockk<IClientsInUsersRepository>()
-        val getClientUseCase = mockk<IGetModelSuspendUseCase<Client, String>>()
+        val getClientUseCase = mockk<IGetModelSuspendUseCase<Client, UUID>>()
         val useCase = GetAuthCodeUseCase(repository, getClientUseCase, mockk())
-        coEvery { repository.get("code") } returns ClientInUser("code", "uid", "cid", tomorrow)
-        coEvery { getClientUseCase("cid") } returns null
+        val clientId = UUID()
+        coEvery { repository.get("code") } returns ClientInUser("code", UUID(), clientId, tomorrow)
+        coEvery { getClientUseCase(clientId) } returns null
         assertEquals(null, useCase("code"))
     }
 
     @Test
     fun testInvokeBadUser() = runBlocking {
         val repository = mockk<IClientsInUsersRepository>()
-        val getClientUseCase = mockk<IGetModelSuspendUseCase<Client, String>>()
-        val getUserUseCase = mockk<IGetModelWithContextSuspendUseCase<User, String>>()
+        val getClientUseCase = mockk<IGetModelSuspendUseCase<Client, UUID>>()
+        val getUserUseCase = mockk<IGetModelWithContextSuspendUseCase<User, UUID>>()
         val useCase = GetAuthCodeUseCase(repository, getClientUseCase, getUserUseCase)
         val clientForUser = ClientForUser(
-            Client("cid", "oid", "name", "description", "secret", "redirect"),
-            User("uid", "displayName", "username")
+            Client(UUID(), UUID(), "name", "description", "secret", "redirect"),
+            User(UUID(), "displayName", "username")
         )
-        coEvery { repository.get("code") } returns ClientInUser("code", "uid", "cid", tomorrow)
-        coEvery { getClientUseCase("cid") } returns clientForUser.client
-        coEvery { getUserUseCase("uid", UserContext("uid")) } returns null
+        coEvery { repository.get("code") } returns ClientInUser(
+            "code", clientForUser.user.id, clientForUser.client.id, tomorrow
+        )
+        coEvery { getClientUseCase(clientForUser.client.id) } returns clientForUser.client
+        coEvery { getUserUseCase(clientForUser.user.id, UserContext(clientForUser.user.id)) } returns null
         assertEquals(null, useCase("code"))
     }
 

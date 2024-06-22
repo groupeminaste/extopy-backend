@@ -4,6 +4,7 @@ import com.extopy.models.auth.*
 import dev.kaccelero.annotations.*
 import dev.kaccelero.commons.responses.RedirectResponse
 import dev.kaccelero.controllers.IUnitController
+import dev.kaccelero.models.UUID
 import io.ktor.server.application.*
 
 interface IAuthController : IUnitController {
@@ -47,11 +48,11 @@ interface IAuthController : IUnitController {
 
     @TemplateMapping("auth/authorize.ftl")
     @Path("GET", "/authorize")
-    suspend fun authorize(call: ApplicationCall, @QueryParameter clientId: String?): ClientForUser
+    suspend fun authorize(call: ApplicationCall, @QueryParameter clientId: UUID?): ClientForUser
 
     @TemplateMapping("auth/redirect.ftl")
     @Path("POST", "/authorize")
-    suspend fun authorizeRedirect(call: ApplicationCall, @QueryParameter clientId: String?): Map<String, Any>
+    suspend fun authorizeRedirect(call: ApplicationCall, @QueryParameter clientId: UUID?): Map<String, Any>
 
     @APIMapping("createToken")
     @Path("POST", "/token")

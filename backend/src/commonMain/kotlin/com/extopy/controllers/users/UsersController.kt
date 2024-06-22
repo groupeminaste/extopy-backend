@@ -11,6 +11,7 @@ import dev.kaccelero.commons.repositories.IGetModelWithContextSuspendUseCase
 import dev.kaccelero.commons.repositories.IListSliceModelWithContextSuspendUseCase
 import dev.kaccelero.commons.repositories.IUpdateModelSuspendUseCase
 import dev.kaccelero.commons.users.IRequireUserForCallUseCase
+import dev.kaccelero.models.UUID
 import dev.kaccelero.repositories.Pagination
 import io.ktor.http.*
 import io.ktor.server.application.*
@@ -18,8 +19,8 @@ import io.ktor.server.application.*
 class UsersController(
     private val requireUserForCallUseCase: IRequireUserForCallUseCase,
     private val listUsersUseCase: IListSliceModelWithContextSuspendUseCase<User>,
-    private val getUserUseCase: IGetModelWithContextSuspendUseCase<User, String>,
-    private val updateUserUseCase: IUpdateModelSuspendUseCase<User, String, UpdateUserPayload>,
+    private val getUserUseCase: IGetModelWithContextSuspendUseCase<User, UUID>,
+    private val updateUserUseCase: IUpdateModelSuspendUseCase<User, UUID, UpdateUserPayload>,
     private val getUserPostsUseCase: IGetUserPostsUseCase,
 ) : IUsersController {
 
@@ -35,14 +36,14 @@ class UsersController(
         )
     }
 
-    override suspend fun get(call: ApplicationCall, id: String): User {
+    override suspend fun get(call: ApplicationCall, id: UUID): User {
         val user = requireUserForCallUseCase(call) as User
         return getUserUseCase(id, UserContext(user.id)) ?: throw ControllerException(
             HttpStatusCode.NotFound, "users_not_found"
         )
     }
 
-    override suspend fun update(call: ApplicationCall, id: String, payload: UpdateUserPayload): User {
+    override suspend fun update(call: ApplicationCall, id: UUID, payload: UpdateUserPayload): User {
         val user = (requireUserForCallUseCase(call) as User).takeIf {
             it.id == id
         } ?: throw ControllerException(
@@ -55,7 +56,7 @@ class UsersController(
         )
     }
 
-    override suspend fun listPosts(call: ApplicationCall, id: String, limit: Long?, offset: Long?): List<Post> {
+    override suspend fun listPosts(call: ApplicationCall, id: UUID, limit: Long?, offset: Long?): List<Post> {
         val user = requireUserForCallUseCase(call) as User
         val target = getUserUseCase(id, UserContext(user.id)) ?: throw ControllerException(
             HttpStatusCode.NotFound, "users_not_found"

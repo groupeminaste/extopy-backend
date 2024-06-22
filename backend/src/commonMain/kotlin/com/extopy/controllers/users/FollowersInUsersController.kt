@@ -9,16 +9,17 @@ import dev.kaccelero.commons.repositories.ICreateChildModelWithContextSuspendUse
 import dev.kaccelero.commons.repositories.IDeleteChildModelSuspendUseCase
 import dev.kaccelero.commons.repositories.IListSliceChildModelSuspendUseCase
 import dev.kaccelero.commons.users.IRequireUserForCallUseCase
+import dev.kaccelero.models.UUID
 import dev.kaccelero.repositories.Pagination
 import io.ktor.http.*
 import io.ktor.server.application.*
 
 class FollowersInUsersController(
     private val requireUserForCallUseCase: IRequireUserForCallUseCase,
-    private val listFollowerInUserUseCase: IListSliceChildModelSuspendUseCase<FollowerInUser, String>,
+    private val listFollowerInUserUseCase: IListSliceChildModelSuspendUseCase<FollowerInUser, UUID>,
     private val listFollowingInUserUseCase: IListFollowingInUserUseCase,
-    private val createFollowerInUserUseCase: ICreateChildModelWithContextSuspendUseCase<FollowerInUser, Unit, String>,
-    private val deleteFollowerInUserUseCase: IDeleteChildModelSuspendUseCase<FollowerInUser, String, String>,
+    private val createFollowerInUserUseCase: ICreateChildModelWithContextSuspendUseCase<FollowerInUser, Unit, UUID>,
+    private val deleteFollowerInUserUseCase: IDeleteChildModelSuspendUseCase<FollowerInUser, UUID, UUID>,
 ) : IFollowersInUsersController {
 
     override suspend fun list(call: ApplicationCall, parent: User, limit: Long?, offset: Long?): List<FollowerInUser> {
@@ -55,7 +56,7 @@ class FollowersInUsersController(
         ) ?: throw ControllerException(HttpStatusCode.InternalServerError, "error_internal")
     }
 
-    override suspend fun delete(call: ApplicationCall, parent: User, id: String) {
+    override suspend fun delete(call: ApplicationCall, parent: User, id: UUID) {
         val user = requireUserForCallUseCase(call) as User
 
         // I can unfollow someone, or remove someone from my followers

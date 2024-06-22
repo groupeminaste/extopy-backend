@@ -5,6 +5,7 @@ import com.auth0.jwt.JWTVerifier
 import com.auth0.jwt.algorithms.Algorithm
 import com.auth0.jwt.exceptions.JWTVerificationException
 import com.auth0.jwt.interfaces.DecodedJWT
+import dev.kaccelero.models.UUID
 import io.ktor.http.*
 import io.ktor.server.auth.*
 import io.ktor.server.auth.jwt.*
@@ -32,14 +33,14 @@ class JWTService(
         call.respond(mapOf("error" to "auth_invalid_token"))
     }
 
-    override fun generateJWT(userId: String, clientId: String, type: String): String {
+    override fun generateJWT(userId: UUID, clientId: UUID, type: String): String {
         val effectiveExpiration = when (type) {
             "refresh" -> refreshExpiration
             else -> expiration
         }
         return JWT.create()
-            .withSubject(userId)
-            .withAudience(clientId)
+            .withSubject(userId.toString())
+            .withAudience(clientId.toString())
             .withIssuer(issuer)
             .withExpiresAt(Date(System.currentTimeMillis() + effectiveExpiration))
             .sign(Algorithm.HMAC256(secret))

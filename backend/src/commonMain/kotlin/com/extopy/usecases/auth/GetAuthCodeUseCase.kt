@@ -7,12 +7,13 @@ import com.extopy.models.users.UserContext
 import com.extopy.repositories.users.IClientsInUsersRepository
 import dev.kaccelero.commons.repositories.IGetModelSuspendUseCase
 import dev.kaccelero.commons.repositories.IGetModelWithContextSuspendUseCase
+import dev.kaccelero.models.UUID
 import kotlinx.datetime.Clock
 
 class GetAuthCodeUseCase(
     private val repository: IClientsInUsersRepository,
-    private val getClientUseCase: IGetModelSuspendUseCase<Client, String>,
-    private val getUserUseCase: IGetModelWithContextSuspendUseCase<User, String>,
+    private val getClientUseCase: IGetModelSuspendUseCase<Client, UUID>,
+    private val getUserUseCase: IGetModelWithContextSuspendUseCase<User, UUID>,
 ) : IGetAuthCodeUseCase {
 
     override suspend fun invoke(input: String): ClientForUser? {

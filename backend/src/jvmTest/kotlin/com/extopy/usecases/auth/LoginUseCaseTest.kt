@@ -5,6 +5,7 @@ import com.extopy.models.users.User
 import com.extopy.repositories.users.IUsersRepository
 import dev.kaccelero.commons.auth.IVerifyPasswordUseCase
 import dev.kaccelero.commons.auth.VerifyPasswordPayload
+import dev.kaccelero.models.UUID
 import io.mockk.coEvery
 import io.mockk.every
 import io.mockk.mockk
@@ -19,7 +20,7 @@ class LoginUseCaseTest {
         val repository = mockk<IUsersRepository>()
         val verifyPasswordUseCase = mockk<IVerifyPasswordUseCase>()
         val useCase = LoginUseCase(repository, verifyPasswordUseCase)
-        val user = User("id", "displayName", "username", "email", "hash")
+        val user = User(UUID(), "displayName", "username", "email", "hash")
         coEvery { repository.getForUsernameOrEmail("email", true) } returns user
         every { verifyPasswordUseCase(VerifyPasswordPayload("password", "hash")) } returns true
         assertEquals(user, useCase(LoginPayload("email", "password")))
@@ -39,7 +40,7 @@ class LoginUseCaseTest {
         val repository = mockk<IUsersRepository>()
         val verifyPasswordUseCase = mockk<IVerifyPasswordUseCase>()
         val useCase = LoginUseCase(repository, verifyPasswordUseCase)
-        val user = User("id", "displayName", "username", "email", "hash")
+        val user = User(UUID(), "displayName", "username", "email", "hash")
         coEvery { repository.getForUsernameOrEmail("email", true) } returns user
         every { verifyPasswordUseCase(VerifyPasswordPayload("password", "hash")) } returns false
         assertEquals(null, useCase(LoginPayload("email", "password")))

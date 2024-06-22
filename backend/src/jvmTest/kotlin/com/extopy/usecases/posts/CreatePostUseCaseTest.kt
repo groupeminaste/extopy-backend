@@ -5,6 +5,7 @@ import com.extopy.models.posts.PostPayload
 import com.extopy.models.users.UserContext
 import com.extopy.repositories.posts.IPostsRepository
 import dev.kaccelero.commons.exceptions.ControllerException
+import dev.kaccelero.models.UUID
 import io.ktor.http.*
 import io.mockk.coEvery
 import io.mockk.mockk
@@ -47,9 +48,10 @@ class CreatePostUseCaseTest {
         val repository = mockk<IPostsRepository>()
         val useCase = CreatePostUseCase(repository)
         val post = mockk<Post>()
-        val payload = PostPayload("body", repliedToId = "replyId")
+        val replyId = UUID()
+        val payload = PostPayload("body", repliedToId = replyId)
         val context = mockk<UserContext>()
-        coEvery { repository.get("replyId", context) } returns mockk()
+        coEvery { repository.get(replyId, context) } returns mockk()
         coEvery { repository.create(payload, context) } returns post
         val result = useCase(payload, context)
         assertEquals(post, result)
@@ -60,9 +62,10 @@ class CreatePostUseCaseTest {
         val repository = mockk<IPostsRepository>()
         val useCase = CreatePostUseCase(repository)
         val post = mockk<Post>()
-        val payload = PostPayload("body", repliedToId = "replyId")
+        val replyId = UUID()
+        val payload = PostPayload("body", repliedToId = replyId)
         val context = mockk<UserContext>()
-        coEvery { repository.get("replyId", context) } returns null
+        coEvery { repository.get(replyId, context) } returns null
         coEvery { repository.create(payload, context) } returns post
         val exception = assertFailsWith<ControllerException> {
             useCase(payload, context)
@@ -76,9 +79,10 @@ class CreatePostUseCaseTest {
         val repository = mockk<IPostsRepository>()
         val useCase = CreatePostUseCase(repository)
         val post = mockk<Post>()
-        val payload = PostPayload("", repliedToId = "replyId")
+        val replyId = UUID()
+        val payload = PostPayload("", repliedToId = replyId)
         val context = mockk<UserContext>()
-        coEvery { repository.get("replyId", context) } returns mockk()
+        coEvery { repository.get(replyId, context) } returns mockk()
         coEvery { repository.create(payload, context) } returns post
         val exception = assertFailsWith<ControllerException> {
             useCase(payload, context)
@@ -92,9 +96,10 @@ class CreatePostUseCaseTest {
         val repository = mockk<IPostsRepository>()
         val useCase = CreatePostUseCase(repository)
         val post = mockk<Post>()
-        val payload = PostPayload("", repostOfId = "repostId")
+        val repostId = UUID()
+        val payload = PostPayload("", repostOfId = repostId)
         val context = mockk<UserContext>()
-        coEvery { repository.get("repostId", context) } returns mockk()
+        coEvery { repository.get(repostId, context) } returns mockk()
         coEvery { repository.create(payload, context) } returns post
         val result = useCase(payload, context)
         assertEquals(post, result)
@@ -105,9 +110,10 @@ class CreatePostUseCaseTest {
         val repository = mockk<IPostsRepository>()
         val useCase = CreatePostUseCase(repository)
         val post = mockk<Post>()
-        val payload = PostPayload("body", repostOfId = "repostId")
+        val repostId = UUID()
+        val payload = PostPayload("body", repostOfId = repostId)
         val context = mockk<UserContext>()
-        coEvery { repository.get("repostId", context) } returns mockk()
+        coEvery { repository.get(repostId, context) } returns mockk()
         coEvery { repository.create(payload, context) } returns post
         val result = useCase(payload, context)
         assertEquals(post, result)
@@ -118,9 +124,10 @@ class CreatePostUseCaseTest {
         val repository = mockk<IPostsRepository>()
         val useCase = CreatePostUseCase(repository)
         val post = mockk<Post>()
-        val payload = PostPayload("", repostOfId = "repostId")
+        val repostId = UUID()
+        val payload = PostPayload("", repostOfId = repostId)
         val context = mockk<UserContext>()
-        coEvery { repository.get("repostId", context) } returns null
+        coEvery { repository.get(repostId, context) } returns null
         coEvery { repository.create(payload, context) } returns post
         val exception = assertFailsWith<ControllerException> {
             useCase(payload, context)
@@ -133,7 +140,9 @@ class CreatePostUseCaseTest {
     fun testInvokeReplyRepost() = runBlocking {
         val repository = mockk<IPostsRepository>()
         val useCase = CreatePostUseCase(repository)
-        val payload = PostPayload("body", repliedToId = "replyId", repostOfId = "repostId")
+        val replyId = UUID()
+        val repostId = UUID()
+        val payload = PostPayload("body", repliedToId = replyId, repostOfId = repostId)
         val context = mockk<UserContext>()
         val exception = assertFailsWith<ControllerException> {
             useCase(payload, context)

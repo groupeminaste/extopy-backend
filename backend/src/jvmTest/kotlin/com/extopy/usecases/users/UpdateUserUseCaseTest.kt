@@ -5,6 +5,7 @@ import com.extopy.models.users.User
 import com.extopy.repositories.users.IUsersRepository
 import dev.kaccelero.commons.auth.IHashPasswordUseCase
 import dev.kaccelero.commons.exceptions.ControllerException
+import dev.kaccelero.models.UUID
 import io.ktor.http.*
 import io.mockk.coEvery
 import io.mockk.every
@@ -20,7 +21,7 @@ class UpdateUserUseCaseTest {
     fun invoke() = runBlocking {
         val usersRepository = mockk<IUsersRepository>()
         val useCase = UpdateUserUseCase(usersRepository, mockk())
-        val user = User("id", "displayName", "username")
+        val user = User(UUID(), "displayName", "username")
         val payload = UpdateUserPayload("newUsername", "newDisplayName")
         coEvery { usersRepository.getForUsernameOrEmail("newUsername", false) } returns null
         coEvery { usersRepository.update(user.id, payload) } returns true
@@ -32,7 +33,7 @@ class UpdateUserUseCaseTest {
     fun invokeKeepUsername() = runBlocking {
         val usersRepository = mockk<IUsersRepository>()
         val useCase = UpdateUserUseCase(usersRepository, mockk())
-        val user = User("id", "displayName", "username")
+        val user = User(UUID(), "displayName", "username")
         val payload = UpdateUserPayload("username", "newDisplayName")
         coEvery { usersRepository.getForUsernameOrEmail("username", false) } returns user
         coEvery { usersRepository.update(user.id, payload) } returns true
@@ -45,7 +46,7 @@ class UpdateUserUseCaseTest {
         val usersRepository = mockk<IUsersRepository>()
         val hashPasswordUseCase = mockk<IHashPasswordUseCase>()
         val useCase = UpdateUserUseCase(usersRepository, hashPasswordUseCase)
-        val user = User("id", "displayName", "username")
+        val user = User(UUID(), "displayName", "username")
         val payload = UpdateUserPayload("newUsername", "newDisplayName", "password")
         val hashedUser = user.copy(password = "hash")
         val hashedPayload = payload.copy(password = "hash")
@@ -60,7 +61,7 @@ class UpdateUserUseCaseTest {
     fun invokeError() = runBlocking {
         val usersRepository = mockk<IUsersRepository>()
         val useCase = UpdateUserUseCase(usersRepository, mockk())
-        val user = User("id", "displayName", "username")
+        val user = User(UUID(), "displayName", "username")
         val payload = UpdateUserPayload("newUsername", "newDisplayName")
         coEvery { usersRepository.getForUsernameOrEmail("newUsername", false) } returns null
         coEvery { usersRepository.update(user.id, payload) } returns false
@@ -71,8 +72,8 @@ class UpdateUserUseCaseTest {
     fun invokeStealUsername() = runBlocking {
         val usersRepository = mockk<IUsersRepository>()
         val useCase = UpdateUserUseCase(usersRepository, mockk())
-        val user = User("id", "displayName", "username")
-        val otherUser = User("otherId", "displayName", "newUsername")
+        val user = User(UUID(), "displayName", "username")
+        val otherUser = User(UUID(), "displayName", "newUsername")
         val payload = UpdateUserPayload("newUsername", "newDisplayName")
         coEvery { usersRepository.getForUsernameOrEmail("newUsername", false) } returns otherUser
         coEvery { usersRepository.update(user.id, payload) } returns true

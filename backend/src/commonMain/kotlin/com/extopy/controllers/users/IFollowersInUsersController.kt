@@ -4,9 +4,10 @@ import com.extopy.models.users.FollowerInUser
 import com.extopy.models.users.User
 import dev.kaccelero.annotations.*
 import dev.kaccelero.controllers.IChildModelController
+import dev.kaccelero.models.UUID
 import io.ktor.server.application.*
 
-interface IFollowersInUsersController : IChildModelController<FollowerInUser, String, Unit, Unit, User, String> {
+interface IFollowersInUsersController : IChildModelController<FollowerInUser, UUID, Unit, Unit, User, UUID> {
 
     @APIMapping
     @ListModelPath
@@ -48,6 +49,6 @@ interface IFollowersInUsersController : IChildModelController<FollowerInUser, St
     @DocumentedError(403, "followers_in_users_delete_not_allowed")
     @DocumentedError(404, "users_not_found")
     @DocumentedError(500, "error_internal")
-    suspend fun delete(call: ApplicationCall, @ParentModel parent: User, @Id id: String)
+    suspend fun delete(call: ApplicationCall, @ParentModel parent: User, @Id id: UUID)
 
 }

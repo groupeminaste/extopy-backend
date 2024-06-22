@@ -4,15 +4,17 @@ import com.extopy.database.users.Users
 import com.extopy.models.posts.LikeInPost
 import com.extopy.models.users.UserContext
 import dev.kaccelero.database.IDatabase
+import dev.kaccelero.database.eq
+import dev.kaccelero.database.set
 import dev.kaccelero.models.IContext
+import dev.kaccelero.models.UUID
 import dev.kaccelero.repositories.IChildModelSuspendRepository
 import dev.kaccelero.repositories.Pagination
 import org.jetbrains.exposed.sql.*
-import org.jetbrains.exposed.sql.SqlExpressionBuilder.eq
 
 class LikesInPostsDatabaseRepository(
     private val database: IDatabase,
-) : IChildModelSuspendRepository<LikeInPost, String, Unit, Unit, String> {
+) : IChildModelSuspendRepository<LikeInPost, UUID, Unit, Unit, UUID> {
 
     init {
         database.transaction {
@@ -20,7 +22,7 @@ class LikesInPostsDatabaseRepository(
         }
     }
 
-    override suspend fun list(pagination: Pagination, parentId: String, context: IContext?): List<LikeInPost> =
+    override suspend fun list(pagination: Pagination, parentId: UUID, context: IContext?): List<LikeInPost> =
         database.suspendedTransaction {
             customJoin()
                 .where { LikesInPosts.postId eq parentId }
@@ -28,7 +30,7 @@ class LikesInPostsDatabaseRepository(
                 .map { LikesInPosts.toLikeInPost(it, null, Users.toUser(it)) }
         }
 
-    override suspend fun create(payload: Unit, parentId: String, context: IContext?): LikeInPost? {
+    override suspend fun create(payload: Unit, parentId: UUID, context: IContext?): LikeInPost? {
         if (context !is UserContext) return null
         return database.suspendedTransaction {
             LikesInPosts.insert {
@@ -38,7 +40,7 @@ class LikesInPostsDatabaseRepository(
         }
     }
 
-    override suspend fun delete(id: String, parentId: String, context: IContext?): Boolean =
+    override suspend fun delete(id: UUID, parentId: UUID, context: IContext?): Boolean =
         database.suspendedTransaction {
             LikesInPosts.deleteWhere {
                 postId eq parentId and (userId eq id)

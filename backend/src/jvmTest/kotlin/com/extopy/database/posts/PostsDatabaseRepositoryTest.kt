@@ -1,8 +1,5 @@
 package com.extopy.database.posts
 
-import kotlinx.coroutines.runBlocking
-import kotlinx.datetime.Clock
-import kotlinx.datetime.LocalDate
 import com.extopy.database.Database
 import com.extopy.database.users.UsersDatabaseRepository
 import com.extopy.models.posts.PostPayload
@@ -10,6 +7,10 @@ import com.extopy.models.users.CreateUserPayload
 import com.extopy.models.users.UserContext
 import com.extopy.repositories.posts.IPostsRepository
 import dev.kaccelero.database.IDatabase
+import dev.kaccelero.models.UUID
+import kotlinx.coroutines.runBlocking
+import kotlinx.datetime.Clock
+import kotlinx.datetime.LocalDate
 import org.jetbrains.exposed.sql.selectAll
 import kotlin.test.Test
 import kotlin.test.assertEquals
@@ -50,9 +51,9 @@ class PostsDatabaseRepositoryTest {
         assertEquals(postFromDatabase?.repostOfId, post?.repostOfId)
         assertEquals(postFromDatabase?.repliedToId, post?.repliedToId)
         assertEquals(postFromDatabase?.body, post?.body)
-        assertEquals(postFromDatabase?.published, post?.published)
-        assertEquals(postFromDatabase?.edited, post?.edited)
-        assertEquals(postFromDatabase?.expiration, post?.expiration)
+        assertEquals(postFromDatabase?.publishedAt, post?.publishedAt)
+        assertEquals(postFromDatabase?.editedAt, post?.editedAt)
+        assertEquals(postFromDatabase?.expiresAt, post?.expiresAt)
         assertEquals(postFromDatabase?.visibility, post?.visibility)
         assertEquals(postFromDatabase?.userId, user.id)
         assertEquals(postFromDatabase?.body, "body")
@@ -92,9 +93,9 @@ class PostsDatabaseRepositoryTest {
         assertEquals(post.repostOfId, result?.repostOfId)
         assertEquals(post.repliedToId, result?.repliedToId)
         assertEquals(post.body, result?.body)
-        assertEquals(post.published, result?.published)
-        assertEquals(post.edited, result?.edited)
-        assertEquals(post.expiration, result?.expiration)
+        assertEquals(post.publishedAt, result?.publishedAt)
+        assertEquals(post.editedAt, result?.editedAt)
+        assertEquals(post.expiresAt, result?.expiresAt)
         assertEquals(post.visibility, result?.visibility)
         assertEquals(user.id, result?.user?.id)
         assertEquals(user.username, result?.user?.username)
@@ -115,7 +116,7 @@ class PostsDatabaseRepositoryTest {
             PostPayload("body", null, null),
             UserContext(user.id)
         ) ?: fail("Unable to create post")
-        assertEquals(null, repository.get("postId", UserContext(user.id)))
+        assertEquals(null, repository.get(UUID(), UserContext(user.id)))
     }
 
     @Test
@@ -168,12 +169,12 @@ class PostsDatabaseRepositoryTest {
         assertEquals(postFromDatabase?.userId, post.userId)
         assertEquals(postFromDatabase?.repostOfId, post.repostOfId)
         assertEquals(postFromDatabase?.repliedToId, post.repliedToId)
-        assertEquals(postFromDatabase?.published, post.published)
-        assertEquals(postFromDatabase?.expiration, post.expiration)
+        assertEquals(postFromDatabase?.publishedAt, post.publishedAt)
+        assertEquals(postFromDatabase?.expiresAt, post.expiresAt)
         assertEquals(postFromDatabase?.visibility, post.visibility)
         assertEquals(postFromDatabase?.userId, user.id)
         assertEquals(postFromDatabase?.body, "newBody")
-        assertTrue(postFromDatabase?.edited!! >= now)
+        assertTrue(postFromDatabase?.editedAt!! >= now)
     }
 
     @Test
@@ -192,7 +193,7 @@ class PostsDatabaseRepositoryTest {
         ) ?: fail("Unable to create post")
         assertEquals(
             false, repository.update(
-                "postId",
+                UUID(),
                 PostPayload("newBody", null, null)
             )
         )
@@ -235,7 +236,7 @@ class PostsDatabaseRepositoryTest {
             PostPayload("body", null, null),
             UserContext(user.id)
         ) ?: fail("Unable to create post")
-        assertEquals(false, repository.delete("postId", UserContext(user.id)))
+        assertEquals(false, repository.delete(UUID(), UserContext(user.id)))
         val count = database.suspendedTransaction {
             Posts
                 .selectAll()
