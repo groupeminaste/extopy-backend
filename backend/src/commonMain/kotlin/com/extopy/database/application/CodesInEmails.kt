@@ -1,15 +1,15 @@
 package com.extopy.database.application
 
-import kotlinx.datetime.toInstant
 import com.extopy.models.application.CodeInEmail
 import org.jetbrains.exposed.sql.ResultRow
 import org.jetbrains.exposed.sql.Table
+import org.jetbrains.exposed.sql.kotlin.datetime.timestamp
 
 object CodesInEmails : Table() {
 
     val email = varchar("email", 255)
     val code = varchar("code", 32).index()
-    val expiresAt = varchar("expires_at", 255)
+    val expiresAt = timestamp("expires_at")
 
     override val primaryKey = PrimaryKey(email)
 
@@ -18,7 +18,7 @@ object CodesInEmails : Table() {
     ) = CodeInEmail(
         row[email],
         row[code],
-        row[expiresAt].toInstant()
+        row[expiresAt]
     )
 
 }

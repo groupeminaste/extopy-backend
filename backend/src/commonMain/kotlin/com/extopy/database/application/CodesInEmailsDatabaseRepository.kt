@@ -1,9 +1,9 @@
 package com.extopy.database.application
 
-import kotlinx.datetime.Instant
 import com.extopy.models.application.CodeInEmail
 import com.extopy.repositories.application.ICodesInEmailsRepository
 import dev.kaccelero.database.IDatabase
+import kotlinx.datetime.Instant
 import org.jetbrains.exposed.sql.*
 import org.jetbrains.exposed.sql.SqlExpressionBuilder.eq
 
@@ -31,7 +31,7 @@ class CodesInEmailsDatabaseRepository(
         database.suspendedTransaction {
             CodesInEmails
                 .selectAll()
-                .where { CodesInEmails.expiresAt less date.toString() }
+                .where { CodesInEmails.expiresAt less date }
                 .map(CodesInEmails::toCodeInEmail)
         }
 
@@ -44,7 +44,7 @@ class CodesInEmailsDatabaseRepository(
             CodesInEmails.insert {
                 it[this.email] = email
                 it[this.code] = code
-                it[this.expiresAt] = expiresAt.toString()
+                it[this.expiresAt] = expiresAt
             }.resultedValues?.map(CodesInEmails::toCodeInEmail)?.singleOrNull()
         }
 
@@ -56,7 +56,7 @@ class CodesInEmailsDatabaseRepository(
         database.suspendedTransaction {
             CodesInEmails.update({ CodesInEmails.email eq email }) {
                 it[this.code] = code
-                it[this.expiresAt] = expiresAt.toString()
+                it[this.expiresAt] = expiresAt
             }
         } == 1
 

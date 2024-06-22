@@ -15,6 +15,7 @@ ktor {
     docker {
         jreVersion.set(JavaVersion.VERSION_21)
         localImageName.set("extopy-backend")
+        imageTag.set("latest" + (System.getenv("JIB_PLATFORM_ARCHITECTURE")?.let { "-$it" } ?: ""))
 
         externalRegistry.set(
             io.ktor.plugin.features.DockerImageRegistry.dockerHub(
@@ -23,6 +24,17 @@ ktor {
                 password = providers.environmentVariable("DOCKER_HUB_PASSWORD")
             )
         )
+    }
+}
+
+jib {
+    from {
+        platforms {
+            platform {
+                os = "linux"
+                architecture = System.getenv("JIB_PLATFORM_ARCHITECTURE") ?: "amd64"
+            }
+        }
     }
 }
 
