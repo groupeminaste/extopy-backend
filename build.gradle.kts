@@ -1,15 +1,18 @@
 plugins {
-    kotlin("jvm").version("2.0.0").apply(false)
-    kotlin("plugin.serialization").version("2.0.0").apply(false)
-    id("convention.publication").apply(false)
-    id("org.jetbrains.kotlinx.kover").version("0.8.0").apply(false)
-    id("com.google.devtools.ksp").version("2.0.0-1.0.21").apply(false)
-    id("dev.petuska.npm.publish").version("3.4.1").apply(false)
+    alias(libs.plugins.multiplatform) apply false
 }
 
 allprojects {
-    group = "me.nathanfallet.extopy"
+    group = "com.extopy"
     version = "0.1.1"
+    project.ext.set("url", "https://github.com/groupeminaste/extopy-backend")
+    project.ext.set("license.name", "GPL-3.0")
+    project.ext.set("license.url", "https://opensource.org/licenses/GPL-3.0")
+    project.ext.set("developer.id", "nathanfallet")
+    project.ext.set("developer.name", "Nathan Fallet")
+    project.ext.set("developer.email", "contact@nathanfallet.me")
+    project.ext.set("developer.url", "https://www.nathanfallet.me")
+    project.ext.set("scm.url", "https://github.com/groupeminaste/extopy-backend.git")
 
     repositories {
         mavenCentral()
