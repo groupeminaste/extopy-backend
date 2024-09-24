@@ -13,16 +13,16 @@ dependencyResolutionManagement {
     versionCatalogs {
         create("libs") {
             // Plugins
-            version("kotlin", "2.0.0")
+            version("kotlin", "2.0.20")
             plugin("multiplatform", "org.jetbrains.kotlin.multiplatform").versionRef("kotlin")
             plugin("serialization", "org.jetbrains.kotlin.plugin.serialization").versionRef("kotlin")
-            plugin("kover", "org.jetbrains.kotlinx.kover").version("0.8.0")
-            plugin("ksp", "com.google.devtools.ksp").version("2.0.0-1.0.21")
+            plugin("kover", "org.jetbrains.kotlinx.kover").version("0.8.3")
+            plugin("ksp", "com.google.devtools.ksp").version("2.0.20-1.0.24")
             plugin("maven", "com.vanniktech.maven.publish").version("0.28.0")
             plugin("npm", "dev.petuska.npm.publish").version("3.4.1")
 
             // Kaccelero
-            version("kaccelero", "0.2.0")
+            version("kaccelero", "0.3.0")
             library("kaccelero-routers-client", "dev.kaccelero", "routers-client-ktor").versionRef("kaccelero")
             library("kaccelero-routers", "dev.kaccelero", "routers-ktor").versionRef("kaccelero")
             library("kaccelero-i18n-freemarker", "dev.kaccelero", "i18n-ktor-freemarker").versionRef("kaccelero")
@@ -42,12 +42,12 @@ dependencyResolutionManagement {
             )
 
             // Tests
-            library("tests-mockk", "io.mockk:mockk:1.13.11")
-            library("tests-h2", "com.h2database:h2:2.2.224")
+            library("tests-mockk", "io.mockk:mockk:1.13.12")
+            library("tests-h2", "com.h2database:h2:2.3.232")
             library("tests-jsoup", "org.jsoup:jsoup:1.16.2")
 
             // Ktor
-            version("ktor", "2.3.11")
+            version("ktor", "2.3.12")
             plugin("ktor", "io.ktor.plugin").versionRef("ktor")
             library("ktor-serialization-kotlinx-json", "io.ktor", "ktor-serialization-kotlinx-json").versionRef("ktor")
             library("ktor-server-core", "io.ktor", "ktor-server-core").versionRef("ktor")
@@ -115,7 +115,7 @@ dependencyResolutionManagement {
             library("logback-classic", "ch.qos.logback:logback-classic:0.9.30")
             library("mysql", "com.mysql:mysql-connector-j:8.0.33")
             library("sentry", "io.sentry:sentry:7.9.0")
-            library("cloudflare-client", "me.nathanfallet.cloudflare:cloudflare-api-client:4.4.1")
+            library("cloudflare-client", "me.nathanfallet.cloudflare:cloudflare-api-client:4.4.2")
             library("apache-email", "org.apache.commons:commons-email:1.6.0")
         }
     }

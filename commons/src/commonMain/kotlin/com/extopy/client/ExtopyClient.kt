@@ -11,6 +11,7 @@ import dev.kaccelero.client.AbstractAPIClient
 import dev.kaccelero.commons.auth.IGetTokenUseCase
 import dev.kaccelero.commons.auth.ILogoutUseCase
 import dev.kaccelero.commons.auth.IRenewTokenUseCase
+import io.ktor.http.*
 
 class ExtopyClient(
     getTokenUseCase: IGetTokenUseCase,
@@ -30,5 +31,10 @@ class ExtopyClient(
     override val posts = PostsRemoteRepository(this)
     override val likesInPosts = LikesInPostsRemoteRepository(this, posts)
     override val timelines = TimelinesRemoteRepository(this)
+
+    override fun shouldIncludeToken(method: HttpMethod, path: String): Boolean {
+        // Don't include token for refresh token endpoint (to avoid infinite loop)
+        return path != "/api/v1/auth/refresh"
+    }
 
 }
