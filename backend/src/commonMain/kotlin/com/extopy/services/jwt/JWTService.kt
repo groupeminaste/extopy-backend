@@ -16,7 +16,7 @@ class JWTService(
     private val secret: String,
     private val issuer: String,
     private val expiration: Long = 7 * 24 * 60 * 60 * 1000L, // 7 days
-    private val refreshExpiration: Long = 30 * 24 * 60 * 60 * 1000L, // 30 days
+    private val refreshExpiration: Long = 365 * 24 * 60 * 60 * 1000L, // 365 days
 ) : IJWTService {
 
     override val verifier: JWTVerifier =
