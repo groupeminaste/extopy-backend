@@ -4,7 +4,7 @@ plugins {
     alias(libs.plugins.kover)
     alias(libs.plugins.ksp)
     alias(libs.plugins.ktor)
-    //alias(libs.plugins.maven)
+    alias(libs.plugins.maven)
 }
 
 application {
@@ -38,7 +38,6 @@ jib {
     }
 }
 
-/*
 mavenPublishing {
     publishToMavenCentral(com.vanniktech.maven.publish.SonatypeHost.CENTRAL_PORTAL)
     signAllPublications()
@@ -65,7 +64,6 @@ mavenPublishing {
         }
     }
 }
-*/
 
 kotlin {
     jvmToolchain(21)

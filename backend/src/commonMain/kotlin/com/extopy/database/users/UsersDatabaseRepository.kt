@@ -33,7 +33,8 @@ class UsersDatabaseRepository(
                 .groupBy(Users.id)
                 .andWhere(pagination.options)
                 .orderBy(Users.joinDate to SortOrder.DESC)
-                .limit(pagination.limit.toInt(), pagination.offset)
+                .limit(pagination.limit.toInt())
+                .offset(pagination.offset)
                 .map(Users::toUser)
         }
     }

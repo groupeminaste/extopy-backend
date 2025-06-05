@@ -25,7 +25,8 @@ class FollowersInUsersDatabaseRepository(
         database.suspendedTransaction {
             customFollowersJoin()
                 .where { FollowersInUsers.targetId eq parentId and (FollowersInUsers.accepted eq true) }
-                .limit(pagination.limit.toInt(), pagination.offset)
+                .limit(pagination.limit.toInt())
+                .offset(pagination.offset)
                 .map { FollowersInUsers.toFollowerInUser(it, Users.toUser(it), null) }
         }
 
@@ -37,7 +38,8 @@ class FollowersInUsersDatabaseRepository(
         database.suspendedTransaction {
             customFollowingJoin()
                 .where { FollowersInUsers.userId eq parentId and (FollowersInUsers.accepted eq true) }
-                .limit(pagination.limit.toInt(), pagination.offset)
+                .limit(pagination.limit.toInt())
+                .offset(pagination.offset)
                 .map { FollowersInUsers.toFollowerInUser(it, null, Users.toUser(it)) }
         }
 

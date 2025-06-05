@@ -28,9 +28,9 @@ class UsersRemoteRepository(
     prefix = "/api/v1"
 ), IUsersRemoteRepository {
 
-    override fun encodePaginationOptions(options: IPaginationOptions, builder: HttpRequestBuilder) = when (options) {
-        is SearchOptions -> builder.parameter("search", options.search)
-        else -> super.encodePaginationOptions(options, builder)
+    override fun HttpRequestBuilder.encodePaginationOptions(options: IPaginationOptions) = when (options) {
+        is SearchOptions -> parameter("search", options.search)
+        else -> {}
     }
 
     override suspend fun list(pagination: Pagination): List<User> = list(pagination, null)

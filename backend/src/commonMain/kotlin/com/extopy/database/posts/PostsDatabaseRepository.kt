@@ -34,7 +34,8 @@ class PostsDatabaseRepository(
                 .groupBy(Posts.id)
                 .andWhere(pagination.options)
                 .orderBy(Posts.publishedAt to SortOrder.DESC)
-                .limit(pagination.limit.toInt(), pagination.offset)
+                .limit(pagination.limit.toInt())
+                .offset(pagination.offset)
                 .map { Posts.toPost(it, Users.toUser(it)) }
         }
     }
@@ -56,7 +57,8 @@ class PostsDatabaseRepository(
                 }
                 .groupBy(Posts.id)
                 .orderBy(Posts.publishedAt to SortOrder.DESC)
-                .limit(pagination.limit.toInt(), pagination.offset)
+                .limit(pagination.limit.toInt())
+                .offset(pagination.offset)
                 .map { Posts.toPost(it, Users.toUser(it)) }
         }
 
@@ -65,7 +67,8 @@ class PostsDatabaseRepository(
             customJoin(context.userId)
                 .groupBy(Posts.id)
                 .orderBy(Posts.trendsCount to SortOrder.DESC)
-                .limit(pagination.limit.toInt(), pagination.offset)
+                .limit(pagination.limit.toInt())
+                .offset(pagination.offset)
                 .map { Posts.toPost(it, Users.toUser(it)) }
         }
 
@@ -75,7 +78,8 @@ class PostsDatabaseRepository(
                 .where { Posts.userId eq userId }
                 .groupBy(Posts.id)
                 .orderBy(Posts.publishedAt to SortOrder.DESC)
-                .limit(pagination.limit.toInt(), pagination.offset)
+                .limit(pagination.limit.toInt())
+                .offset(pagination.offset)
                 .map { Posts.toPost(it, Users.toUser(it)) }
         }
 
@@ -85,7 +89,8 @@ class PostsDatabaseRepository(
                 .where { Posts.repliedToId eq postId.javaUUID }
                 .groupBy(Posts.id)
                 .orderBy(Posts.publishedAt to SortOrder.DESC)
-                .limit(pagination.limit.toInt(), pagination.offset)
+                .limit(pagination.limit.toInt())
+                .offset(pagination.offset)
                 .map { Posts.toPost(it, Users.toUser(it)) }
         }
 

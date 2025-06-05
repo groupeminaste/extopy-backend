@@ -26,7 +26,8 @@ class LikesInPostsDatabaseRepository(
         database.suspendedTransaction {
             customJoin()
                 .where { LikesInPosts.postId eq parentId }
-                .limit(pagination.limit.toInt(), pagination.offset)
+                .limit(pagination.limit.toInt())
+                .offset(pagination.offset)
                 .map { LikesInPosts.toLikeInPost(it, null, Users.toUser(it)) }
         }
 
