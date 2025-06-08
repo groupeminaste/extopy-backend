@@ -40,7 +40,7 @@ jobs:
           password: ${{ secrets.DOCKER_HUB_PASSWORD }}
       - name: Build and publish to Docker Hub
         run: ./gradlew publishImage
-      - name: Build and publish to Docker Hub (arm64)
-        run: ./gradlew publishImage
-        env:
-          JIB_PLATFORM_ARCHITECTURE: arm64
+      #- name: Build and publish to Docker Hub (arm64)
+      #  run: ./gradlew publishImage
+      #  env:
+      #    JIB_PLATFORM_ARCHITECTURE: arm64
