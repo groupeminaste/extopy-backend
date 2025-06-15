@@ -3,7 +3,7 @@ package com.extopy.usecases.auth
 import io.mockk.coEvery
 import io.mockk.mockk
 import kotlinx.coroutines.runBlocking
-import com.extopy.repositories.users.IClientsInUsersRepository
+import com.extopy.database.users.IClientsInUsersRepository
 import kotlin.test.Test
 import kotlin.test.assertEquals
 

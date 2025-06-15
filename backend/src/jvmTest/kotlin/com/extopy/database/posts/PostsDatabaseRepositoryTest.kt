@@ -5,7 +5,7 @@ import com.extopy.database.users.UsersDatabaseRepository
 import com.extopy.models.posts.PostPayload
 import com.extopy.models.users.CreateUserPayload
 import com.extopy.models.users.UserContext
-import com.extopy.repositories.posts.IPostsRepository
+import com.extopy.database.posts.IPostsRepository
 import dev.kaccelero.database.IDatabase
 import dev.kaccelero.models.UUID
 import kotlinx.coroutines.runBlocking

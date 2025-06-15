@@ -1,6 +1,6 @@
 package com.extopy.usecases.auth
 
-import com.extopy.repositories.users.IClientsInUsersRepository
+import com.extopy.database.users.IClientsInUsersRepository
 
 class DeleteAuthCodeUseCase(
     private val repository: IClientsInUsersRepository,

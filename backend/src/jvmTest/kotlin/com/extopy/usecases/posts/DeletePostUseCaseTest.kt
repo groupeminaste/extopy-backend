@@ -1,6 +1,6 @@
 package com.extopy.usecases.posts
 
-import com.extopy.repositories.posts.IPostsRepository
+import com.extopy.database.posts.IPostsRepository
 import dev.kaccelero.models.UUID
 import io.mockk.coEvery
 import io.mockk.mockk

@@ -1,7 +1,7 @@
 package com.extopy.database.application
 
 import com.extopy.models.application.CodeInEmail
-import com.extopy.repositories.application.ICodesInEmailsRepository
+import com.extopy.database.application.ICodesInEmailsRepository
 import dev.kaccelero.database.IDatabase
 import kotlinx.datetime.Instant
 import org.jetbrains.exposed.sql.*

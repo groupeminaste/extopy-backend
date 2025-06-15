@@ -6,7 +6,6 @@ import com.extopy.models.users.CreateUserPayload
 import com.extopy.models.users.UpdateUserPayload
 import com.extopy.models.users.User
 import com.extopy.models.users.UserContext
-import com.extopy.repositories.users.IUsersRepository
 import dev.kaccelero.database.IDatabase
 import dev.kaccelero.database.eq
 import dev.kaccelero.models.IContext

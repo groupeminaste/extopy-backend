@@ -4,7 +4,7 @@ import com.extopy.models.application.Client
 import com.extopy.models.auth.ClientForUser
 import com.extopy.models.users.ClientInUser
 import com.extopy.models.users.User
-import com.extopy.repositories.users.IClientsInUsersRepository
+import com.extopy.database.users.IClientsInUsersRepository
 import dev.kaccelero.models.UUID
 import io.mockk.coEvery
 import io.mockk.mockk

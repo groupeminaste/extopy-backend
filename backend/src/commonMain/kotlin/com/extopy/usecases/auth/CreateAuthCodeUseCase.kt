@@ -1,7 +1,7 @@
 package com.extopy.usecases.auth
 
 import com.extopy.models.auth.ClientForUser
-import com.extopy.repositories.users.IClientsInUsersRepository
+import com.extopy.database.users.IClientsInUsersRepository
 import kotlinx.datetime.Clock
 import kotlinx.datetime.DateTimeUnit
 import kotlinx.datetime.TimeZone

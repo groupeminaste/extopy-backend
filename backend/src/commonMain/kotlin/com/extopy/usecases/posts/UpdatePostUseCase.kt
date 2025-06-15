@@ -2,7 +2,7 @@ package com.extopy.usecases.posts
 
 import com.extopy.models.posts.Post
 import com.extopy.models.posts.PostPayload
-import com.extopy.repositories.posts.IPostsRepository
+import com.extopy.database.posts.IPostsRepository
 import dev.kaccelero.commons.exceptions.ControllerException
 import dev.kaccelero.commons.repositories.IUpdateModelSuspendUseCase
 import dev.kaccelero.models.UUID

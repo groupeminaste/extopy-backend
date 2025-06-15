@@ -2,7 +2,7 @@ package com.extopy.usecases.users
 
 import com.extopy.models.users.UpdateUserPayload
 import com.extopy.models.users.User
-import com.extopy.repositories.users.IUsersRepository
+import com.extopy.database.users.IUsersRepository
 import dev.kaccelero.commons.auth.IHashPasswordUseCase
 import dev.kaccelero.commons.exceptions.ControllerException
 import dev.kaccelero.models.UUID

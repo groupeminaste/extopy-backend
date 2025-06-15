@@ -1,7 +1,7 @@
 package com.extopy.usecases.users
 
 import com.extopy.models.users.FollowerInUser
-import com.extopy.repositories.users.IFollowersInUsersRepository
+import com.extopy.database.users.IFollowersInUsersRepository
 import dev.kaccelero.models.UUID
 import dev.kaccelero.repositories.Pagination
 

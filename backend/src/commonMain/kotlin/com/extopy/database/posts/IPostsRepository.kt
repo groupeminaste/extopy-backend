@@ -1,4 +1,4 @@
-package com.extopy.repositories.posts
+package com.extopy.database.posts
 
 import com.extopy.models.posts.Post
 import com.extopy.models.posts.PostPayload

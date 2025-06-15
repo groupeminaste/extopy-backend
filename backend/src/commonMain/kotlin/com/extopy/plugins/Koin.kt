@@ -28,11 +28,11 @@ import com.extopy.models.users.CreateUserPayload
 import com.extopy.models.users.FollowerInUser
 import com.extopy.models.users.UpdateUserPayload
 import com.extopy.models.users.User
-import com.extopy.repositories.application.ICodesInEmailsRepository
-import com.extopy.repositories.posts.IPostsRepository
-import com.extopy.repositories.users.IClientsInUsersRepository
-import com.extopy.repositories.users.IFollowersInUsersRepository
-import com.extopy.repositories.users.IUsersRepository
+import com.extopy.database.application.ICodesInEmailsRepository
+import com.extopy.database.posts.IPostsRepository
+import com.extopy.database.users.IClientsInUsersRepository
+import com.extopy.database.users.IFollowersInUsersRepository
+import com.extopy.database.users.IUsersRepository
 import com.extopy.services.emails.EmailsService
 import com.extopy.services.emails.IEmailsService
 import com.extopy.services.jwt.IJWTService

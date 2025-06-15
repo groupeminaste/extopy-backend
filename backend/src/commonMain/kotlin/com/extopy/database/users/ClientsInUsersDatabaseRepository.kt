@@ -1,7 +1,6 @@
 package com.extopy.database.users
 
 import com.extopy.models.users.ClientInUser
-import com.extopy.repositories.users.IClientsInUsersRepository
 import dev.kaccelero.database.IDatabase
 import dev.kaccelero.database.set
 import dev.kaccelero.models.UUID

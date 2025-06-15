@@ -3,8 +3,8 @@ package com.extopy.usecases.users
 import com.extopy.models.users.FollowerInUser
 import com.extopy.models.users.FollowerInUserContext
 import com.extopy.models.users.UserContext
-import com.extopy.repositories.users.IFollowersInUsersRepository
-import com.extopy.repositories.users.IUsersRepository
+import com.extopy.database.users.IFollowersInUsersRepository
+import com.extopy.database.users.IUsersRepository
 import dev.kaccelero.commons.exceptions.ControllerException
 import dev.kaccelero.commons.repositories.ICreateChildModelWithContextSuspendUseCase
 import dev.kaccelero.models.IContext

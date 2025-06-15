@@ -1,4 +1,4 @@
-package com.extopy.repositories.users
+package com.extopy.database.users
 
 import com.extopy.models.users.ClientInUser
 import dev.kaccelero.models.UUID

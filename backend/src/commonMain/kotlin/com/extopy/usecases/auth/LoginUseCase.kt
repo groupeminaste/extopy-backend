@@ -2,7 +2,7 @@ package com.extopy.usecases.auth
 
 import com.extopy.models.auth.LoginPayload
 import com.extopy.models.users.User
-import com.extopy.repositories.users.IUsersRepository
+import com.extopy.database.users.IUsersRepository
 import dev.kaccelero.commons.auth.IVerifyPasswordUseCase
 import dev.kaccelero.commons.auth.VerifyPasswordPayload
 

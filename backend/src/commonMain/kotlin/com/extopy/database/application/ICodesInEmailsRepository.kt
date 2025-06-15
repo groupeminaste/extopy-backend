@@ -1,7 +1,7 @@
-package com.extopy.repositories.application
+package com.extopy.database.application
 
-import kotlinx.datetime.Instant
 import com.extopy.models.application.CodeInEmail
+import kotlinx.datetime.Instant
 
 interface ICodesInEmailsRepository {
 

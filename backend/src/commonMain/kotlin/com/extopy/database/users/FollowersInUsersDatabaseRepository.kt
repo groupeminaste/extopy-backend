@@ -2,7 +2,6 @@ package com.extopy.database.users
 
 import com.extopy.models.users.FollowerInUser
 import com.extopy.models.users.FollowerInUserContext
-import com.extopy.repositories.users.IFollowersInUsersRepository
 import dev.kaccelero.database.IDatabase
 import dev.kaccelero.database.eq
 import dev.kaccelero.database.set

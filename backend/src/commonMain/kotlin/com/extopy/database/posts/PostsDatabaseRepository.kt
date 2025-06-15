@@ -6,7 +6,7 @@ import com.extopy.models.application.SearchOptions
 import com.extopy.models.posts.Post
 import com.extopy.models.posts.PostPayload
 import com.extopy.models.users.UserContext
-import com.extopy.repositories.posts.IPostsRepository
+import com.extopy.database.posts.IPostsRepository
 import dev.kaccelero.database.IDatabase
 import dev.kaccelero.database.eq
 import dev.kaccelero.database.set

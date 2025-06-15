@@ -2,7 +2,7 @@ package com.extopy.usecases.application
 
 import kotlinx.datetime.Clock
 import com.extopy.models.application.CodeInEmail
-import com.extopy.repositories.application.ICodesInEmailsRepository
+import com.extopy.database.application.ICodesInEmailsRepository
 
 class GetCodeInEmailUseCase(
     private val repository: ICodesInEmailsRepository,

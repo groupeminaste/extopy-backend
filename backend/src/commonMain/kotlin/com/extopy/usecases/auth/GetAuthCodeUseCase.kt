@@ -4,7 +4,7 @@ import com.extopy.models.application.Client
 import com.extopy.models.auth.ClientForUser
 import com.extopy.models.users.User
 import com.extopy.models.users.UserContext
-import com.extopy.repositories.users.IClientsInUsersRepository
+import com.extopy.database.users.IClientsInUsersRepository
 import dev.kaccelero.commons.repositories.IGetModelSuspendUseCase
 import dev.kaccelero.commons.repositories.IGetModelWithContextSuspendUseCase
 import dev.kaccelero.models.UUID

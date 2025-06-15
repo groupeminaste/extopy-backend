@@ -1,6 +1,6 @@
 package com.extopy.usecases.application
 
-import com.extopy.repositories.application.ICodesInEmailsRepository
+import com.extopy.database.application.ICodesInEmailsRepository
 
 class DeleteCodeInEmailUseCase(
     private val repository: ICodesInEmailsRepository,

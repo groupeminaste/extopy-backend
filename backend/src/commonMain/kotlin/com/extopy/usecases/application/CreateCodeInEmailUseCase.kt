@@ -2,8 +2,8 @@ package com.extopy.usecases.application
 
 import com.extopy.extensions.generateId
 import com.extopy.models.application.CodeInEmail
-import com.extopy.repositories.application.ICodesInEmailsRepository
-import com.extopy.repositories.users.IUsersRepository
+import com.extopy.database.application.ICodesInEmailsRepository
+import com.extopy.database.users.IUsersRepository
 import dev.kaccelero.commons.exceptions.ControllerException
 import io.ktor.http.*
 import kotlinx.datetime.Clock
