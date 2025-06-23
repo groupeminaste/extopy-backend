@@ -24,7 +24,7 @@ dependencyResolutionManagement {
             plugin("zodable", "digital.guimauve.zodable").version("1.4.1")
 
             // Kaccelero
-            version("kaccelero", "0.5.1")
+            version("kaccelero", "0.6.0")
             library("kaccelero-routers-client", "dev.kaccelero", "routers-client-ktor").versionRef("kaccelero")
             library("kaccelero-routers", "dev.kaccelero", "routers-ktor").versionRef("kaccelero")
             library("kaccelero-i18n-freemarker", "dev.kaccelero", "i18n-ktor-freemarker").versionRef("kaccelero")
@@ -49,7 +49,7 @@ dependencyResolutionManagement {
             library("tests-jsoup", "org.jsoup:jsoup:1.16.2")
 
             // Ktor
-            version("ktor", "2.3.12")
+            version("ktor", "3.1.3")
             plugin("ktor", "io.ktor.plugin").versionRef("ktor")
             library("ktor-serialization-kotlinx-json", "io.ktor", "ktor-serialization-kotlinx-json").versionRef("ktor")
             library("ktor-server-core", "io.ktor", "ktor-server-core").versionRef("ktor")
@@ -108,7 +108,7 @@ dependencyResolutionManagement {
             )
 
             // Koin
-            version("koin", "3.5.0")
+            version("koin", "4.1.0")
             library("koin-core", "io.insert-koin", "koin-core").versionRef("koin")
             library("koin-ktor", "io.insert-koin", "koin-ktor").versionRef("koin")
 

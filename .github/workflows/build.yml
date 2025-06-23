@@ -18,10 +18,10 @@ jobs:
       - name: Install dependencies and run tests
         run: ./gradlew jvmTest koverXmlReport
       - name: Upload coverage reports to Codecov
-        uses: codecov/codecov-action@v4.0.1
+        uses: codecov/codecov-action@v5
         with:
           token: ${{ secrets.CODECOV_TOKEN }}
-  deploy:
+  build:
     runs-on: ubuntu-latest
     needs: test
     if: github.ref == 'refs/heads/main'

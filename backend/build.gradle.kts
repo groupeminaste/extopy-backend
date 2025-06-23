@@ -15,7 +15,9 @@ ktor {
     docker {
         jreVersion.set(JavaVersion.VERSION_21)
         localImageName.set("extopy-backend")
-        imageTag.set("latest" + (System.getenv("JIB_PLATFORM_ARCHITECTURE")?.let { "-$it" } ?: ""))
+        findProperty("imageTag")?.let { imageTag.set(it.toString()) }
+
+        //imageTag.set("latest" + (System.getenv("JIB_PLATFORM_ARCHITECTURE")?.let { "-$it" } ?: ""))
 
         externalRegistry.set(
             io.ktor.plugin.features.DockerImageRegistry.dockerHub(
