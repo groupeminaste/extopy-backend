@@ -21,7 +21,7 @@ dependencyResolutionManagement {
             plugin("maven", "com.vanniktech.maven.publish").version("0.30.0")
             plugin("npm", "dev.petuska.npm.publish").version("3.4.1")
             plugin("kotlinjsfix", "me.nathanfallet.kotlinjsfix").version("1.0.1")
-            plugin("zodable", "digital.guimauve.zodable").version("1.4.1")
+            plugin("zodable", "digital.guimauve.zodable").version("1.5.1")
 
             // Kaccelero
             version("kaccelero", "0.6.0")
