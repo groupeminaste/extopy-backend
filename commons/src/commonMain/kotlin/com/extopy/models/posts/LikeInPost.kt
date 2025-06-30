@@ -3,8 +3,12 @@ package com.extopy.models.posts
 import com.extopy.models.users.User
 import dev.kaccelero.models.IChildModel
 import dev.kaccelero.models.UUID
+import digital.guimauve.zodable.Zodable
 import kotlinx.serialization.Serializable
+import kotlin.js.JsExport
 
+@Zodable
+@JsExport
 @Serializable
 data class LikeInPost(
     val postId: UUID,

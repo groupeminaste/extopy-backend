@@ -4,10 +4,14 @@ import dev.kaccelero.annotations.Schema
 import dev.kaccelero.models.IModel
 import dev.kaccelero.models.IUser
 import dev.kaccelero.models.UUID
+import digital.guimauve.zodable.Zodable
 import kotlinx.datetime.Instant
 import kotlinx.datetime.LocalDate
 import kotlinx.serialization.Serializable
+import kotlin.js.JsExport
 
+@Zodable
+@JsExport
 @Serializable
 data class User(
     @Schema("Id of the User", "123abc")

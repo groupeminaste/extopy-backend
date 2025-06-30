@@ -4,9 +4,13 @@ import com.extopy.models.users.User
 import dev.kaccelero.annotations.Schema
 import dev.kaccelero.models.IModel
 import dev.kaccelero.models.UUID
+import digital.guimauve.zodable.Zodable
 import kotlinx.datetime.Instant
 import kotlinx.serialization.Serializable
+import kotlin.js.JsExport
 
+@Zodable
+@JsExport
 @Serializable
 data class Post(
     @Schema("Id of the Post", "123abc")

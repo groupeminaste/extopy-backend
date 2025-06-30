@@ -2,8 +2,12 @@ package com.extopy.models.users
 
 import dev.kaccelero.annotations.Schema
 import dev.kaccelero.annotations.StringPropertyValidator
+import digital.guimauve.zodable.Zodable
 import kotlinx.serialization.Serializable
+import kotlin.js.JsExport
 
+@Zodable
+@JsExport
 @Serializable
 data class UpdateUserPayload(
     @StringPropertyValidator(regex = User.USERNAME_REGEX, maxLength = 25)

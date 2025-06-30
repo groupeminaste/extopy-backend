@@ -5,6 +5,7 @@ plugins {
     alias(libs.plugins.ksp)
     alias(libs.plugins.maven)
     alias(libs.plugins.npm)
+    alias(libs.plugins.zodable)
 }
 
 mavenPublishing {
@@ -76,6 +77,11 @@ kotlin {
 
     applyDefaultHierarchyTemplate()
     sourceSets {
+        all {
+            languageSettings.apply {
+                optIn("kotlin.js.ExperimentalJsExport")
+            }
+        }
         val commonMain by getting {
             dependencies {
                 api(libs.kaccelero.routers.client)
@@ -90,18 +96,8 @@ kotlin {
     }
 }
 
-npmPublish {
-    readme.set(file("README.md"))
-    packages {
-        named("js") {
-            packageJson {
-                name.set("extopy")
-            }
-        }
-    }
-    registries {
-        register("npmjs") {
-            uri.set("https://registry.npmjs.org")
-        }
-    }
+zodable {
+    packageName = "extopy"
+    enableTypescript = true
+    enablePython = true
 }

@@ -6,7 +6,7 @@ pluginManagement {
 }
 
 plugins {
-    id("org.gradle.toolchains.foojay-resolver-convention") version "0.5.0"
+    id("org.gradle.toolchains.foojay-resolver-convention") version "0.8.0"
 }
 
 dependencyResolutionManagement {
@@ -21,10 +21,10 @@ dependencyResolutionManagement {
             plugin("maven", "com.vanniktech.maven.publish").version("0.30.0")
             plugin("npm", "dev.petuska.npm.publish").version("3.4.1")
             plugin("kotlinjsfix", "me.nathanfallet.kotlinjsfix").version("1.0.1")
-            plugin("zodable", "digital.guimauve.zodable").version("1.5.1")
+            plugin("zodable", "digital.guimauve.zodable").version("1.6.0")
 
             // Kaccelero
-            version("kaccelero", "0.6.0")
+            version("kaccelero", "0.6.1")
             library("kaccelero-routers-client", "dev.kaccelero", "routers-client-ktor").versionRef("kaccelero")
             library("kaccelero-routers", "dev.kaccelero", "routers-ktor").versionRef("kaccelero")
             library("kaccelero-i18n-freemarker", "dev.kaccelero", "i18n-ktor-freemarker").versionRef("kaccelero")

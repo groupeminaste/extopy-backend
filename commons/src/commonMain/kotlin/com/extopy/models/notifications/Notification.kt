@@ -1,9 +1,13 @@
 package com.extopy.models.notifications
 
 import dev.kaccelero.models.UUID
+import digital.guimauve.zodable.Zodable
 import kotlinx.datetime.Instant
 import kotlinx.serialization.Serializable
+import kotlin.js.JsExport
 
+@Zodable
+@JsExport
 @Serializable
 data class Notification(
     val id: UUID,

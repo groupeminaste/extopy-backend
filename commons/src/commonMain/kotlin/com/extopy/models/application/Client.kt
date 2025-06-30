@@ -3,8 +3,12 @@ package com.extopy.models.application
 import dev.kaccelero.commons.auth.IClient
 import dev.kaccelero.models.IModel
 import dev.kaccelero.models.UUID
+import digital.guimauve.zodable.Zodable
 import kotlinx.serialization.Serializable
+import kotlin.js.JsExport
 
+@Zodable
+@JsExport
 @Serializable
 data class Client(
     override val id: UUID,
