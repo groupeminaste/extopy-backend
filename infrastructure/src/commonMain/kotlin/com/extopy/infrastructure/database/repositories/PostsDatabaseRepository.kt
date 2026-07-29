@@ -34,7 +34,9 @@ class PostsDatabaseRepository(
 
     init {
         transactionManager.transaction {
-            SchemaUtils.create(Posts)
+            // Every read of a post joins its author, its likes and what points back at it, so those
+            // have to be there as well.
+            SchemaUtils.create(Posts, Users, LikesInPosts, FollowersInUsers)
         }
     }
 

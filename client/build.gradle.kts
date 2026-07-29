@@ -93,7 +93,10 @@ kotlin {
                 api(libs.ktor.serialization.kotlinx.json)
             }
         }
-        val commonTest by getting {
+        // The client is the same code everywhere, and what its tests pin — the paths it builds and
+        // the payloads it sends — does not vary per platform. Running them on the JVM keeps the
+        // build from needing a simulator runtime per Apple target; every target is still compiled.
+        val jvmTest by getting {
             dependencies {
                 implementation(kotlin("test"))
                 implementation(libs.ktor.client.mock)

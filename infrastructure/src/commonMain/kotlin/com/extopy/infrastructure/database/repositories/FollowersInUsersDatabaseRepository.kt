@@ -24,7 +24,8 @@ class FollowersInUsersDatabaseRepository(
 
     init {
         transactionManager.transaction {
-            SchemaUtils.create(FollowersInUsers)
+            // A link is only ever listed with the account on the other end of it, which is joined in.
+            SchemaUtils.create(FollowersInUsers, Users)
         }
     }
 

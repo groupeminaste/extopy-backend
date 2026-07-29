@@ -33,7 +33,9 @@ class UsersDatabaseRepository(
 
     init {
         transactionManager.transaction {
-            SchemaUtils.create(Users)
+            // Every read of a user joins its posts and its follow links in to count them, so those
+            // two have to be there as well.
+            SchemaUtils.create(Users, Posts, FollowersInUsers)
         }
     }
 

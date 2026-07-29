@@ -23,7 +23,8 @@ class LikesInPostsDatabaseRepository(
 
     init {
         transactionManager.transaction {
-            SchemaUtils.create(LikesInPosts)
+            // A like is only ever listed with the account that left it, which is joined in.
+            SchemaUtils.create(LikesInPosts, Users)
         }
     }
 
