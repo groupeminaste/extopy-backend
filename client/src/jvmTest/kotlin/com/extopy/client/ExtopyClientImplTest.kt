@@ -78,9 +78,9 @@ class ExtopyClientImplTest {
     }
 
     /**
-     * The endpoint listing what an account follows sits under `followers`, which is where the
-     * derived routing of the previous framework put it. A client asking for `/following` instead
-     * gets a 404, which is exactly what the previous client did.
+     * The endpoint listing what an account follows sits next to `followers`, not under it. This is
+     * the one place where the previous client and the previous server disagreed — the client asked
+     * here and the derived routing answered one level down — so it is worth pinning.
      */
     @Test
     fun testFollowersPaths() = runTest {
@@ -91,7 +91,7 @@ class ExtopyClientImplTest {
         assertEquals("/api/v1/users/$userId/followers", recorder.pathOf())
 
         client.followersInUsers.listFollowing(userId)
-        assertEquals("/api/v1/users/$userId/followers/following", recorder.pathOf(1))
+        assertEquals("/api/v1/users/$userId/following", recorder.pathOf(1))
 
         recorder.body = """{"userId":"$userId","targetId":"$userId"}"""
         client.followersInUsers.create(userId)

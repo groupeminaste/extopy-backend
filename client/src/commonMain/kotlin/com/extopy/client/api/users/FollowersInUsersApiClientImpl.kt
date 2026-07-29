@@ -1,6 +1,7 @@
 package com.extopy.client.api.users
 
 import com.extopy.api.resources.users.FollowersInUsersApi
+import com.extopy.api.resources.users.FollowingInUsersApi
 import com.extopy.api.responses.users.FollowerInUserResponse
 import com.extopy.client.api.paginate
 import io.ktor.client.*
@@ -21,7 +22,7 @@ class FollowersInUsersApiClientImpl(
         limit: Long?,
         offset: Long?,
     ): List<FollowerInUserResponse> = client
-        .get(FollowersInUsersApi.Following(FollowersInUsersApi(userId))) { paginate(limit, offset) }
+        .get(FollowingInUsersApi(userId)) { paginate(limit, offset) }
         .body()
 
     override suspend fun create(userId: Uuid): FollowerInUserResponse = client

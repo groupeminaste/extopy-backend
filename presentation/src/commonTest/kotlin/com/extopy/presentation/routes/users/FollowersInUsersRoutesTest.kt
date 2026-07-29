@@ -73,18 +73,17 @@ class FollowersInUsersRoutesTest {
     }
 
     /**
-     * Listing what an account follows lives under `followers`, which is where the derived routing of
-     * the previous framework put it. Moving it would break every client already calling it.
+     * Listing what an account follows sits next to `followers`, not under it.
      */
     @Test
-    fun testListFollowingSitsUnderFollowers() = testApplication {
+    fun testListFollowingSitsNextToFollowers() = testApplication {
         val mocks = Mocks()
         mocks.signedInOnTarget()
         coEvery { mocks.listFollowingInUserUseCase(any(), RoutesTestHelper.OTHER_USER_ID) } returns
                 listOf(RoutesTestHelper.testFollower)
         configureApp(mocks)
 
-        val response = client.get(followersPath("/following")) { authenticated() }
+        val response = client.get("/api/v1/users/${RoutesTestHelper.OTHER_USER_ID}/following") { authenticated() }
 
         assertEquals(HttpStatusCode.OK, response.status)
         coVerify { mocks.listFollowingInUserUseCase(any(), RoutesTestHelper.OTHER_USER_ID) }

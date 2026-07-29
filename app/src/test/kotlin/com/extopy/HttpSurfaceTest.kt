@@ -52,7 +52,7 @@ class HttpSurfaceTest {
 
         // Followers
         HttpMethod.Get to "/api/v1/users/$userId/followers",
-        HttpMethod.Get to "/api/v1/users/$userId/followers/following",
+        HttpMethod.Get to "/api/v1/users/$userId/following",
         HttpMethod.Post to "/api/v1/users/$userId/followers",
         HttpMethod.Delete to "/api/v1/users/$userId/followers/$userId",
 
@@ -108,7 +108,7 @@ class HttpSurfaceTest {
         }
         application { module() }
 
-        listOf("/api/v1/notifications", "/api/v2/users", "/api/v1/users/$userId/following").forEach { path ->
+        listOf("/api/v1/notifications", "/api/v2/users", "/api/v1/users/$userId/followers/following").forEach { path ->
             val response = client.get(path)
             assertTrue(
                 response.status == HttpStatusCode.NotFound && response.bodyAsText().isEmpty(),

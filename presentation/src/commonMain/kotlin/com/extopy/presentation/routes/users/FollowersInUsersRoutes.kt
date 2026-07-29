@@ -1,6 +1,7 @@
 package com.extopy.presentation.routes.users
 
 import com.extopy.api.resources.users.FollowersInUsersApi
+import com.extopy.api.resources.users.FollowingInUsersApi
 import com.extopy.domain.exceptions.users.FollowerInUserDeleteForbiddenException
 import com.extopy.domain.exceptions.users.UserNotFoundException
 import com.extopy.domain.models.users.User
@@ -15,6 +16,7 @@ import io.ktor.server.resources.delete
 import io.ktor.server.resources.post
 import io.ktor.server.response.*
 import io.ktor.server.routing.*
+import kotlin.uuid.Uuid
 
 /**
  * Dependencies required for the followers routes.
@@ -31,11 +33,11 @@ data class FollowersInUsersRoutesDependencies(
  * Resolves the account the follow links hang off, which has to exist and be readable by the caller.
  */
 private suspend fun ApplicationCall.requireTarget(
-    resource: FollowersInUsersApi,
+    userId: Uuid,
     dependencies: FollowersInUsersRoutesDependencies,
 ): Pair<User, User> = with(dependencies) {
     val user = requireUser(getUserUseCase)
-    val target = getUserUseCase(resource.userId, user.id) ?: throw UserNotFoundException()
+    val target = getUserUseCase(userId, user.id) ?: throw UserNotFoundException()
     user to target
 }
 
@@ -44,20 +46,20 @@ private suspend fun ApplicationCall.requireTarget(
  */
 fun Route.followersInUsersRoutes(dependencies: FollowersInUsersRoutesDependencies) = with(dependencies) {
     get<FollowersInUsersApi> { resource ->
-        val (_, target) = call.requireTarget(resource, dependencies)
+        val (_, target) = call.requireTarget(resource.userId, dependencies)
         call.respond(listFollowersInUserUseCase(call.pagination(), target.id).map { it.toFollowerInUserResponse() })
     }
-    get<FollowersInUsersApi.Following> { resource ->
-        val (_, target) = call.requireTarget(resource.parent, dependencies)
+    get<FollowingInUsersApi> { resource ->
+        val (_, target) = call.requireTarget(resource.userId, dependencies)
         call.respond(listFollowingInUserUseCase(call.pagination(), target.id).map { it.toFollowerInUserResponse() })
     }
     post<FollowersInUsersApi> { resource ->
-        val (user, target) = call.requireTarget(resource, dependencies)
+        val (user, target) = call.requireTarget(resource.userId, dependencies)
         val follower = createFollowerInUserUseCase(target.id, user.id) ?: throw UserNotFoundException()
         call.respond(HttpStatusCode.Created, follower.toFollowerInUserResponse())
     }
     delete<FollowersInUsersApi.Id> { resource ->
-        val (user, target) = call.requireTarget(resource.parent, dependencies)
+        val (user, target) = call.requireTarget(resource.parent.userId, dependencies)
         // Either end of a link may cut it: unfollowing an account, or dropping one of your followers.
         if (user.id != resource.followerId && user.id != target.id) {
             throw FollowerInUserDeleteForbiddenException()

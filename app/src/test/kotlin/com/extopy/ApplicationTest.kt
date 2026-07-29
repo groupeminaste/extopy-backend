@@ -57,7 +57,7 @@ class ApplicationTest {
         assertEquals(HttpStatusCode.OK, response.status)
         with(response.bodyAsText()) {
             assertContains(this, "Extopy API")
-            assertContains(this, "/api/v1/users/{userId}/followers/following")
+            assertContains(this, "/api/v1/users/{userId}/following")
         }
     }
 
@@ -82,7 +82,7 @@ class ApplicationTest {
             "/api/v1/users/$userId",
             "/api/v1/users/$userId/posts",
             "/api/v1/users/$userId/followers",
-            "/api/v1/users/$userId/followers/following",
+            "/api/v1/users/$userId/following",
             "/api/v1/posts",
             "/api/v1/posts/$postId",
             "/api/v1/posts/$postId/replies",

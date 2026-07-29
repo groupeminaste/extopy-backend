@@ -17,20 +17,6 @@ class FollowersInUsersApi(
 ) {
 
     /**
-     * Resource class representing the users a user follows.
-     *
-     * Note: this sits under `followers` rather than next to it, which is where the derived routing
-     * of the previous framework put it. Moving it would break every client already calling it.
-     */
-    @Resource("following")
-    class Following(
-        /**
-         * The parent FollowersInUsersApi resource.
-         */
-        val parent: FollowersInUsersApi,
-    )
-
-    /**
      * Resource class representing a specific follower identified by its user ID.
      */
     @Resource("{followerId}")
