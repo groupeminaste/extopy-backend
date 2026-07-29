@@ -1,6 +1,8 @@
 plugins {
+    alias(libs.plugins.jvm) apply false
     alias(libs.plugins.multiplatform) apply false
     alias(libs.plugins.maven) apply false
+    alias(libs.plugins.kover)
 }
 
 allprojects {
@@ -18,4 +20,13 @@ allprojects {
     repositories {
         mavenCentral()
     }
+}
+
+dependencies {
+    kover(projects.api)
+    kover(projects.client)
+    kover(projects.domain)
+    kover(projects.infrastructure)
+    kover(projects.presentation)
+    kover(projects.app)
 }
