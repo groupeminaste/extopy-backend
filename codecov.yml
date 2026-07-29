@@ -1,5 +1,0 @@
-ignore:
-  # Plain data classes: the models the API is described with, and the ones the business rules work
-  # on. There is nothing in them to cover.
-  - "api/src/commonMain/kotlin/com/extopy/api"
-  - "domain/src/commonMain/kotlin/com/extopy/domain/models"
