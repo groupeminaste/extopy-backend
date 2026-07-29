@@ -11,13 +11,16 @@ import com.extopy.presentation.routes.users.followersInUsersRoutes
 import com.extopy.presentation.routes.users.usersRoutes
 import com.extopy.presentation.routes.web.webRoutes
 import io.ktor.http.*
+import io.ktor.openapi.*
 import io.ktor.server.application.*
 import io.ktor.server.auth.*
 import io.ktor.server.http.content.*
 import io.ktor.server.plugins.autohead.*
 import io.ktor.server.plugins.cors.routing.*
+import io.ktor.server.plugins.openapi.*
 import io.ktor.server.resources.*
 import io.ktor.server.routing.*
+import io.ktor.server.routing.openapi.*
 import org.koin.ktor.ext.get
 
 /**
@@ -26,6 +29,11 @@ import org.koin.ktor.ext.get
  * it, so the two ends agree on a name rather than on a type.
  */
 private const val API_JWT = "api-v1-jwt"
+
+/**
+ * Where the rendered documentation is written on startup.
+ */
+private val OPENAPI_OUTPUT_PATH = "${System.getProperty("java.io.tmpdir")}/extopy-openapi"
 
 fun Application.configureRouting() {
     install(Resources)
@@ -60,6 +68,16 @@ fun Application.configureRouting() {
             localized("/auth") {
                 authWebRoutes(get())
             }
+        }
+
+        // The documentation is read off the routing tree above, so it can only ever describe the
+        // routes that are actually mounted.
+        openAPI(path = "docs") {
+            info = OpenApiInfo("Extopy API", "1.0.0")
+            source = OpenApiDocSource.Routing { routingRoot.descendants() }
+            // The pages are rendered on startup, into a scratch directory rather than into
+            // whichever one the process happens to have been started from.
+            outputPath = OPENAPI_OUTPUT_PATH
         }
 
         staticResources("", "static")

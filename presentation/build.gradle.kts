@@ -62,6 +62,9 @@ kotlin {
                 api(libs.ktor.server.status.pages)
                 api(libs.ktor.server.freemarker)
                 api(libs.ktor.server.cors)
+                api(libs.ktor.server.openapi)
+                // In Ktor 3.4.0, the OpenAPI plugin needs this one to read the routing tree.
+                api(libs.ktor.server.routing.openapi)
                 api(libs.ktor.server.auto.head.response)
                 api(libs.ktor.server.call.logging)
                 api(libs.ktor.server.auth.jwt)

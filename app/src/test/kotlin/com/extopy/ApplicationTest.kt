@@ -47,6 +47,20 @@ class ApplicationTest {
         assertEquals("""{"database":true}""", ready.bodyAsText())
     }
 
+    /**
+     * The documentation is read off the routing tree, so it can only ever describe the routes that
+     * are actually mounted.
+     */
+    @Test
+    fun testDocumentationIsServed() = withApplication("docs") {
+        val response = client.get("/docs")
+        assertEquals(HttpStatusCode.OK, response.status)
+        with(response.bodyAsText()) {
+            assertContains(this, "Extopy API")
+            assertContains(this, "/api/v1/users/{userId}/followers/following")
+        }
+    }
+
     @Test
     fun testLandingPageIsServed() = withApplication("landing") {
         val response = client.get("/")
