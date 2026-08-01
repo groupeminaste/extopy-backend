@@ -150,6 +150,8 @@ email:
 # MySQL configuration
 
 mysql:
+  image:
+    repository: bitnamilegacy/mysql # until we get the new things
   enabled: true
   auth:
     username: ''
