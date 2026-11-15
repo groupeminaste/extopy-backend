@@ -39,27 +39,10 @@ mavenPublishing {
 }
 
 kotlin {
-    // Same targets as `api`, since this is the other half of what the clients depend on.
-    // Tier 1
-    macosX64()
-    macosArm64()
-    iosSimulatorArm64()
-    iosX64()
-
-    // Tier 2
-    linuxX64()
-    linuxArm64()
-    watchosSimulatorArm64()
-    watchosX64()
-    watchosArm32()
-    watchosArm64()
-    tvosSimulatorArm64()
-    tvosX64()
-    tvosArm64()
+    // The same targets as `api`, the other half of what the clients depend on. Each target adds files
+    // to every Maven Central release, which counts them against monthly limits: ask before adding one.
     iosArm64()
-
-    // Tier 3
-    mingwX64()
+    iosSimulatorArm64()
 
     // jvm & js
     jvmToolchain(21)
