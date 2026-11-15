@@ -26,3 +26,25 @@ and `presentation` knows nothing about the database.
 
 Run it with `./gradlew :app:run`, and everything with `./gradlew build`. The API documents itself at
 `/docs`, off the routes that are actually mounted.
+
+## Publishing `api` and `client`
+
+Only `api` and `client` are published; the server modules never leave this repository.
+
+**During development**, publish snapshots to Maven Local and point the app at them:
+
+```sh
+./gradlew :api:publishToMavenLocal :client:publishToMavenLocal   # com.extopy:*:0.2.0-SNAPSHOT
+```
+
+**Maven Central** is for occasional releases only. Since October 2026 Central enforces monthly
+publishing limits per organization (number of releases, number of files, total size), so a release
+is a deliberate step, run from a machine holding the Central credentials and the signing key:
+
+```sh
+./gradlew :api:publishToMavenCentral :client:publishToMavenCentral -PextopyVersion=0.2.0
+```
+
+The build refuses to send a `-SNAPSHOT` version to Central. Empty javadoc jars and the checksums
+Central does not need are left out, to keep each release as small as possible. The deployment is
+then released by hand from the Central Portal, and the app's catalog bumped to that version.

@@ -5,9 +5,22 @@ plugins {
     alias(libs.plugins.kover)
 }
 
+// Development builds are snapshots published to Maven Local (`./gradlew publishToMavenLocal`).
+// A release to Maven Central names its version explicitly: `./gradlew publishToMavenCentral -PextopyVersion=0.2.0`.
+val extopyVersion = providers.gradleProperty("extopyVersion").orElse("0.2.0-SNAPSHOT").get()
+
 allprojects {
     group = "com.extopy"
-    version = "0.1.5"
+    version = extopyVersion
+
+    // Maven Central counts every release against monthly limits: a snapshot never goes there.
+    tasks.matching { it.name.startsWith("publish") && it.name.contains("MavenCentral") }.configureEach {
+        doFirst {
+            require(!extopyVersion.endsWith("-SNAPSHOT")) {
+                "Publish snapshots to Maven Local only; pass -PextopyVersion=<x.y.z> to release on Maven Central."
+            }
+        }
+    }
     project.ext.set("url", "https://github.com/groupeminaste/extopy-backend")
     project.ext.set("license.name", "GPL-3.0")
     project.ext.set("license.url", "https://opensource.org/licenses/GPL-3.0")
