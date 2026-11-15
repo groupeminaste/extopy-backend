@@ -93,14 +93,14 @@ kotlin {
                 optIn("kotlin.js.ExperimentalJsExport")
             }
         }
-        val commonMain by getting {
+        commonMain {
             dependencies {
                 api(libs.kotlinx.serialization.json)
                 api(libs.kotlinx.datetime)
                 api(libs.ktor.resources)
             }
         }
-        val commonTest by getting {
+        commonTest {
             dependencies {
                 implementation(kotlin("test"))
             }
@@ -110,6 +110,8 @@ kotlin {
 
 zodable {
     packageName = "extopy"
+    // Valid for npm (semver) and for pip (PEP 440, which reads `-dev0` as `.dev0`); `-SNAPSHOT` is neither.
+    packageVersion = version.toString().replace("-SNAPSHOT", "-dev0")
     enableTypescript = true
     enablePython = true
 }
