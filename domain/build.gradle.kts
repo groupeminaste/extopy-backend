@@ -1,40 +1,33 @@
 plugins {
-    alias(libs.plugins.multiplatform)
+    alias(libs.plugins.jvm)
     alias(libs.plugins.serialization)
     alias(libs.plugins.kover)
 }
 
 kotlin {
     jvmToolchain(21)
-    jvm {
-        testRuns.named("test") {
-            executionTask.configure {
-                useJUnitPlatform()
-            }
-        }
+    compilerOptions {
+        optIn.add("kotlin.uuid.ExperimentalUuidApi")
     }
+}
 
-    applyDefaultHierarchyTemplate()
-    sourceSets {
-        all {
-            languageSettings.apply {
-                optIn("kotlin.uuid.ExperimentalUuidApi")
-            }
-        }
-        val commonMain by getting {
-            dependencies {
-                api(libs.kotlinx.serialization.json)
-                api(libs.kotlinx.datetime)
-                api(libs.kotlinx.coroutines.core)
-                api(libs.koin.core)
-            }
-        }
-        val commonTest by getting {
-            dependencies {
-                implementation(kotlin("test"))
-                implementation(libs.tests.mockk)
-                implementation(libs.tests.coroutines)
-            }
-        }
-    }
+dependencies {
+    api(libs.kotlinx.serialization.json)
+    api(libs.kotlinx.datetime)
+    api(libs.kotlinx.coroutines.core)
+    api(libs.koin.core)
+
+    testImplementation(libs.kotlin.test.junit5)
+    testRuntimeOnly(libs.junit.jupiter.engine)
+    testImplementation(libs.tests.mockk)
+    testImplementation(libs.tests.coroutines)
+}
+
+tasks.test {
+    useJUnitPlatform()
+}
+
+// CI runs `jvmTest` across the build; on a JVM module that is the `test` task.
+tasks.register("jvmTest") {
+    dependsOn("test")
 }

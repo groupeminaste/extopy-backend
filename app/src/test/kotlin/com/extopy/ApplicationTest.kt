@@ -19,13 +19,11 @@ import kotlin.test.assertTrue
 class ApplicationTest {
 
     /**
-     * Each test gets its own in-memory database. `DB_CLOSE_DELAY=-1` keeps one alive for as long as
-     * the process is, so sharing a name would let one test see what another one wrote.
+     * Each test gets its own database, so that one test never sees what another one wrote.
      */
     private fun withApplication(name: String, block: suspend ApplicationTestBuilder.() -> Unit) = testApplication {
         environment {
-            config = ApplicationConfig("application.test.conf")
-                .mergeWith(MapApplicationConfig("database.name" to "extopy-$name"))
+            config = TestDatabase.config("extopy-$name")
         }
         application {
             module()

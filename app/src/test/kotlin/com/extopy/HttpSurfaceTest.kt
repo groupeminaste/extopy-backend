@@ -82,8 +82,7 @@ class HttpSurfaceTest {
     @Test
     fun testEveryRouteIsMounted() = testApplication {
         environment {
-            config = ApplicationConfig("application.test.conf")
-                .mergeWith(MapApplicationConfig("database.name" to "extopy-surface"))
+            config = TestDatabase.config("extopy-surface")
         }
         application { module() }
         val client = client.config { followRedirects = false }
@@ -103,8 +102,7 @@ class HttpSurfaceTest {
     @Test
     fun testAnUndeclaredPathIsNotMounted() = testApplication {
         environment {
-            config = ApplicationConfig("application.test.conf")
-                .mergeWith(MapApplicationConfig("database.name" to "extopy-surface-unknown"))
+            config = TestDatabase.config("extopy-surface-unknown")
         }
         application { module() }
 

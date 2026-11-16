@@ -60,7 +60,7 @@ dependencies {
     testImplementation(libs.ktor.server.test.host)
     testImplementation(libs.kotlin.test.junit5)
     testRuntimeOnly(libs.junit.jupiter.engine)
-    testImplementation(libs.h2)
+    testImplementation(libs.testcontainers.mysql)
     testImplementation(libs.tests.jsoup)
 }
 
