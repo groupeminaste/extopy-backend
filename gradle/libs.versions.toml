@@ -9,7 +9,8 @@ hikari = "5.1.0"
 bcrypt = "0.10.2"
 junit = "5.11.4"
 mockk = "1.14.12"
-h2 = "2.3.232"
+flyway = "13.12.2"
+testcontainers = "2.0.5"
 jsoup = "1.16.2"
 kotlinx-coroutines = "1.11.0"
 kotlinx-datetime = "0.8.0"
@@ -27,6 +28,7 @@ multiplatform = { id = "org.jetbrains.kotlin.multiplatform", version.ref = "kotl
 serialization = { id = "org.jetbrains.kotlin.plugin.serialization", version.ref = "kotlin" }
 kover = { id = "org.jetbrains.kotlinx.kover", version.ref = "kover" }
 ksp = { id = "com.google.devtools.ksp", version.ref = "ksp" }
+exposed = { id = "org.jetbrains.exposed.plugin", version.ref = "exposed" }
 maven = { id = "com.vanniktech.maven.publish", version.ref = "maven-publish" }
 zodable = { id = "dev.zodable", version.ref = "zodable" }
 ktor = { id = "io.ktor.plugin", version.ref = "ktor" }
@@ -45,6 +47,9 @@ exposed-core = { module = "org.jetbrains.exposed:exposed-core", version.ref = "e
 exposed-jdbc = { module = "org.jetbrains.exposed:exposed-jdbc", version.ref = "exposed" }
 exposed-kotlin-datetime = { module = "org.jetbrains.exposed:exposed-kotlin-datetime", version.ref = "exposed" }
 hikari = { module = "com.zaxxer:HikariCP", version.ref = "hikari" }
+exposed-migration-jdbc = { module = "org.jetbrains.exposed:exposed-migration-jdbc", version.ref = "exposed" }
+flyway-core = { module = "org.flywaydb:flyway-core", version.ref = "flyway" }
+flyway-mysql = { module = "org.flywaydb:flyway-mysql", version.ref = "flyway" }
 
 # Tests
 tests-mockk = { module = "io.mockk:mockk", version.ref = "mockk" }
@@ -83,7 +88,7 @@ bcrypt = { module = "at.favre.lib:bcrypt", version.ref = "bcrypt" }
 logback-core = { module = "ch.qos.logback:logback-core", version.ref = "logback" }
 logback-classic = { module = "ch.qos.logback:logback-classic", version.ref = "logback" }
 mysql = { module = "com.mysql:mysql-connector-j", version.ref = "mysql" }
-h2 = { module = "com.h2database:h2", version.ref = "h2" }
+testcontainers-mysql = { module = "org.testcontainers:testcontainers-mysql", version.ref = "testcontainers" }
 sentry = { module = "io.sentry:sentry", version.ref = "sentry" }
 apache-email = { module = "org.apache.commons:commons-email", version.ref = "apache-email" }
 

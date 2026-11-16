@@ -24,6 +24,15 @@ and `presentation` knows nothing about the database.
 
 `api` and `client` are multiplatform and published to the clients; the rest is JVM only.
 
+## Database
+
+MySQL 8.4. The schema is Flyway's: the server applies the pending migrations of
+`infrastructure/src/main/resources/db/migration` when it first connects, and nothing else creates or
+alters a table. After changing a table in `infrastructure/.../database/tables`, generate its
+migration with `./gradlew :infrastructure:generateMigrations` (Docker required: it replays the
+history in a throwaway MySQL container), review it, and commit it. A merged migration is never
+edited. The tests also run on MySQL 8.4 through Testcontainers, so Docker is needed for them too.
+
 Run it with `./gradlew :app:run`, and everything with `./gradlew build`. The API documents itself at
 `/docs`, off the routes that are actually mounted.
 
