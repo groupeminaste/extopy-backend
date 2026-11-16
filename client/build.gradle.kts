@@ -1,3 +1,7 @@
+import com.vanniktech.maven.publish.JavadocJar
+import com.vanniktech.maven.publish.KotlinMultiplatform
+import com.vanniktech.maven.publish.SourcesJar
+
 plugins {
     alias(libs.plugins.multiplatform)
     alias(libs.plugins.serialization)
@@ -6,7 +10,9 @@ plugins {
 }
 
 mavenPublishing {
-    publishToMavenCentral(com.vanniktech.maven.publish.SonatypeHost.CENTRAL_PORTAL)
+    // Empty javadoc jars: Maven Central requires one, and every file counts towards its monthly limits.
+    configure(KotlinMultiplatform(javadocJar = JavadocJar.Empty(), sourcesJar = SourcesJar.Sources()))
+    publishToMavenCentral()
     signAllPublications()
     pom {
         name.set("extopy-client")
@@ -33,27 +39,10 @@ mavenPublishing {
 }
 
 kotlin {
-    // Same targets as `api`, since this is the other half of what the clients depend on.
-    // Tier 1
-    macosX64()
-    macosArm64()
-    iosSimulatorArm64()
-    iosX64()
-
-    // Tier 2
-    linuxX64()
-    linuxArm64()
-    watchosSimulatorArm64()
-    watchosX64()
-    watchosArm32()
-    watchosArm64()
-    tvosSimulatorArm64()
-    tvosX64()
-    tvosArm64()
+    // The same targets as `api`, the other half of what the clients depend on. Each target adds files
+    // to every Maven Central release, which counts them against monthly limits: ask before adding one.
     iosArm64()
-
-    // Tier 3
-    mingwX64()
+    iosSimulatorArm64()
 
     // jvm & js
     jvmToolchain(21)
@@ -82,7 +71,7 @@ kotlin {
                 optIn("kotlin.js.ExperimentalJsExport")
             }
         }
-        val commonMain by getting {
+        commonMain {
             dependencies {
                 api(projects.api)
 
@@ -96,7 +85,7 @@ kotlin {
         // The client is the same code everywhere, and what its tests pin — the paths it builds and
         // the payloads it sends — does not vary per platform. Running them on the JVM keeps the
         // build from needing a simulator runtime per Apple target; every target is still compiled.
-        val jvmTest by getting {
+        jvmTest {
             dependencies {
                 implementation(kotlin("test"))
                 implementation(libs.ktor.client.mock)

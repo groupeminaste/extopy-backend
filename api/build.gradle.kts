@@ -1,3 +1,7 @@
+import com.vanniktech.maven.publish.JavadocJar
+import com.vanniktech.maven.publish.KotlinMultiplatform
+import com.vanniktech.maven.publish.SourcesJar
+
 plugins {
     alias(libs.plugins.multiplatform)
     alias(libs.plugins.serialization)
@@ -8,7 +12,9 @@ plugins {
 }
 
 mavenPublishing {
-    publishToMavenCentral(com.vanniktech.maven.publish.SonatypeHost.CENTRAL_PORTAL)
+    // Empty javadoc jars: Maven Central requires one, and every file counts towards its monthly limits.
+    configure(KotlinMultiplatform(javadocJar = JavadocJar.Empty(), sourcesJar = SourcesJar.Sources()))
+    publishToMavenCentral()
     signAllPublications()
     pom {
         name.set("extopy-api")
@@ -35,27 +41,10 @@ mavenPublishing {
 }
 
 kotlin {
-    // Tiers are in accordance with <https://kotlinlang.org/docs/native-target-support.html>
-    // Tier 1
-    macosX64()
-    macosArm64()
-    iosSimulatorArm64()
-    iosX64()
-
-    // Tier 2
-    linuxX64()
-    linuxArm64()
-    watchosSimulatorArm64()
-    watchosX64()
-    watchosArm32()
-    watchosArm64()
-    tvosSimulatorArm64()
-    tvosX64()
-    tvosArm64()
+    // Only the targets a client builds for: the Android app (jvm), the iOS app, and js. Each target adds
+    // files to every Maven Central release, which counts them against monthly limits: ask before adding one.
     iosArm64()
-
-    // Tier 3
-    mingwX64()
+    iosSimulatorArm64()
 
     // jvm & js
     jvmToolchain(21)
@@ -87,14 +76,14 @@ kotlin {
                 optIn("kotlin.js.ExperimentalJsExport")
             }
         }
-        val commonMain by getting {
+        commonMain {
             dependencies {
                 api(libs.kotlinx.serialization.json)
                 api(libs.kotlinx.datetime)
                 api(libs.ktor.resources)
             }
         }
-        val commonTest by getting {
+        commonTest {
             dependencies {
                 implementation(kotlin("test"))
             }
@@ -104,6 +93,8 @@ kotlin {
 
 zodable {
     packageName = "extopy"
+    // Valid for npm (semver) and for pip (PEP 440, which reads `-dev0` as `.dev0`); `-SNAPSHOT` is neither.
+    packageVersion = version.toString().replace("-SNAPSHOT", "-dev0")
     enableTypescript = true
     enablePython = true
 }
